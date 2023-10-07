@@ -1,0 +1,35 @@
+[tool.poetry]
+name = "prosper-api"
+version = "0.1.0"
+description = "Python trading library for Prosper.com"
+authors = ["Graham Tibbitts <graham.tibbitts@gmail.com>"]
+license = "apache-2.0"
+readme = "README.md"
+packages = [{include = "prosper_api"}]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+requests = "^2.31.0"
+
+[tool.poetry.group.dev.dependencies]
+tox = "^4.11.3"
+pytest = "^7.4.2"
+pytest-cov = "^4.1.0"
+pytest-mock = "^3.11.1"
+pytest-sugar = "^0.9.7"
+autohooks = "^23.7.0"
+autohooks-plugin-black = "^23.7.0"
+autohooks-plugin-pytest = "^23.4.0"
+
+[tool.pytest.ini_options]
+#addopts = "-ra -q"
+testpaths = "tests"
+python_functions = ["*_test", "test_*"]
+
+[tool.autohooks]
+mode = "poetry"
+pre-commit = ["autohooks.plugins.black", "autohooks.plugins.pytest"]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
