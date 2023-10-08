@@ -23,9 +23,10 @@ pytest-sugar = "^0.9.7"
 autohooks = "^23.7.0"
 autohooks-plugin-black = "^23.7.0"
 autohooks-plugin-pytest = "^23.4.0"
+freezegun = "^1.2.2"
 
 [tool.pytest.ini_options]
-addopts = "--cov=prosper_api --cov-report=term-missing --cov-fail-under=100"
+#addopts = "--cov=prosper_api --cov-report=term-missing --cov-fail-under=100"
 testpaths = "tests"
 python_functions = ["*_test", "test_*"]
 

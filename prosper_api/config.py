@@ -1,12 +1,20 @@
 from os.path import expanduser
 
 import dpath
-from schema import Schema, Regex
+from schema import Schema, Regex, Optional
 from toml import load, loads
+
+CLIENT_ID = "credentials.client-id"
+CLIENT_SECRET = "credentials.client-secret"
+USERNAME = "credentials.username"
+PASSWORD = "credentials.password"
+TOKEN_CACHE = "auth.token-cache"
 
 
 class Config:
-    DEFAULT_CONFIG_PATH = expanduser("~/.prosperlib/config.toml")
+    DEFAULT_CONFIG_PATH = expanduser("~/.prosper-client/config.toml")
+    DEFAULT_TOKEN_CACHE_PATH = expanduser("~/.prosper-client/token-cache")
+
     SCHEMA = Schema(
         {
             "credentials": {
@@ -14,7 +22,10 @@ class Config:
                 "client-secret": Regex(r"^[a-f0-9]{32}$"),
                 "username": str,
                 "password": str,
-            }
+            },
+            Optional("auth", default={"token-cache": DEFAULT_TOKEN_CACHE_PATH}): {
+                Optional("token-cache", default=DEFAULT_TOKEN_CACHE_PATH): str
+            },
         }
     )
 
@@ -29,7 +40,7 @@ class Config:
                 self.config_dict = load(config_file)
 
         if validate:
-            self.SCHEMA.validate(self.config_dict)
+            self.config_dict = self.SCHEMA.validate(self.config_dict)
 
-    def get(self, key):
+    def get(self, key) -> str:
         return dpath.get(self.config_dict, key, separator=".")
