@@ -31,9 +31,33 @@ class TestAuthTokenManager:
             client-secret = "fedcba0987654321fedcba0987654321"
             username = "test@test.test"
             password = "password_value"
-            
+
             [auth]
             token-cache = "///NOT_A_VALID_PATH///"
+        """
+        )
+        return config
+
+    @pytest.fixture
+    def temp_token_cache(self):
+        with TemporaryDirectory() as temp_dir:
+            temp_cache_path = join(temp_dir, "token-cache")
+            with open(temp_cache_path, "w") as temp_cache_file:
+                json.dump(self.DEFAULT_TOKEN, temp_cache_file)
+            yield temp_cache_path
+
+    @pytest.fixture
+    def config_with_valid_token_cache(self, temp_token_cache):
+        config = Config(
+            config_string=f"""
+            [credentials]
+            client-id = "0123456789abcdef0123456789abcdef"
+            client-secret = "fedcba0987654321fedcba0987654321"
+            username = "test@test.test"
+            password = "password_value"
+
+            [auth]
+            token-cache = "{temp_token_cache}"
         """
         )
         return config
@@ -191,3 +215,8 @@ class TestAuthTokenManager:
         auth_token_manager_for_get_token._initial_auth.assert_called_once()
         auth_token_manager_for_get_token._refresh_auth.assert_called_once()
         assert actual_token is None
+
+    def test_get_cached_token(self, temp_token_cache, config_with_valid_token_cache):
+        auth_token_manager = AuthTokenManager(config_with_valid_token_cache)
+
+        assert auth_token_manager.token == self.DEFAULT_TOKEN
