@@ -26,15 +26,15 @@ class TestAuthTokenManager:
     def config(self):
         config = Config(
             config_string="""
-            [credentials]
-            client-id = "0123456789abcdef0123456789abcdef"
-            client-secret = "fedcba0987654321fedcba0987654321"
-            username = "test@test.test"
-            password = "password_value"
-
-            [auth]
-            token-cache = "///NOT_A_VALID_PATH///"
-        """
+                [credentials]
+                client-id = "0123456789abcdef0123456789abcdef"
+                client-secret = "fedcba0987654321fedcba0987654321"
+                username = "test@test.test"
+                password = "password_value"
+    
+                [auth]
+                token-cache = "///NOT_A_VALID_PATH///"
+            """
         )
         return config
 
@@ -50,15 +50,15 @@ class TestAuthTokenManager:
     def config_with_valid_token_cache(self, temp_token_cache):
         config = Config(
             config_string=f"""
-            [credentials]
-            client-id = "0123456789abcdef0123456789abcdef"
-            client-secret = "fedcba0987654321fedcba0987654321"
-            username = "test@test.test"
-            password = "password_value"
-
-            [auth]
-            token-cache = "{temp_token_cache}"
-        """
+                [credentials]
+                client-id = "0123456789abcdef0123456789abcdef"
+                client-secret = "fedcba0987654321fedcba0987654321"
+                username = "test@test.test"
+                password = "password_value"
+    
+                [auth]
+                token-cache = "{temp_token_cache}"
+            """
         )
         return config
 
