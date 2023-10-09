@@ -7,6 +7,8 @@ import requests
 
 from prosper_api.config import *
 
+logger = logging.getLogger(__name__)
+
 AUTH_URL = "https://api.prosper.com/v1/security/oauth/token"
 ACCESS_TOKEN_KEY = "access_token"
 REFRESH_TOKEN_KEY = "refresh_token"
@@ -65,22 +67,22 @@ class AuthTokenManager:
     def get_token(self):
         try:
             if self.token is None:
-                logging.info(
+                logger.info(
                     "No cached auth token found; performing initial authentication"
                 )
                 self._initial_auth()
-            elif self.token[EXPIRES_AT_KEY] >= datetime.now().timestamp():
-                logging.info("Cached auth token is expiring; attempting to refresh it")
+            elif self.token[EXPIRES_AT_KEY] <= datetime.now().timestamp():
+                logger.info("Cached auth token is expired; attempting to refresh it")
                 try:
                     self._refresh_auth()
                 except Exception as ex:
-                    logging.info(
+                    logger.info(
                         "Failed to refresh auth token; performing full authentication"
                     )
                     logging.debug("Refresh auth token failure", exc_info=ex)
                     self._initial_auth()
         except Exception as ex:
-            logging.error("Failed to authenticate", exc_info=ex)
+            logger.error("Failed to authenticate", exc_info=ex)
             return None
 
         return self.token[ACCESS_TOKEN_KEY]
