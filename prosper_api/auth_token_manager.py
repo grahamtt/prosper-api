@@ -5,7 +5,14 @@ from os.path import isfile
 
 import requests
 
-from prosper_api.config import *
+from prosper_api.config import (
+    CLIENT_ID,
+    CLIENT_SECRET,
+    PASSWORD,
+    TOKEN_CACHE,
+    USERNAME,
+    Config,
+)
 
 logger = logging.getLogger(__name__)
 

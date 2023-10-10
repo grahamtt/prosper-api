@@ -7,9 +7,9 @@ import freezegun
 import pytest
 
 from prosper_api.auth_token_manager import (
-    AuthTokenManager,
-    EXPIRES_AT_KEY,
     ACCESS_TOKEN_KEY,
+    EXPIRES_AT_KEY,
+    AuthTokenManager,
 )
 from prosper_api.config import Config
 

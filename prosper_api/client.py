@@ -52,7 +52,7 @@ class Client:
                 "invested": "true"
                 if invested
                 else "false"
-                if invested == False
+                if invested is False
                 else None,
                 "prosper_rating": ",".join(prosper_rating),
                 # Probably exclusive

@@ -1,7 +1,7 @@
 from os.path import expanduser
 
 import dpath
-from schema import Schema, Regex, Optional
+from schema import Optional, Regex, Schema
 from toml import load, loads
 
 CLIENT_ID = "credentials.client-id"

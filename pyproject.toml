@@ -24,6 +24,8 @@ autohooks = "^23.7.0"
 autohooks-plugin-black = "^23.7.0"
 autohooks-plugin-pytest = "^23.4.0"
 freezegun = "^1.2.2"
+autohooks-plugin-isort = "^23.4.0"
+autohooks-plugin-ruff = "^23.6.1"
 
 [tool.pytest.ini_options]
 addopts = "--cov=prosper_api --cov-report=term-missing --cov-fail-under=100"
@@ -32,7 +34,10 @@ python_functions = ["*_test", "test_*"]
 
 [tool.autohooks]
 mode = "poetry"
-pre-commit = ["autohooks.plugins.black", "autohooks.plugins.pytest", "hooks.tox"]
+pre-commit = ["autohooks.plugins.black", "autohooks.plugins.isort", "autohooks.plugins.ruff", "autohooks.plugins.pytest", "hooks.tox"]
+
+[tool.isort]
+profile = "black"
 
 [tool.poetry-dynamic-versioning]
 enable = true
