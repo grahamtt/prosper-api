@@ -29,13 +29,17 @@ class TestClient:
         client_for_api_tests._do_get.assert_called_once_with(
             "https://api.prosper.com/listingsvc/v2/listings/",
             {
-                "sort_by": "lender_yield desc",
-                "offset": None,
-                "limit": None,
                 "biddable": "true",
                 "invested": None,
-                "prosper_rating": "AA,A,B,C,D,E",
+                "limit": None,
+                "listing_end_date_max": None,
+                "listing_end_date_min": None,
                 "listing_number": "",
+                "offset": None,
+                "percent_funded_max": None,
+                "percent_funded_min": None,
+                "prosper_rating": "AA,A,B,C,D,E",
+                "sort_by": "lender_yield desc",
             },
         )
 
@@ -62,6 +66,14 @@ class TestClient:
             {"bid_requests": [{"listing_id": "listing_id", "bid_amount": 1234}]},
         )
 
+    def test_list_orders(self, client_for_api_tests):
+        client_for_api_tests.list_orders()
+
+        client_for_api_tests._do_get.assert_called_once_with(
+            "https://api.prosper.com/v1/orders/",
+            query_params={"limit": None, "offset": None},
+        )
+
     def test_do_get(self, auto_token_manager_mock, config_mock, request_mock):
         auto_token_manager_mock.return_value.get_token.return_value = "auth_token"
         request_mock.return_value.json.return_value = {"p1": "v1", "p2": 2}
@@ -73,6 +85,7 @@ class TestClient:
             "GET",
             "some_url",
             params={"param1": "value1", "param2": 2},
+            json={},
             headers={
                 "Authorization": "bearer auth_token",
                 "Accept": "application/json",
@@ -89,6 +102,7 @@ class TestClient:
         request_mock.assert_called_once_with(
             "POST",
             "some_url",
+            params={},
             json={"param1": "value1", "param2": 2},
             headers={
                 "Authorization": "bearer auth_token",
