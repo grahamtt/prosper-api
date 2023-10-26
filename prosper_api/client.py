@@ -6,7 +6,16 @@ from ratelimit import RateLimitException, limits
 
 from prosper_api.auth_token_manager import AuthTokenManager
 from prosper_api.config import Config
-from prosper_api.models import Account, AmountsByRating
+from prosper_api.models import (
+    Account,
+    AmountsByRating,
+    Listing,
+    ListNotesResponse,
+    ListOrdersResponse,
+    Note,
+    Order,
+    SearchListingsResponse,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -58,7 +67,7 @@ class Client:
         lender_yield_upper_bound=None,
         listing_number=[],
     ):
-        return self._do_get(
+        resp = self._do_get(
             self.SEARCH_API_URL,
             {
                 "sort_by": f"{sort_by} {sort_dir}",
@@ -81,6 +90,8 @@ class Client:
                 "lender_yield_max": lender_yield_upper_bound,
             },
         )
+        resp["result"] = [Listing(**r) for r in resp["result"]]
+        return SearchListingsResponse(**resp)
 
     def list_notes(
         self,
@@ -89,7 +100,7 @@ class Client:
         offset: int = None,
         limit: int = None,
     ):
-        return self._do_get(
+        resp = self._do_get(
             self.NOTES_API_URL,
             {
                 "sort_by": f"{sort_by} {sort_dir}",
@@ -97,6 +108,8 @@ class Client:
                 "limit": limit,
             },
         )
+        resp["result"] = [Note(**r) for r in resp["result"]]
+        return ListNotesResponse(**resp)
 
     def order(
         self,
@@ -113,9 +126,11 @@ class Client:
         offset: int = None,
         limit: int = None,
     ):
-        return self._do_get(
+        resp = self._do_get(
             self.ORDERS_API_URL, query_params={"limit": limit, "offset": offset}
         )
+        resp["result"] = [Order(**r) for r in resp["result"]]
+        return ListOrdersResponse(**resp)
 
     def _do_get(self, url, query_params={}):
         return self._do_request("GET", url, params=query_params)
@@ -143,6 +158,4 @@ class Client:
             },
         )
         response.raise_for_status()
-        response_json = response.json()
-        logger.info(response.text)
-        return response_json
+        return response.json()
