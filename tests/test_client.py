@@ -236,12 +236,29 @@ class TestClient:
         assert account.invested_notes.E == 1111.056157
 
     def test_order(self, client_for_api_tests):
-        client_for_api_tests.order("listing_id", 1234)
+        client_for_api_tests._do_post.return_value = {
+            "order_id": "AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAA",
+            "bid_requests": [
+                {
+                    "listing_id": 11111111,
+                    "bid_amount": 25.0,
+                    "bid_status": "PENDING",
+                }
+            ],
+            "order_status": "IN_PROGRESS",
+            "source": "AI",
+            "order_date": "2023-09-18 16:08:23 +0000",
+        }
+
+        result = client_for_api_tests.order("listing_id", 1234)
 
         client_for_api_tests._do_post.assert_called_once_with(
             "https://api.prosper.com/v1/orders/",
             {"bid_requests": [{"listing_id": "listing_id", "bid_amount": 1234}]},
         )
+        assert result.order_id == "AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAA"
+        assert len(result.bid_requests) == 1
+        assert result.bid_requests[0].bid_status == "PENDING"
 
     def test_list_orders(self, client_for_api_tests):
         client_for_api_tests._do_get.return_value = {

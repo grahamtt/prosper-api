@@ -51,7 +51,6 @@ class Listing(NamedTuple):
     has_mortgage: bool
     credit_bureau_values_transunion_indexed: dict
     employment_status_description: str
-    occupation: str
     investment_type_description: str
     last_updated_date: str
     decision_bureau: str
@@ -59,49 +58,52 @@ class Listing(NamedTuple):
     borrower_state: str
     co_borrower_application: bool
     income_verifiable: bool
+    occupation: str = None
     loan_number: int = None
     listing_end_date: str = None
     loan_origination_date: str = None
-    months_employed: float = 0.0
-    investment_product_id: int = 0
-    listing_amount: float = 0.0
-    amount_funded: float = 0.0
-    amount_remaining: float = 0.0
-    percent_funded: float = 0.0
-    partial_funding_indicator: bool = False
-    funding_threshold: float = 0.0
-    lender_yield: float = 0.0
-    borrower_rate: float = 0.0
-    borrower_apr: float = 0.0
-    listing_term: int = 0
-    listing_monthly_payment: float = 0.0
-    prosper_score: int = 0
-    listing_category_id: int = 0
-    income_range: int = 0
-    income_range_description: str = ""
-    stated_monthly_income: float = 0.0
-    dti_wprosper_loan: float = 0.0
-    lender_indicator: int = 0
-    channel_code: int = 0
-    amount_participation: float = 0.0
-    investment_typeid: int = 0
-    estimated_monthly_housing_expense: float = 0.0
-    historical_return: float = 0.0
-    historical_return_10th_pctl: float = 0.0
-    historical_return_90th_pctl: float = 0.0
-    prior_prosper_loans_active: int = 0
-    prior_prosper_loans: int = 0
-    prior_prosper_loan_earliest_pay_off: int = 0
-    prior_prosper_loans_principal_borrowed: float = 0.0
-    prior_prosper_loans_principal_outstanding: float = 0.0
-    prior_prosper_loans_balance_outstanding: float = 0.0
-    prior_prosper_loans_cycles_billed: int = 0
-    prior_prosper_loans_ontime_payments: int = 0
-    prior_prosper_loans_late_cycles: int = 0
-    prior_prosper_loans_late_payments_one_month_plus: int = 0
-    max_prior_prosper_loan: float = 0.0
-    min_prior_prosper_loan: float = 0.0
+    months_employed: float = None
+    investment_product_id: int = None
+    listing_amount: float = None
+    amount_funded: float = None
+    amount_remaining: float = None
+    percent_funded: float = None
+    partial_funding_indicator: bool = None
+    funding_threshold: float = None
+    lender_yield: float = None
+    borrower_rate: float = None
+    borrower_apr: float = None
+    listing_term: int = None
+    listing_monthly_payment: float = None
+    prosper_score: int = None
+    listing_category_id: int = None
+    income_range: int = None
+    income_range_description: str = None
+    stated_monthly_income: float = None
+    dti_wprosper_loan: float = None
+    lender_indicator: int = None
+    channel_code: int = None
+    amount_participation: float = None
+    investment_typeid: int = None
+    estimated_monthly_housing_expense: float = None
+    historical_return: float = None
+    historical_return_10th_pctl: float = None
+    historical_return_90th_pctl: float = None
+    prior_prosper_loans_active: int = None
+    prior_prosper_loans: int = None
+    prior_prosper_loan_earliest_pay_off: int = None
+    prior_prosper_loans_principal_borrowed: float = None
+    prior_prosper_loans_principal_outstanding: float = None
+    prior_prosper_loans_balance_outstanding: float = None
+    prior_prosper_loans_cycles_billed: int = None
+    prior_prosper_loans_ontime_payments: int = None
+    prior_prosper_loans_late_cycles: int = None
+    prior_prosper_loans_late_payments_one_month_plus: int = None
+    max_prior_prosper_loan: float = None
+    min_prior_prosper_loan: float = None
     verification_stage: str = None
+    combined_dti_wprosper_loan: float = None
+    combined_stated_monthly_income: float = None
 
 
 class SearchListingsResponse(ListResponse):
@@ -155,15 +157,28 @@ class ListNotesResponse(ListResponse):
     result: List[Note]
 
 
+class BidRequest(NamedTuple):
+    listing_id: int
+    bid_status: str
+    bid_amount: float
+    bid_amount_placed: float = None
+    bid_result: str = None
+
+
 class Order(NamedTuple):
     order_id: str
-    bid_requests: List[dict]
-    order_amount: float
-    order_amount_placed: float
-    order_amount_invested: float
+    order_date: str
+    bid_requests: List[BidRequest]
     order_status: str
     source: str
-    order_date: str
+    order_amount: float = None
+    order_amount_placed: float = None
+    order_amount_invested: float = None
+
+
+def build_order(order_dict):
+    order_dict["bid_requests"] = [BidRequest(**b) for b in order_dict["bid_requests"]]
+    return Order(**order_dict)
 
 
 class ListOrdersResponse(ListResponse):

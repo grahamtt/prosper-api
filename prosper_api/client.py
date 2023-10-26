@@ -13,8 +13,8 @@ from prosper_api.models import (
     ListNotesResponse,
     ListOrdersResponse,
     Note,
-    Order,
     SearchListingsResponse,
+    build_order,
 )
 
 logger = logging.getLogger(__name__)
@@ -116,10 +116,11 @@ class Client:
         listing_id,
         amount,
     ):
-        return self._do_post(
+        resp = self._do_post(
             self.ORDERS_API_URL,
             {"bid_requests": [{"listing_id": listing_id, "bid_amount": amount}]},
         )
+        return build_order(resp)
 
     def list_orders(
         self,
@@ -129,7 +130,7 @@ class Client:
         resp = self._do_get(
             self.ORDERS_API_URL, query_params={"limit": limit, "offset": offset}
         )
-        resp["result"] = [Order(**r) for r in resp["result"]]
+        resp["result"] = [build_order(r) for r in resp["result"]]
         return ListOrdersResponse(**resp)
 
     def _do_get(self, url, query_params={}):
