@@ -1,9 +1,14 @@
+import logging
+
 import requests
 from backoff import expo, on_exception
 from ratelimit import RateLimitException, limits
 
 from prosper_api.auth_token_manager import AuthTokenManager
 from prosper_api.config import Config
+from prosper_api.models import Account, AmountsByRating
+
+logger = logging.getLogger(__name__)
 
 
 class Client:
@@ -27,11 +32,14 @@ class Client:
         self.config = config
         self.auth_token_manager = auth_token_manager
 
-    def get_account_info(self):
-        return self._do_get(
+    def get_account_info(self) -> Account:
+        resp = self._do_get(
             self.ACCOUNT_API_URL,
             {},
         )
+        resp["invested_notes"] = AmountsByRating(**resp["invested_notes"])
+        resp["pending_bids"] = AmountsByRating(**resp["pending_bids"])
+        return Account(**resp)
 
     def search_listings(
         self,
@@ -46,6 +54,8 @@ class Client:
         percent_funded_upper_bound=None,
         listing_end_date_lower_bound=None,
         listing_end_date_upper_bound=None,
+        lender_yield_lower_bound=None,
+        lender_yield_upper_bound=None,
         listing_number=[],
     ):
         return self._do_get(
@@ -67,6 +77,8 @@ class Client:
                 "percent_funded_max": percent_funded_upper_bound,
                 "listing_end_date_min": listing_end_date_lower_bound,
                 "listing_end_date_max": listing_end_date_upper_bound,
+                "lender_yield_min": lender_yield_lower_bound,
+                "lender_yield_max": lender_yield_upper_bound,
             },
         )
 
@@ -131,5 +143,6 @@ class Client:
             },
         )
         response.raise_for_status()
-
-        return response.json()
+        response_json = response.json()
+        logger.info(response.text)
+        return response_json

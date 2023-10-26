@@ -31,6 +31,8 @@ class TestClient:
             {
                 "biddable": "true",
                 "invested": None,
+                "lender_yield_max": None,
+                "lender_yield_min": None,
                 "limit": None,
                 "listing_end_date_max": None,
                 "listing_end_date_min": None,
@@ -52,11 +54,50 @@ class TestClient:
         )
 
     def test_get_account_info(self, client_for_api_tests):
-        client_for_api_tests.get_account_info()
+        client_for_api_tests._do_get.return_value = {
+            "available_cash_balance": 8.735266,
+            "pending_investments_primary_market": 0.0,
+            "pending_investments_secondary_market": 0.0,
+            "pending_quick_invest_orders": 0.0,
+            "total_principal_received_on_active_notes": 379.2,
+            "total_amount_invested_on_active_notes": 4213.53,
+            "outstanding_principal_on_active_notes": 3834.329863,
+            "total_account_value": 3843.069863,
+            "pending_deposit": 0.0,
+            "last_deposit_amount": 30.0,
+            "last_deposit_date": "2023-10-23 07:00:00 +0000",
+            "last_withdraw_amount": -14.31,
+            "last_withdraw_date": "2012-11-07 08:00:00 +0000",
+            "external_user_id": "AAAAAAAAA-0000-AAAA-AAAA-AAAAAAAA",
+            "prosper_account_digest": "Aa=",
+            "invested_notes": {
+                "NA": 0,
+                "HR": 68.080180,
+                "E": 1021.056157,
+                "D": 891.837770,
+                "C": 820.719430,
+                "B": 599.842790,
+                "A": 213.991266,
+                "AA": 214.641243,
+            },
+            "pending_bids": {
+                "NA": 0,
+                "HR": 0,
+                "E": 0,
+                "D": 0,
+                "C": 0,
+                "B": 0,
+                "A": 0,
+                "AA": 0,
+            },
+        }
+        account = client_for_api_tests.get_account_info()
 
         client_for_api_tests._do_get.assert_called_once_with(
             "https://api.prosper.com/v1/accounts/prosper/", {}
         )
+        assert account.total_account_value == 3843.069863
+        assert account.invested_notes.E == 1021.056157
 
     def test_order(self, client_for_api_tests):
         client_for_api_tests.order("listing_id", 1234)
