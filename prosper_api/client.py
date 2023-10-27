@@ -13,6 +13,7 @@ from prosper_api.models import (
     ListNotesResponse,
     ListOrdersResponse,
     Note,
+    SearchListingsRequest,
     SearchListingsResponse,
     build_order,
 )
@@ -50,44 +51,30 @@ class Client:
         resp["pending_bids"] = AmountsByRating(**resp["pending_bids"])
         return Account(**resp)
 
-    def search_listings(
-        self,
-        sort_by="lender_yield",
-        sort_dir="desc",
-        offset: int = None,
-        limit: int = None,
-        biddable: bool = True,
-        invested: bool = None,
-        prosper_rating=["AA", "A", "B", "C", "D", "E"],
-        percent_funded_lower_bound=None,
-        percent_funded_upper_bound=None,
-        listing_end_date_lower_bound=None,
-        listing_end_date_upper_bound=None,
-        lender_yield_lower_bound=None,
-        lender_yield_upper_bound=None,
-        listing_number=[],
-    ):
+    def search_listings(self, request: SearchListingsRequest):
         resp = self._do_get(
             self.SEARCH_API_URL,
             {
-                "sort_by": f"{sort_by} {sort_dir}",
-                "offset": offset,
-                "limit": limit,
-                "biddable": "true" if biddable or biddable is None else "false",
+                "sort_by": f"{request.sort_by} {request.sort_dir}",
+                "offset": request.offset,
+                "limit": request.limit,
+                "biddable": "true"
+                if request.biddable or request.biddable is None
+                else "false",
                 "invested": "true"
-                if invested
+                if request.invested
                 else "false"
-                if invested is False
+                if request.invested is False
                 else None,
-                "prosper_rating": ",".join(prosper_rating),
+                "prosper_rating": ",".join(request.prosper_rating),
                 # Probably exclusive
-                "listing_number": ",".join(listing_number),
-                "percent_funded_min": percent_funded_lower_bound,
-                "percent_funded_max": percent_funded_upper_bound,
-                "listing_end_date_min": listing_end_date_lower_bound,
-                "listing_end_date_max": listing_end_date_upper_bound,
-                "lender_yield_min": lender_yield_lower_bound,
-                "lender_yield_max": lender_yield_upper_bound,
+                "listing_number": ",".join(request.listing_number),
+                "percent_funded_min": request.percent_funded_lower_bound,
+                "percent_funded_max": request.percent_funded_upper_bound,
+                "listing_end_date_min": request.listing_end_date_lower_bound,
+                "listing_end_date_max": request.listing_end_date_upper_bound,
+                "lender_yield_min": request.lender_yield_lower_bound,
+                "lender_yield_max": request.lender_yield_upper_bound,
             },
         )
         resp["result"] = [Listing(**r) for r in resp["result"]]

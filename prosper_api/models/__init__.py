@@ -106,6 +106,23 @@ class Listing(NamedTuple):
     combined_stated_monthly_income: float = None
 
 
+class SearchListingsRequest(NamedTuple):
+    sort_by: str = "lender_yield"
+    sort_dir: str = "desc"
+    offset: int = None
+    limit: int = None
+    biddable: bool = True
+    invested: bool = None
+    prosper_rating: List[str] = ["AA", "A", "B", "C", "D", "E"]
+    percent_funded_lower_bound: float = None
+    percent_funded_upper_bound: float = None
+    listing_end_date_lower_bound: str = None
+    listing_end_date_upper_bound: str = None
+    lender_yield_lower_bound: float = None
+    lender_yield_upper_bound: float = None
+    listing_number: List[str] = []
+
+
 class SearchListingsResponse(ListResponse):
     result: List[Listing]
 

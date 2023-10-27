@@ -1,6 +1,7 @@
 import pytest
 
 from prosper_api.client import Client
+from prosper_api.models import SearchListingsRequest
 
 
 class TestClient:
@@ -107,7 +108,7 @@ class TestClient:
             "total_count": 1,
         }
 
-        result = client_for_api_tests.search_listings()
+        result = client_for_api_tests.search_listings(SearchListingsRequest())
 
         client_for_api_tests._do_get.assert_called_once_with(
             "https://api.prosper.com/listingsvc/v2/listings/",
