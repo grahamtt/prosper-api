@@ -290,7 +290,11 @@ class TestClient:
 
         client_for_api_tests._do_get.assert_called_once_with(
             "https://api.prosper.com/v1/orders/",
-            query_params={"limit": None, "offset": None},
+            query_params={
+                "sort_by": "prosper_rating desc",
+                "limit": None,
+                "offset": None,
+            },
         )
         assert len(result.result) == 1
         assert result.result[0].order_id == "AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAA"

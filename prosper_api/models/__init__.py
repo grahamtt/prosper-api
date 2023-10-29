@@ -170,6 +170,13 @@ class Note(NamedTuple):
     note_default_reason_description: str = None
 
 
+class ListNotesRequest(NamedTuple):
+    sort_by: str = "prosper_rating"
+    sort_dir: str = "desc"
+    offset: int = None
+    limit: int = None
+
+
 class ListNotesResponse(ListResponse):
     result: List[Note]
 
@@ -196,6 +203,13 @@ class Order(NamedTuple):
 def build_order(order_dict):
     order_dict["bid_requests"] = [BidRequest(**b) for b in order_dict["bid_requests"]]
     return Order(**order_dict)
+
+
+class ListOrdersRequest(NamedTuple):
+    sort_by: str = "prosper_rating"
+    sort_dir: str = "desc"
+    offset: int = None
+    limit: int = None
 
 
 class ListOrdersResponse(ListResponse):

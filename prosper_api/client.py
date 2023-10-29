@@ -10,7 +10,9 @@ from prosper_api.models import (
     Account,
     AmountsByRating,
     Listing,
+    ListNotesRequest,
     ListNotesResponse,
+    ListOrdersRequest,
     ListOrdersResponse,
     Note,
     SearchListingsRequest,
@@ -80,19 +82,16 @@ class Client:
         resp["result"] = [Listing(**r) for r in resp["result"]]
         return SearchListingsResponse(**resp)
 
-    def list_notes(
-        self,
-        sort_by="prosper_rating",
-        sort_dir="desc",
-        offset: int = None,
-        limit: int = None,
-    ):
+    def list_notes(self, request: ListNotesRequest = None):
+        if request is None:
+            request = ListNotesRequest()
+
         resp = self._do_get(
             self.NOTES_API_URL,
             {
-                "sort_by": f"{sort_by} {sort_dir}",
-                "offset": offset,
-                "limit": limit,
+                "sort_by": f"{request.sort_by} {request.sort_dir}",
+                "offset": request.offset,
+                "limit": request.limit,
             },
         )
         resp["result"] = [Note(**r) for r in resp["result"]]
@@ -109,13 +108,17 @@ class Client:
         )
         return build_order(resp)
 
-    def list_orders(
-        self,
-        offset: int = None,
-        limit: int = None,
-    ):
+    def list_orders(self, request: ListOrdersRequest = None):
+        if request is None:
+            request = ListOrdersRequest()
+
         resp = self._do_get(
-            self.ORDERS_API_URL, query_params={"limit": limit, "offset": offset}
+            self.ORDERS_API_URL,
+            query_params={
+                "sort_by": f"{request.sort_by} {request.sort_dir}",
+                "offset": request.offset,
+                "limit": request.limit,
+            },
         )
         resp["result"] = [build_order(r) for r in resp["result"]]
         return ListOrdersResponse(**resp)
