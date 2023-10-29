@@ -7,8 +7,8 @@ import freezegun
 import pytest
 
 from prosper_api.auth_token_manager import (
-    ACCESS_TOKEN_KEY,
-    EXPIRES_AT_KEY,
+    _ACCESS_TOKEN_KEY,
+    _EXPIRES_AT_KEY,
     AuthTokenManager,
 )
 from prosper_api.config import Config
@@ -190,7 +190,7 @@ class TestAuthTokenManager:
                 actual_saved_token = json.load(token_cache_file)
 
             assert actual_saved_token == auth_token_manager.token
-            assert actual_saved_token[EXPIRES_AT_KEY] == 1696683590
+            assert actual_saved_token[_EXPIRES_AT_KEY] == 1696683590
 
     def test_get_token_when_no_token(
         self, auth_token_manager_for_get_token: AuthTokenManager
@@ -204,7 +204,7 @@ class TestAuthTokenManager:
 
         auth_token_manager_for_get_token._initial_auth.assert_called_once()
         auth_token_manager_for_get_token._refresh_auth.assert_not_called()
-        assert actual_token == self.DEFAULT_TOKEN[ACCESS_TOKEN_KEY]
+        assert actual_token == self.DEFAULT_TOKEN[_ACCESS_TOKEN_KEY]
 
     @freezegun.freeze_time("2023-10-07 12:00:01")
     def test_get_token_when_token_expired(
@@ -212,7 +212,7 @@ class TestAuthTokenManager:
     ):
         auth_token_manager_for_get_token.token = {
             **self.DEFAULT_TOKEN,
-            EXPIRES_AT_KEY: datetime(2023, 10, 7, 12, 0, 1).timestamp(),
+            _EXPIRES_AT_KEY: datetime(2023, 10, 7, 12, 0, 1).timestamp(),
         }
 
         def assign_token():
@@ -224,7 +224,7 @@ class TestAuthTokenManager:
 
         auth_token_manager_for_get_token._initial_auth.assert_not_called()
         auth_token_manager_for_get_token._refresh_auth.assert_called_once()
-        assert actual_token == self.DEFAULT_TOKEN[ACCESS_TOKEN_KEY]
+        assert actual_token == self.DEFAULT_TOKEN[_ACCESS_TOKEN_KEY]
 
     @freezegun.freeze_time("2023-10-07 12:00:01")
     def test_get_token_when_token_expired_and_refresh_fails(
@@ -232,7 +232,7 @@ class TestAuthTokenManager:
     ):
         auth_token_manager_for_get_token.token = {
             **self.DEFAULT_TOKEN,
-            EXPIRES_AT_KEY: datetime(2023, 10, 7, 12, 0, 1).timestamp(),
+            _EXPIRES_AT_KEY: datetime(2023, 10, 7, 12, 0, 1).timestamp(),
         }
 
         def assign_token():
@@ -245,7 +245,7 @@ class TestAuthTokenManager:
 
         auth_token_manager_for_get_token._initial_auth.assert_called_once()
         auth_token_manager_for_get_token._refresh_auth.assert_called_once()
-        assert actual_token == self.DEFAULT_TOKEN[ACCESS_TOKEN_KEY]
+        assert actual_token == self.DEFAULT_TOKEN[_ACCESS_TOKEN_KEY]
 
     @freezegun.freeze_time("2023-10-07 12:00:01")
     def test_get_token_when_token_expired_and_both_gens_fail(
@@ -253,7 +253,7 @@ class TestAuthTokenManager:
     ):
         auth_token_manager_for_get_token.token = {
             **self.DEFAULT_TOKEN,
-            EXPIRES_AT_KEY: datetime(2023, 10, 7, 12, 0, 1).timestamp(),
+            _EXPIRES_AT_KEY: datetime(2023, 10, 7, 12, 0, 1).timestamp(),
         }
 
         def assign_token():

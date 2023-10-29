@@ -28,6 +28,8 @@ autohooks-plugin-pytest = "^23.4.0"
 freezegun = "^1.2.2"
 autohooks-plugin-isort = "^23.4.0"
 autohooks-plugin-ruff = "^23.6.1"
+pydoclint = "^0.3.8"
+pydocstyle = "^6.3.0"
 
 
 [tool.poetry.group.secure.dependencies]
@@ -40,10 +42,25 @@ python_functions = ["*_test", "test_*"]
 
 [tool.autohooks]
 mode = "poetry"
-pre-commit = ["autohooks.plugins.black", "autohooks.plugins.ruff", "autohooks.plugins.isort", "autohooks.plugins.pytest", "hooks.tox"]
+pre-commit = ["autohooks.plugins.black", "autohooks.plugins.ruff", "autohooks.plugins.isort", "hooks.pydocstyle", "hooks.pydoclint", "autohooks.plugins.pytest", "hooks.tox"]
 
 [tool.autohooks.plugins.ruff]
 arguments = '--fix'
+
+[tool.autohooks.plugins.pydocstyle]
+include = 'prosper_api/*.py'
+
+[tool.autohooks.plugins.pydoclint]
+include = 'prosper_api/*.py'
+
+[tool.pydocstyle]
+inherit = false
+convention = "google"
+add_ignore = ['D100', 'D104']
+
+[tool.pydoclint]
+style="google"
+allow-init-docstring=true
 
 [tool.isort]
 profile = "black"

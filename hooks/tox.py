@@ -1,4 +1,5 @@
 import subprocess
+import sys
 from typing import Iterable, List, Optional, Union
 
 from autohooks.api import error, ok
@@ -9,6 +10,7 @@ from autohooks.api.git import (
 )
 from autohooks.config import Config
 from autohooks.precommit.run import ReportProgress
+from autohooks.terminal import out
 
 DEFAULT_ARGUMENTS = (
     "--parallel",
@@ -57,6 +59,7 @@ def precommit(
     if report_progress:
         report_progress.init(1)
 
+    ret = 0
     arguments = ["tox"]
     arguments.extend(get_tox_arguments(config))
 
@@ -68,8 +71,13 @@ def precommit(
                 report_progress.update()
         except subprocess.CalledProcessError as e:
             error("Running tox")
-            raise e from None
+            ret = e.returncode
+            lint_errors = e.stdout.decode(
+                encoding=sys.getdefaultencoding(), errors="replace"
+            ).split("\n")
+            for line in lint_errors:
+                out(line)
 
         stage_files_from_status_list(files)
 
-    return 0
+    return ret

@@ -6,30 +6,47 @@ from os.path import isfile
 import requests
 
 from prosper_api.config import (
-    CLIENT_ID,
-    CLIENT_SECRET,
-    PASSWORD,
-    TOKEN_CACHE,
-    USERNAME,
+    _CLIENT_ID,
+    _CLIENT_SECRET,
+    _PASSWORD,
+    _TOKEN_CACHE,
+    _USERNAME,
     Config,
 )
 
 logger = logging.getLogger(__name__)
 
-AUTH_URL = "https://api.prosper.com/v1/security/oauth/token"
-ACCESS_TOKEN_KEY = "access_token"
-REFRESH_TOKEN_KEY = "refresh_token"
-EXPIRES_IN_KEY = "expires_in"
-EXPIRES_AT_KEY = "expires_at"
+_AUTH_URL = "https://api.prosper.com/v1/security/oauth/token"
+_ACCESS_TOKEN_KEY = "access_token"
+_REFRESH_TOKEN_KEY = "refresh_token"
+_EXPIRES_IN_KEY = "expires_in"
+_EXPIRES_AT_KEY = "expires_at"
 
 
 class AuthTokenManager:
+    """Token manager for Prosper API tokens.
+
+    Uses credentials configured in the config file or in the OS key storage. The
+    credentials are cached and reused until they expire. After expiration, the manager
+    attempts to refresh the auth token using the refresh token; if that fails, the
+    full auth is re-executed.
+
+    """
+
     def __init__(self, config: Config):
-        self.token_cache_path = config.get(TOKEN_CACHE)
-        self.client_id = config.get(CLIENT_ID)
-        self.client_secret = config.get(CLIENT_SECRET)
-        self.username = config.get(USERNAME)
-        self.password = config.get(PASSWORD)
+        """Creates and AuthTokenManager instance.
+
+        Args:
+            config (Config): A prosper-api config
+
+        Raises:
+            AttributeError: If the client_secret or password can't be resolved.
+        """
+        self.token_cache_path = config.get(_TOKEN_CACHE)
+        self.client_id = config.get(_CLIENT_ID)
+        self.client_secret = config.get(_CLIENT_SECRET)
+        self.username = config.get(_USERNAME)
+        self.password = config.get(_PASSWORD)
 
         if not self.client_secret or not self.password:
             try:
@@ -63,7 +80,7 @@ class AuthTokenManager:
             "password": self.password,
         }
         headers = {"accept": "application/json"}
-        response = requests.request("POST", AUTH_URL, data=payload, headers=headers)
+        response = requests.request("POST", _AUTH_URL, data=payload, headers=headers)
         response.raise_for_status()
         self.token = response.json()
         self._cache_token()
@@ -73,30 +90,35 @@ class AuthTokenManager:
             "grant_type": "refresh_token",
             "client_id": self.client_id,
             "client_secret": self.client_secret,
-            "refresh_token": self.token[REFRESH_TOKEN_KEY],
+            "refresh_token": self.token[_REFRESH_TOKEN_KEY],
         }
         headers = {"accept": "application/json"}
-        response = requests.request("POST", AUTH_URL, data=payload, headers=headers)
+        response = requests.request("POST", _AUTH_URL, data=payload, headers=headers)
         response.raise_for_status()
         self.token = response.json()
         self._cache_token()
 
     def _cache_token(self):
-        self.token[EXPIRES_AT_KEY] = (
-            datetime.now() + timedelta(seconds=self.token[EXPIRES_IN_KEY] - 10)
+        self.token[_EXPIRES_AT_KEY] = (
+            datetime.now() + timedelta(seconds=self.token[_EXPIRES_IN_KEY] - 10)
         ).timestamp()
-        logging.debug(f"Set expires at to {self.token[EXPIRES_AT_KEY]}")
+        logging.debug(f"Set expires at to {self.token[_EXPIRES_AT_KEY]}")
         with open(self.token_cache_path, "w") as token_cache_file:
             json.dump(self.token, token_cache_file)
 
     def get_token(self):
+        """Get the auth token, generating it or refreshing it if necessary.
+
+        Returns
+            str: A valid authorization token for Prosper APIs.
+        """
         try:
             if self.token is None:
                 logger.info(
                     "No cached auth token found; performing initial authentication"
                 )
                 self._initial_auth()
-            elif self.token[EXPIRES_AT_KEY] <= datetime.now().timestamp():
+            elif self.token[_EXPIRES_AT_KEY] <= datetime.now().timestamp():
                 logger.info("Cached auth token is expired; attempting to refresh it")
                 try:
                     self._refresh_auth()
@@ -110,4 +132,4 @@ class AuthTokenManager:
             logger.error("Failed to authenticate", exc_info=ex)
             return None
 
-        return self.token[ACCESS_TOKEN_KEY]
+        return self.token[_ACCESS_TOKEN_KEY]

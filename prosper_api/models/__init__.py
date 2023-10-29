@@ -2,6 +2,8 @@ from typing import List, NamedTuple
 
 
 class AmountsByRating(NamedTuple):
+    """Holds arbitrary float amounts bucketed by Prosper rating."""
+
     NA: float
     HR: float
     E: float
@@ -13,6 +15,8 @@ class AmountsByRating(NamedTuple):
 
 
 class Account(NamedTuple):
+    """Holds account-level information, such as current balances."""
+
     available_cash_balance: float
     pending_investments_primary_market: float
     pending_investments_secondary_market: float
@@ -32,13 +36,19 @@ class Account(NamedTuple):
     pending_bids: AmountsByRating
 
 
-class ListResponse(NamedTuple):
+class _ListResponse(NamedTuple):
     result: List[NamedTuple]
     result_count: int
     total_count: int
 
 
 class Listing(NamedTuple):
+    """Represents a Prosper listing.
+
+    Contains the information needed for an investor to make an informed decision about
+    whether to invest in a potential loan.
+    """
+
     listing_number: int
     prosper_rating: str
     listing_title: str
@@ -107,6 +117,12 @@ class Listing(NamedTuple):
 
 
 class SearchListingsRequest(NamedTuple):
+    """Request for searching listings.
+
+    Todo:
+        Currently, only supports a sub-set of available filters.
+    """
+
     sort_by: str = "lender_yield"
     sort_dir: str = "desc"
     offset: int = None
@@ -123,11 +139,21 @@ class SearchListingsRequest(NamedTuple):
     listing_number: List[str] = []
 
 
-class SearchListingsResponse(ListResponse):
+class SearchListingsResponse(_ListResponse):
+    """The listings matching the given search parameters."""
+
     result: List[Listing]
 
 
 class Note(NamedTuple):
+    """Represents the Prosper note.
+
+    The note holds information about the borrowers obligation to the individual lenders.
+
+    See Also:
+        https://developers.prosper.com/docs/investor/notes-api/
+    """
+
     principal_balance_pro_rata_share: float
     service_fees_paid_pro_rata_share: float
     principal_paid_pro_rata_share: float
@@ -171,17 +197,26 @@ class Note(NamedTuple):
 
 
 class ListNotesRequest(NamedTuple):
+    """Request for searching notes."""
+
     sort_by: str = "prosper_rating"
     sort_dir: str = "desc"
     offset: int = None
     limit: int = None
 
 
-class ListNotesResponse(ListResponse):
+class ListNotesResponse(_ListResponse):
+    """The notes matching the given search parameters."""
+
     result: List[Note]
 
 
 class BidRequest(NamedTuple):
+    """Represents an individual bid on a listing.
+
+    An order may contain multiple bids on multiple listings.
+    """
+
     listing_id: int
     bid_status: str
     bid_amount: float
@@ -190,6 +225,8 @@ class BidRequest(NamedTuple):
 
 
 class Order(NamedTuple):
+    """Represents the an order placed on on or more listings."""
+
     order_id: str
     order_date: str
     bid_requests: List[BidRequest]
@@ -200,17 +237,21 @@ class Order(NamedTuple):
     order_amount_invested: float = None
 
 
-def build_order(order_dict):
+def _build_order(order_dict):
     order_dict["bid_requests"] = [BidRequest(**b) for b in order_dict["bid_requests"]]
     return Order(**order_dict)
 
 
 class ListOrdersRequest(NamedTuple):
+    """Request for search orders."""
+
     sort_by: str = "prosper_rating"
     sort_dir: str = "desc"
     offset: int = None
     limit: int = None
 
 
-class ListOrdersResponse(ListResponse):
+class ListOrdersResponse(_ListResponse):
+    """The orders that match the given search params."""
+
     result: List[Order]
