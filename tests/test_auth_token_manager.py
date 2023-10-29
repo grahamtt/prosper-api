@@ -31,7 +31,21 @@ class TestAuthTokenManager:
                 client-secret = "fedcba0987654321fedcba0987654321"
                 username = "test@test.test"
                 password = "password_value"
-    
+
+                [auth]
+                token-cache = "///NOT_A_VALID_PATH///"
+            """
+        )
+        return config
+
+    @pytest.fixture
+    def config_with_no_creds(self):
+        config = Config(
+            config_string="""
+                [credentials]
+                client-id = "0123456789abcdef0123456789abcdef"
+                username = "test@test.test"
+
                 [auth]
                 token-cache = "///NOT_A_VALID_PATH///"
             """
@@ -67,6 +81,10 @@ class TestAuthTokenManager:
         return mocker.patch("requests.request")
 
     @pytest.fixture
+    def keyring_get_password_mock(self, mocker):
+        return mocker.patch("keyring.get_password")
+
+    @pytest.fixture
     def auth_token_manager(self, config):
         return AuthTokenManager(config)
 
@@ -80,6 +98,40 @@ class TestAuthTokenManager:
     def auth_token_manager_for_gen_token(self, mocker, auth_token_manager):
         mocker.patch.object(auth_token_manager, "_cache_token", mocker.MagicMock())
         return auth_token_manager
+
+    def test_init_when_password_not_present_and_keyring_not_available(
+        self, mock_import, config_with_no_creds
+    ):
+        with pytest.raises(AttributeError):
+            AuthTokenManager(config_with_no_creds)
+
+    def test_init_when_client_id_in_keyring_but_not_password(
+        self, config_with_no_creds, keyring_get_password_mock
+    ):
+        def get_password_side_effect(service, username):
+            if username == "0123456789abcdef0123456789abcdef":
+                return "client_id_12341234"
+            if username == "test@test.test":
+                return None
+
+        keyring_get_password_mock.side_effect = get_password_side_effect
+
+        with pytest.raises(AttributeError):
+            AuthTokenManager(config_with_no_creds)
+
+    def test_init_when_password_in_keyring_but_not_client_id(
+        self, config_with_no_creds, keyring_get_password_mock
+    ):
+        def get_password_side_effect(service, username):
+            if username == "0123456789abcdef0123456789abcdef":
+                return None
+            if username == "test@test.test":
+                return "password_value"
+
+        keyring_get_password_mock.side_effect = get_password_side_effect
+
+        with pytest.raises(AttributeError):
+            AuthTokenManager(config_with_no_creds)
 
     def test_initial_auth(
         self, auth_token_manager_for_gen_token: AuthTokenManager, request_mock

@@ -29,6 +29,10 @@ freezegun = "^1.2.2"
 autohooks-plugin-isort = "^23.4.0"
 autohooks-plugin-ruff = "^23.6.1"
 
+
+[tool.poetry.group.secure.dependencies]
+keyring = "^24.2.0"
+
 [tool.pytest.ini_options]
 addopts = "--cov=prosper_api --cov-report=term-missing --cov-fail-under=100"
 testpaths = "tests"

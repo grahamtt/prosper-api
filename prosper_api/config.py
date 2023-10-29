@@ -12,16 +12,16 @@ TOKEN_CACHE = "auth.token-cache"
 
 
 class Config:
-    DEFAULT_CONFIG_PATH = expanduser("~/.prosper-client/config.toml")
-    DEFAULT_TOKEN_CACHE_PATH = expanduser("~/.prosper-client/token-cache")
+    DEFAULT_CONFIG_PATH = expanduser("~/.prosper-api/config.toml")
+    DEFAULT_TOKEN_CACHE_PATH = expanduser("~/.prosper-api/token-cache")
 
     SCHEMA = Schema(
         {
             "credentials": {
                 "client-id": Regex(r"^[a-f0-9]{32}$"),
-                "client-secret": Regex(r"^[a-f0-9]{32}$"),
+                Optional("client-secret"): Regex(r"^[a-f0-9]{32}$"),
                 "username": str,
-                "password": str,
+                Optional("password"): str,
             },
             Optional("auth", default={"token-cache": DEFAULT_TOKEN_CACHE_PATH}): {
                 Optional("token-cache", default=DEFAULT_TOKEN_CACHE_PATH): str
@@ -43,4 +43,4 @@ class Config:
             self.config_dict = self.SCHEMA.validate(self.config_dict)
 
     def get(self, key) -> str:
-        return dpath.get(self.config_dict, key, separator=".")
+        return dpath.get(self.config_dict, key, separator=".", default=None)
