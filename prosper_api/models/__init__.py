@@ -225,7 +225,7 @@ class BidRequest(NamedTuple):
 
 
 class Order(NamedTuple):
-    """Represents the an order placed on on or more listings."""
+    """Represents an order placed on one or more listings."""
 
     order_id: str
     order_date: str
@@ -243,7 +243,7 @@ def _build_order(order_dict):
 
 
 class ListOrdersRequest(NamedTuple):
-    """Request for search orders."""
+    """Request for listing orders."""
 
     sort_by: str = "prosper_rating"
     sort_dir: str = "desc"
@@ -255,3 +255,45 @@ class ListOrdersResponse(_ListResponse):
     """The orders that match the given search params."""
 
     result: List[Order]
+
+
+class Loan(NamedTuple):
+    """Represents the totality of a loan the lender participates in."""
+
+    loan_number: int
+    amount_borrowed: float
+    borrower_rate: float
+    prosper_rating: str
+    term: int
+    age_in_months: int
+    origination_date: str
+    days_past_due: int
+    principal_balance: float
+    service_fees_paid: float
+    principal_paid: float
+    interest_paid: float
+    prosper_fees_paid: float
+    late_fees_paid: float
+    collection_fees_paid: float
+    debt_sale_proceeds_received: float
+    loan_status: int
+    loan_status_description: str
+    loan_default_reason: int
+    next_payment_due_date: str
+    next_payment_due_amount: float
+    loan_default_reason_description: str = None
+
+
+class ListLoansRequest(NamedTuple):
+    """Request for searching loans."""
+
+    sort_by: str = "prosper_rating"
+    sort_dir: str = "desc"
+    offset: int = None
+    limit: int = None
+
+
+class ListLoansResponse(_ListResponse):
+    """The loans that match the given parameters."""
+
+    result: List[Loan]

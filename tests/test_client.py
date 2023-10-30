@@ -299,6 +299,49 @@ class TestClient:
         assert len(result.result) == 1
         assert result.result[0].order_id == "AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAA"
 
+    def test_list_loans(self, client_for_api_tests):
+        client_for_api_tests._do_get.return_value = {
+            "result": [
+                {
+                    "loan_number": 11111,
+                    "amount_borrowed": 3000.0,
+                    "borrower_rate": 0.29,
+                    "prosper_rating": "N/A",
+                    "term": 36,
+                    "age_in_months": 192,
+                    "origination_date": "2007-10-19",
+                    "days_past_due": 0,
+                    "principal_balance": 0.0,
+                    "service_fees_paid": -37.59,
+                    "principal_paid": 3000.0,
+                    "interest_paid": 1090.03,
+                    "prosper_fees_paid": 0.0,
+                    "late_fees_paid": 0.0,
+                    "collection_fees_paid": 0.0,
+                    "debt_sale_proceeds_received": 0.0,
+                    "loan_status": 4,
+                    "loan_status_description": "COMPLETED",
+                    "loan_default_reason": 0,
+                    "next_payment_due_date": "2010-10-19",
+                    "next_payment_due_amount": 0.0,
+                },
+            ],
+            "result_count": 1,
+            "total_count": 1,
+        }
+        result = client_for_api_tests.list_loans()
+
+        client_for_api_tests._do_get.assert_called_once_with(
+            "https://api.prosper.com/v1/loans/",
+            query_params={
+                "sort_by": "prosper_rating desc",
+                "limit": None,
+                "offset": None,
+            },
+        )
+        assert len(result.result) == 1
+        assert result.result[0].loan_number == 11111
+
     def test_do_get(self, auto_token_manager_mock, config_mock, request_mock):
         auto_token_manager_mock.return_value.get_token.return_value = "auth_token"
         request_mock.return_value.json.return_value = {"p1": "v1", "p2": 2}

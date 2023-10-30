@@ -10,10 +10,13 @@ from prosper_api.models import (
     Account,
     AmountsByRating,
     Listing,
+    ListLoansRequest,
+    ListLoansResponse,
     ListNotesRequest,
     ListNotesResponse,
     ListOrdersRequest,
     ListOrdersResponse,
+    Loan,
     Note,
     Order,
     SearchListingsRequest,
@@ -34,6 +37,7 @@ class Client:
     _SEARCH_API_URL = "https://api.prosper.com/listingsvc/v2/listings/"
     _NOTES_API_URL = "https://api.prosper.com/v1/notes/"
     _ORDERS_API_URL = "https://api.prosper.com/v1/orders/"
+    _LOANS_API_URL = "https://api.prosper.com/v1/loans/"
 
     def __init__(
         self,
@@ -178,6 +182,29 @@ class Client:
         )
         resp["result"] = [_build_order(r) for r in resp["result"]]
         return ListOrdersResponse(**resp)
+
+    def list_loans(self, request: ListLoansRequest = None) -> ListLoansResponse:
+        """Lists loans associated with the account.
+
+        Args:
+            request (ListLoansRequest): Configures the sort and pagination parameters.
+
+        Returns:
+            ListLoansResponse: Holds the list results and pagination information.
+        """
+        if request is None:
+            request = ListLoansRequest()
+
+        resp = self._do_get(
+            self._LOANS_API_URL,
+            query_params={
+                "sort_by": f"{request.sort_by} {request.sort_dir}",
+                "offset": request.offset,
+                "limit": request.limit,
+            },
+        )
+        resp["result"] = [Loan(**r) for r in resp["result"]]
+        return ListLoansResponse(**resp)
 
     def _do_get(self, url, query_params={}):
         return self._do_request("GET", url, params=query_params)
