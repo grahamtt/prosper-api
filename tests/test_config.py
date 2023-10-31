@@ -49,3 +49,12 @@ class TestConfig:
         assert config.get("credentials.username") == "test@test.test"
         assert config.get("credentials.password") == "password_value"
         assert config.get("auth.token-cache") == "/token/cache/path"
+
+    def test_valid_config_extra_section(self):
+        config = Config(
+            config_path=join(
+                dirname(__file__), "data", "TEST_CONFIG_EXTRA_SECTION.toml"
+            )
+        )
+
+        assert config.get("extra-section.extra-key") == "extra value"

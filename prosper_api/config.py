@@ -17,18 +17,16 @@ class Config:
     _DEFAULT_CONFIG_PATH = expanduser("~/.prosper-api/config.toml")
     _DEFAULT_TOKEN_CACHE_PATH = expanduser("~/.prosper-api/token-cache")
 
-    _SCHEMA = Schema(
+    _CREDENTIALS_SCHEMA = Schema(
         {
-            "credentials": {
-                "client-id": Regex(r"^[a-f0-9]{32}$"),
-                Optional("client-secret"): Regex(r"^[a-f0-9]{32}$"),
-                "username": str,
-                Optional("password"): str,
-            },
-            Optional("auth", default={"token-cache": _DEFAULT_TOKEN_CACHE_PATH}): {
-                Optional("token-cache", default=_DEFAULT_TOKEN_CACHE_PATH): str
-            },
+            "client-id": Regex(r"^[a-f0-9]{32}$"),
+            Optional("client-secret"): Regex(r"^[a-f0-9]{32}$"),
+            "username": str,
+            Optional("password"): str,
         }
+    )
+    _AUTH_SCHEMA = Schema(
+        {Optional("token-cache", default=_DEFAULT_TOKEN_CACHE_PATH): str}
     )
 
     def __init__(
@@ -55,7 +53,13 @@ class Config:
                 self._config_dict = load(config_file)
 
         if validate:
-            self._config_dict = self._SCHEMA.validate(self._config_dict)
+            self._config_dict = {
+                **self._config_dict,
+                "credentials": self._CREDENTIALS_SCHEMA.validate(
+                    self._config_dict["credentials"]
+                ),
+                "auth": self._AUTH_SCHEMA.validate(self._config_dict.get("auth", {})),
+            }
 
     def get(self, key: str) -> str:
         """Get the specified config value as a string.
