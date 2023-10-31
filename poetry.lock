@@ -590,6 +590,16 @@ files = [
 python-dateutil = ">=2.7"
 
 [[package]]
+name = "glob2"
+version = "0.7"
+description = "Version of the glob module that can capture patterns and supports recursive wildcards"
+optional = false
+python-versions = "*"
+files = [
+    {file = "glob2-0.7.tar.gz", hash = "sha256:85c3dbd07c8aa26d63d7aacee34fa86e9a91a3873bc30bf62ec46e531f92ab8c"},
+]
+
+[[package]]
 name = "h11"
 version = "0.14.0"
 description = "A pure-Python, bring-your-own-I/O implementation of HTTP/1.1"
@@ -774,6 +784,20 @@ test = ["async-timeout", "pytest", "pytest-asyncio (>=0.17)", "pytest-trio", "te
 trio = ["async_generator", "trio"]
 
 [[package]]
+name = "junit-xml"
+version = "1.9"
+description = "Creates JUnit XML test result documents that can be read by tools such as Jenkins"
+optional = false
+python-versions = "*"
+files = [
+    {file = "junit-xml-1.9.tar.gz", hash = "sha256:de16a051990d4e25a3982b2dd9e89d671067548718866416faec14d9de56db9f"},
+    {file = "junit_xml-1.9-py2.py3-none-any.whl", hash = "sha256:ec5ca1a55aefdd76d28fcc0b135251d156c7106fa979686a4b48d62b761b4732"},
+]
+
+[package.dependencies]
+six = "*"
+
+[[package]]
 name = "keyring"
 version = "24.2.0"
 description = "Store and access your passwords safely."
@@ -950,6 +974,29 @@ files = [
 ]
 
 [[package]]
+name = "mutmut"
+version = "2.4.4"
+description = "mutation testing for Python 3"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "mutmut-2.4.4.tar.gz", hash = "sha256:babd1ac579a817f94d5b944af70f1c5fee5ed117775be0a13c99b96b96841b23"},
+]
+
+[package.dependencies]
+click = "*"
+glob2 = "*"
+junit-xml = ">=1.8,<2"
+parso = "*"
+pony = "*"
+toml = "*"
+
+[package.extras]
+coverage = ["coverage"]
+patch = ["whatthepatch (==0.0.6)"]
+pytest = ["pytest", "pytest-cov"]
+
+[[package]]
 name = "mypy-extensions"
 version = "1.0.0"
 description = "Type system extensions for programs checked with the mypy type checker."
@@ -970,6 +1017,21 @@ files = [
     {file = "packaging-23.2-py3-none-any.whl", hash = "sha256:8c491190033a9af7e1d931d0b5dacc2ef47509b34dd0de67ed209b5203fc88c7"},
     {file = "packaging-23.2.tar.gz", hash = "sha256:048fb0e9405036518eaaf48a55953c750c11e1a1b68e0dd1a9d62ed0c092cfc5"},
 ]
+
+[[package]]
+name = "parso"
+version = "0.8.3"
+description = "A Python Parser"
+optional = false
+python-versions = ">=3.6"
+files = [
+    {file = "parso-0.8.3-py2.py3-none-any.whl", hash = "sha256:c001d4636cd3aecdaf33cbb40aebb59b094be2a74c556778ef5576c175e19e75"},
+    {file = "parso-0.8.3.tar.gz", hash = "sha256:8c07be290bb59f03588915921e29e8a50002acaf2cdc5fa0e0114f91709fafa0"},
+]
+
+[package.extras]
+qa = ["flake8 (==3.8.3)", "mypy (==0.782)"]
+testing = ["docopt", "pytest (<6.0.0)"]
 
 [[package]]
 name = "pathspec"
@@ -1032,6 +1094,17 @@ python-dateutil = ">=2.8.2"
 rich = ">=12.4.4"
 semver = ">=2.13"
 tomlkit = ">=0.5.11"
+
+[[package]]
+name = "pony"
+version = "0.7.17"
+description = "Pony Object-Relational Mapper"
+optional = false
+python-versions = "*"
+files = [
+    {file = "pony-0.7.17-py3-none-any.whl", hash = "sha256:c37e9b44f975d147b79cf56925b16b0e40b2b47ba5958d0c01579f37a5a24f7c"},
+    {file = "pony-0.7.17.tar.gz", hash = "sha256:b72172d57abd5e0846cd8d71231572da20f526327bf0d33348a9276f624d8aa7"},
+]
 
 [[package]]
 name = "pycparser"
@@ -1502,4 +1575,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "fea595509c340d356058a744eea454e8adce778e9da4c0a0d40caa6f0dbf79df"
+content-hash = "8e60255dffca56f43708d01648f2e621796e3ad632322d7c993dfe52b989b1e8"

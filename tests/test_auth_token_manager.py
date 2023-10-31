@@ -2,6 +2,7 @@ import json
 from datetime import datetime
 from os.path import join
 from tempfile import TemporaryDirectory
+from unittest.mock import call
 
 import freezegun
 import pytest
@@ -119,6 +120,13 @@ class TestAuthTokenManager:
         with pytest.raises(AttributeError):
             AuthTokenManager(config_with_no_creds)
 
+        keyring_get_password_mock.assert_has_calls(
+            [
+                call("prosper-api", "0123456789abcdef0123456789abcdef"),
+                call("prosper-api", "test@test.test"),
+            ]
+        )
+
     def test_init_when_password_in_keyring_but_not_client_id(
         self, config_with_no_creds, keyring_get_password_mock
     ):
@@ -153,6 +161,9 @@ class TestAuthTokenManager:
             headers={"accept": "application/json"},
         )
 
+        assert auth_token_manager_for_gen_token.token == self.DEFAULT_TOKEN
+        auth_token_manager_for_gen_token._cache_token.assert_called_once()
+
     def test_refresh_auth(
         self, auth_token_manager_for_gen_token: AuthTokenManager, request_mock
     ):
@@ -175,6 +186,9 @@ class TestAuthTokenManager:
             },
             headers={"accept": "application/json"},
         )
+
+        assert auth_token_manager_for_gen_token.token == self.DEFAULT_TOKEN
+        auth_token_manager_for_gen_token._cache_token.assert_called_once()
 
     @freezegun.freeze_time("2023-10-07 12:00:01")
     def test_cache_token(self, auth_token_manager):

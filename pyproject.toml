@@ -30,6 +30,7 @@ autohooks-plugin-isort = "^23.4.0"
 autohooks-plugin-ruff = "^23.6.1"
 pydoclint = "^0.3.8"
 pydocstyle = "^6.3.0"
+mutmut = "^2.4.4"
 
 
 [tool.poetry.group.secure.dependencies]
@@ -42,7 +43,7 @@ python_functions = ["*_test", "test_*"]
 
 [tool.autohooks]
 mode = "poetry"
-pre-commit = ["autohooks.plugins.black", "autohooks.plugins.ruff", "autohooks.plugins.isort", "hooks.pydocstyle", "hooks.pydoclint", "autohooks.plugins.pytest", "hooks.tox"]
+pre-commit = ["autohooks.plugins.black", "autohooks.plugins.ruff", "autohooks.plugins.isort", "hooks.pydocstyle", "hooks.pydoclint", "autohooks.plugins.pytest", "hooks.tox", "hooks.mutmut", ]
 
 [tool.autohooks.plugins.ruff]
 arguments = '--fix'
@@ -65,7 +66,15 @@ allow-init-docstring=true
 [tool.isort]
 profile = "black"
 
+[tool.autohooks.plugins.mutmut]
+arguments = [
+    "--disable-mutation-types=string,fstring",
+    "--CI" # For now the CI flag is needed since there are so many failures.
+]
+
 [tool.ruff.lint]
+extend-ignore = ["E501"]
+
 fixable = ["ALL"]
 unfixable = []
 

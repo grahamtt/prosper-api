@@ -1,4 +1,4 @@
-import logging
+from typing import Optional
 
 import requests
 from backoff import expo, on_exception
@@ -24,8 +24,6 @@ from prosper_api.models import (
     _build_order,
 )
 
-logger = logging.getLogger(__name__)
-
 
 class Client:
     """Main client for calling Prosper APIs."""
@@ -41,16 +39,15 @@ class Client:
 
     def __init__(
         self,
-        auth_token_manager: AuthTokenManager | None = None,
-        config: Config | None = None,
+        config: Optional[Config] = None,
+        auth_token_manager: Optional[AuthTokenManager] = None,
     ):
         """Constructs an instance of the Client class.
 
         Args:
-            auth_token_manager (AuthTokenManager | None): A pre-configured
+            config (Optional[Config]): Config instance to use.
+            auth_token_manager (Optional[AuthTokenManager]): A pre-configured
                 AuthTokenManager. Omit to use the default one.
-            config (Config | None): The Config instance to use. Omit to use the default
-                config.
         """
         if config is None:
             config = Config()
@@ -58,7 +55,6 @@ class Client:
         if auth_token_manager is None:
             auth_token_manager = AuthTokenManager(config)
 
-        self._config = config
         self._auth_token_manager = auth_token_manager
 
     def get_account_info(self) -> Account:
