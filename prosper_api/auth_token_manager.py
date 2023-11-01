@@ -48,20 +48,27 @@ class AuthTokenManager:
         self.username = config.get(_USERNAME)
         self.password = config.get(_PASSWORD)
 
-        if not self.client_secret or not self.password:
+        if not self.client_secret:
             try:
                 import keyring
+
+                self.client_secret = keyring.get_password("prosper-api", self.client_id)
             except ImportError:
                 raise AttributeError(
                     "Keyring is not configured, and client secret or password is not "
                     "provided in config"
                 )
 
-        if not self.client_secret:
-            self.client_secret = keyring.get_password("prosper-api", self.client_id)
-
         if not self.password:
-            self.password = keyring.get_password("prosper-api", self.username)
+            try:
+                import keyring
+
+                self.password = keyring.get_password("prosper-api", self.username)
+            except ImportError:
+                raise AttributeError(
+                    "Keyring is not configured, and client secret or password is not "
+                    "provided in config"
+                )
 
         if not self.client_secret or not self.password:
             raise AttributeError("One or both of client id and password not found")

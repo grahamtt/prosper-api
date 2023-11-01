@@ -100,9 +100,25 @@ class TestAuthTokenManager:
         mocker.patch.object(auth_token_manager, "_cache_token", mocker.MagicMock())
         return auth_token_manager
 
+    def test_init_when_creds_not_present_and_keyring_not_available(
+        self, mock_import, config_with_no_creds
+    ):
+        with pytest.raises(AttributeError):
+            AuthTokenManager(config_with_no_creds)
+
+    def test_init_when_client_secret_not_present_and_keyring_not_available(
+        self, mock_import, config_with_no_creds: Config
+    ):
+        config_with_no_creds._config_dict["credentials"]["password"] = "password_value"
+        with pytest.raises(AttributeError):
+            AuthTokenManager(config_with_no_creds)
+
     def test_init_when_password_not_present_and_keyring_not_available(
         self, mock_import, config_with_no_creds
     ):
+        config_with_no_creds._config_dict["credentials"][
+            "client-secret"
+        ] = "client_secret_value"
         with pytest.raises(AttributeError):
             AuthTokenManager(config_with_no_creds)
 
