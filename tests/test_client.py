@@ -6,7 +6,7 @@ from prosper_api.models import SearchListingsRequest
 
 class TestClient:
     @pytest.fixture
-    def auto_token_manager_mock(self, mocker):
+    def auth_token_manager_mock(self, mocker):
         return mocker.patch("prosper_api.client.AuthTokenManager")
 
     @pytest.fixture
@@ -18,11 +18,34 @@ class TestClient:
         return mocker.patch("requests.request")
 
     @pytest.fixture
-    def client_for_api_tests(self, mocker, auto_token_manager_mock, config_mock):
+    def client_for_api_tests(self, mocker, auth_token_manager_mock, config_mock):
         client = Client()
         mocker.patch.object(client, "_do_get", mocker.MagicMock())
         mocker.patch.object(client, "_do_post", mocker.MagicMock())
         return client
+
+    def test_init_default(self, config_mock, auth_token_manager_mock):
+        client: Client = Client()
+
+        config_mock.assert_called_once()
+        auth_token_manager_mock.assert_called_once_with(config_mock.return_value)
+        assert client._auth_token_manager == auth_token_manager_mock.return_value
+
+    def test_init_default_auth_token_manager(
+        self, config_mock, auth_token_manager_mock
+    ):
+        client = Client(config_mock.return_value)
+
+        config_mock.assert_not_called()
+        auth_token_manager_mock.assert_called_once_with(config_mock.return_value)
+        assert client._auth_token_manager == auth_token_manager_mock.return_value
+
+    def test_init_no_default(self, config_mock, auth_token_manager_mock):
+        client = Client(config_mock.return_value, auth_token_manager_mock.return_value)
+
+        config_mock.assert_not_called()
+        auth_token_manager_mock.assert_not_called()
+        assert client._auth_token_manager == auth_token_manager_mock.return_value
 
     def test_search(self, client_for_api_tests):
         client_for_api_tests._do_get.return_value = {
@@ -342,8 +365,8 @@ class TestClient:
         assert len(result.result) == 1
         assert result.result[0].loan_number == 11111
 
-    def test_do_get(self, auto_token_manager_mock, config_mock, request_mock):
-        auto_token_manager_mock.return_value.get_token.return_value = "auth_token"
+    def test_do_get(self, auth_token_manager_mock, config_mock, request_mock):
+        auth_token_manager_mock.return_value.get_token.return_value = "auth_token"
         request_mock.return_value.json.return_value = {"p1": "v1", "p2": 2}
 
         response = Client()._do_get("some_url", {"param1": "value1", "param2": 2})
@@ -360,8 +383,8 @@ class TestClient:
             },
         )
 
-    def test_do_post(self, auto_token_manager_mock, config_mock, request_mock):
-        auto_token_manager_mock.return_value.get_token.return_value = "auth_token"
+    def test_do_post(self, auth_token_manager_mock, config_mock, request_mock):
+        auth_token_manager_mock.return_value.get_token.return_value = "auth_token"
         request_mock.return_value.json.return_value = {"p1": "v1", "p2": 2}
 
         response = Client()._do_post("some_url", {"param1": "value1", "param2": 2})

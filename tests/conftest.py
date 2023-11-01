@@ -1,4 +1,5 @@
 import logging
+import sys
 
 import pytest
 
@@ -9,18 +10,15 @@ def configure_logging(caplog):
 
 
 @pytest.fixture
-def mock_import(mocker):
+def mock_import_keyring(monkeypatch):
     import builtins
 
     real_import = builtins.__import__
 
-    def myimport(name, _globals, _locals, fromlist, level):
-        if True:
+    def new_import(name, _globals, _locals, fromlist, level):
+        if name == "keyring":
             raise ImportError
         return real_import(name, _globals, _locals, fromlist, level)
 
-    builtins.__import__ = myimport
-
-    yield myimport
-
-    builtins.__import__ = real_import
+    monkeypatch.delitem(sys.modules, "win32security", raising=False)
+    monkeypatch.setattr(builtins, "__import__", new_import)
