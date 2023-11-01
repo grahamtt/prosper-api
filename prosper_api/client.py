@@ -26,7 +26,37 @@ from prosper_api.models import (
 
 
 class Client:
-    """Main client for calling Prosper APIs."""
+    """Main client for calling Prosper APIs.
+
+    This client supports most of the operations supported by the Prosper API.
+
+    Examples:
+        The client can be created with no args; it then uses the default configuration
+        and authentication:
+
+            client = Client()
+
+        The list APIs support pagination using the ``limit`` and ``offset`` parameters:
+
+            loans = []
+            offset = 0
+            while True:
+                response = client.list_loans(ListLoansRequest(limit=25, offset=offset))
+                loans += response.result
+                offset += 25
+                if len(loans) >= response.total_count or len(response.result) < 25:
+                    break
+
+            logger.info(pprint(loans))
+
+    Notes:
+        * The filters in the ``search_listings()`` method are incomplete.
+        * Some *getter* type methods haven't been implemented, e.g. ``get_loan``. The
+          corresponding `list` methods exist for every resource type, though.
+
+    See Also:
+        https://developers.prosper.com/docs/investor/
+    """
 
     _config: Config
     _auth_token_manager: AuthTokenManager
@@ -84,6 +114,9 @@ class Client:
         Returns:
             SearchListingsResponse: Holds the search results as well as pagination
                 information.
+
+        See Also:
+            https://developers.prosper.com/docs/investor/listings-api/
         """
         resp = self._do_get(
             self._SEARCH_API_URL,
@@ -121,6 +154,9 @@ class Client:
 
         Returns:
             ListNotesResponse: Holds the list results and pagination information.
+
+        See Also:
+            https://developers.prosper.com/docs/investor/notes-api/
         """
         if request is None:
             request = ListNotesRequest()
@@ -149,6 +185,9 @@ class Client:
 
         Returns:
             Order: The in-progress order.
+
+        See Also
+            https://developers.prosper.com/docs/investor/orders-api/#submit_new_order
         """
         resp = self._do_post(
             self._ORDERS_API_URL,
@@ -164,6 +203,9 @@ class Client:
 
         Returns:
             ListOrdersResponse: Holds the list results and pagination information.
+
+        See Also:
+            https://developers.prosper.com/docs/investor/orders-api/#get_order_details
         """
         if request is None:
             request = ListOrdersRequest()
@@ -187,6 +229,9 @@ class Client:
 
         Returns:
             ListLoansResponse: Holds the list results and pagination information.
+
+        See Also:
+            https://developers.prosper.com/docs/investor/loans-api/
         """
         if request is None:
             request = ListLoansRequest()
