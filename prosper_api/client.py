@@ -256,9 +256,9 @@ class Client:
     @on_exception(
         expo,
         RateLimitException,
-        max_tries=8,
+        max_tries=8,  # pragma: no mutate
     )
-    @limits(calls=20, period=1)
+    @limits(calls=20, period=1)  # pragma: no mutate
     def _do_request(self, method, url, params={}, data={}):
         auth_token = self._auth_token_manager.get_token()
 

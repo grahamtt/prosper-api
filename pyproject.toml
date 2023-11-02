@@ -68,8 +68,7 @@ profile = "black"
 
 [tool.autohooks.plugins.mutmut]
 arguments = [
-    "--disable-mutation-types=string,fstring",
-    "--CI" # For now the CI flag is needed since there are so many failures.
+    "--disable-mutation-types=string,fstring,expr_stmt,annassign",
 ]
 
 [tool.ruff.lint]

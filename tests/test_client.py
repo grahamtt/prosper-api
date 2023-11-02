@@ -1,3 +1,5 @@
+from datetime import datetime
+
 import pytest
 
 from prosper_api.client import Client
@@ -47,89 +49,91 @@ class TestClient:
         auth_token_manager_mock.assert_not_called()
         assert client._auth_token_manager == auth_token_manager_mock.return_value
 
-    def test_search(self, client_for_api_tests):
-        client_for_api_tests._do_get.return_value = {
-            "result": [
-                {
-                    "credit_bureau_values_transunion_indexed": {
-                        "g102s_months_since_most_recent_inquiry": -4.0,
-                        "credit_report_date": "2023-08-28 17:35:20 +0000",
-                        "at02s_open_accounts": 6.0,
-                        "g041s_accounts_30_or_more_days_past_due_ever": 0.0,
-                        "g093s_number_of_public_records": 0.0,
-                        "g094s_number_of_public_record_bankruptcies": -4.0,
-                        "g095s_months_since_most_recent_public_record": -4.0,
-                        "g218b_number_of_delinquent_accounts": 0.0,
-                        "g980s_inquiries_in_the_last_6_months": -4.0,
-                        "re20s_age_of_oldest_revolving_account_in_months": 142.0,
-                        "s207s_months_since_most_recent_public_record_bankruptcy": -4.0,
-                        "re33s_balance_owed_on_all_revolving_accounts": 6565.0,
-                        "at57s_amount_delinquent": 0.0,
-                        "g099s_public_records_last_24_months": -4.0,
-                        "at20s_oldest_trade_open_date": 189.0,
-                        "at03s_current_credit_lines": 6.0,
-                        "re101s_revolving_balance": 6565.0,
-                        "bc34s_bankcard_utilization": 17.0,
-                        "at01s_credit_lines": 28.0,
-                        "fico_score": "780-799",
-                    },
-                    "listing_number": 11111111,
-                    "listing_start_date": "2023-08-28 22:00:47 +0000",
-                    "historical_return": 0.04485,
-                    "historical_return_10th_pctl": 0.03404,
-                    "historical_return_90th_pctl": 0.05707,
-                    "employment_status_description": "Employed",
-                    "occupation": "Nurse (RN)",
-                    "has_mortgage": True,
-                    "co_borrower_application": False,
-                    "investment_type_description": "Fractional",
-                    "last_updated_date": "2023-08-29 14:33:41 +0000",
-                    "invested": True,
-                    "biddable": False,
-                    "lender_yield": 0.1295,
-                    "borrower_rate": 0.1395,
-                    "borrower_apr": 0.1677,
-                    "listing_term": 48,
-                    "listing_monthly_payment": 273.01,
-                    "prosper_score": 11,
-                    "listing_category_id": 7,
-                    "listing_title": "Other",
-                    "income_range": 6,
-                    "income_range_description": "$100,000+",
-                    "stated_monthly_income": 8333.33,
-                    "income_verifiable": True,
-                    "dti_wprosper_loan": 0.2478,
-                    "borrower_state": "AA",
-                    "prior_prosper_loans_active": 0,
-                    "prior_prosper_loans": 0,
-                    "prior_prosper_loans_late_cycles": 0,
-                    "prior_prosper_loans_late_payments_one_month_plus": 0,
-                    "lender_indicator": 0,
-                    "channel_code": "40000",
-                    "amount_participation": 0.0,
-                    "investment_typeid": 1,
-                    "loan_number": 2119830,
-                    "months_employed": 46.0,
-                    "investment_product_id": 1,
-                    "decision_bureau": "TransUnion",
-                    "member_key": "AAAAAAAAAAAAAAAAAAAAAAAAA",
-                    "listing_end_date": "2023-08-29 14:33:31 +0000",
-                    "listing_creation_date": "2023-08-28 17:42:57 +0000",
-                    "loan_origination_date": "2023-08-30 07:00:00 +0000",
-                    "listing_status": 6,
-                    "listing_status_reason": "Completed",
-                    "listing_amount": 10000.0,
-                    "amount_funded": 10000.0,
-                    "amount_remaining": 0.0,
-                    "percent_funded": 1.0,
-                    "partial_funding_indicator": True,
-                    "funding_threshold": 0.7,
-                    "prosper_rating": "AA",
+    _SEARCH_LISTINGS_RESULT = {
+        "result": [
+            {
+                "credit_bureau_values_transunion_indexed": {
+                    "g102s_months_since_most_recent_inquiry": -4.0,
+                    "credit_report_date": "2023-08-28 17:35:20 +0000",
+                    "at02s_open_accounts": 6.0,
+                    "g041s_accounts_30_or_more_days_past_due_ever": 0.0,
+                    "g093s_number_of_public_records": 0.0,
+                    "g094s_number_of_public_record_bankruptcies": -4.0,
+                    "g095s_months_since_most_recent_public_record": -4.0,
+                    "g218b_number_of_delinquent_accounts": 0.0,
+                    "g980s_inquiries_in_the_last_6_months": -4.0,
+                    "re20s_age_of_oldest_revolving_account_in_months": 142.0,
+                    "s207s_months_since_most_recent_public_record_bankruptcy": -4.0,
+                    "re33s_balance_owed_on_all_revolving_accounts": 6565.0,
+                    "at57s_amount_delinquent": 0.0,
+                    "g099s_public_records_last_24_months": -4.0,
+                    "at20s_oldest_trade_open_date": 189.0,
+                    "at03s_current_credit_lines": 6.0,
+                    "re101s_revolving_balance": 6565.0,
+                    "bc34s_bankcard_utilization": 17.0,
+                    "at01s_credit_lines": 28.0,
+                    "fico_score": "780-799",
                 },
-            ],
-            "result_count": 1,
-            "total_count": 1,
-        }
+                "listing_number": 11111111,
+                "listing_start_date": "2023-08-28 22:00:47 +0000",
+                "historical_return": 0.04485,
+                "historical_return_10th_pctl": 0.03404,
+                "historical_return_90th_pctl": 0.05707,
+                "employment_status_description": "Employed",
+                "occupation": "Nurse (RN)",
+                "has_mortgage": True,
+                "co_borrower_application": False,
+                "investment_type_description": "Fractional",
+                "last_updated_date": "2023-08-29 14:33:41 +0000",
+                "invested": True,
+                "biddable": False,
+                "lender_yield": 0.1295,
+                "borrower_rate": 0.1395,
+                "borrower_apr": 0.1677,
+                "listing_term": 48,
+                "listing_monthly_payment": 273.01,
+                "prosper_score": 11,
+                "listing_category_id": 7,
+                "listing_title": "Other",
+                "income_range": 6,
+                "income_range_description": "$100,000+",
+                "stated_monthly_income": 8333.33,
+                "income_verifiable": True,
+                "dti_wprosper_loan": 0.2478,
+                "borrower_state": "AA",
+                "prior_prosper_loans_active": 0,
+                "prior_prosper_loans": 0,
+                "prior_prosper_loans_late_cycles": 0,
+                "prior_prosper_loans_late_payments_one_month_plus": 0,
+                "lender_indicator": 0,
+                "channel_code": "40000",
+                "amount_participation": 0.0,
+                "investment_typeid": 1,
+                "loan_number": 2119830,
+                "months_employed": 46.0,
+                "investment_product_id": 1,
+                "decision_bureau": "TransUnion",
+                "member_key": "AAAAAAAAAAAAAAAAAAAAAAAAA",
+                "listing_end_date": "2023-08-29 14:33:31 +0000",
+                "listing_creation_date": "2023-08-28 17:42:57 +0000",
+                "loan_origination_date": "2023-08-30 07:00:00 +0000",
+                "listing_status": 6,
+                "listing_status_reason": "Completed",
+                "listing_amount": 10000.0,
+                "amount_funded": 10000.0,
+                "amount_remaining": 0.0,
+                "percent_funded": 1.0,
+                "partial_funding_indicator": True,
+                "funding_threshold": 0.7,
+                "prosper_rating": "AA",
+            },
+        ],
+        "result_count": 1,
+        "total_count": 1,
+    }
+
+    def test_search(self, client_for_api_tests):
+        client_for_api_tests._do_get.return_value = self._SEARCH_LISTINGS_RESULT.copy()
 
         result = client_for_api_tests.search_listings(SearchListingsRequest())
 
@@ -138,6 +142,93 @@ class TestClient:
             {
                 "biddable": "true",
                 "invested": None,
+                "lender_yield_max": None,
+                "lender_yield_min": None,
+                "limit": None,
+                "listing_end_date_max": None,
+                "listing_end_date_min": None,
+                "listing_number": "",
+                "offset": None,
+                "percent_funded_max": None,
+                "percent_funded_min": None,
+                "prosper_rating": "AA,A,B,C,D,E",
+                "sort_by": "lender_yield desc",
+            },
+        )
+        assert len(result.result) == 1
+        assert result.result[0].listing_number == 11111111
+        assert result.result[0].borrower_rate == 0.1395
+
+    def test_search_when_biddable_none(self, client_for_api_tests):
+        client_for_api_tests._do_get.return_value = self._SEARCH_LISTINGS_RESULT.copy()
+
+        result = client_for_api_tests.search_listings(
+            SearchListingsRequest(biddable=None)
+        )
+
+        client_for_api_tests._do_get.assert_called_once_with(
+            "https://api.prosper.com/listingsvc/v2/listings/",
+            {
+                "biddable": "true",
+                "invested": None,
+                "lender_yield_max": None,
+                "lender_yield_min": None,
+                "limit": None,
+                "listing_end_date_max": None,
+                "listing_end_date_min": None,
+                "listing_number": "",
+                "offset": None,
+                "percent_funded_max": None,
+                "percent_funded_min": None,
+                "prosper_rating": "AA,A,B,C,D,E",
+                "sort_by": "lender_yield desc",
+            },
+        )
+        assert len(result.result) == 1
+        assert result.result[0].listing_number == 11111111
+        assert result.result[0].borrower_rate == 0.1395
+
+    def test_search_when_invested(self, client_for_api_tests):
+        client_for_api_tests._do_get.return_value = self._SEARCH_LISTINGS_RESULT.copy()
+
+        result = client_for_api_tests.search_listings(
+            SearchListingsRequest(invested=True)
+        )
+
+        client_for_api_tests._do_get.assert_called_once_with(
+            "https://api.prosper.com/listingsvc/v2/listings/",
+            {
+                "biddable": "true",
+                "invested": "true",
+                "lender_yield_max": None,
+                "lender_yield_min": None,
+                "limit": None,
+                "listing_end_date_max": None,
+                "listing_end_date_min": None,
+                "listing_number": "",
+                "offset": None,
+                "percent_funded_max": None,
+                "percent_funded_min": None,
+                "prosper_rating": "AA,A,B,C,D,E",
+                "sort_by": "lender_yield desc",
+            },
+        )
+        assert len(result.result) == 1
+        assert result.result[0].listing_number == 11111111
+        assert result.result[0].borrower_rate == 0.1395
+
+    def test_search_when_not_invested(self, client_for_api_tests):
+        client_for_api_tests._do_get.return_value = self._SEARCH_LISTINGS_RESULT.copy()
+
+        result = client_for_api_tests.search_listings(
+            SearchListingsRequest(invested=False)
+        )
+
+        client_for_api_tests._do_get.assert_called_once_with(
+            "https://api.prosper.com/listingsvc/v2/listings/",
+            {
+                "biddable": "true",
+                "invested": "false",
                 "lender_yield_max": None,
                 "lender_yield_min": None,
                 "limit": None,
@@ -400,3 +491,13 @@ class TestClient:
                 "Accept": "application/json",
             },
         )
+
+    def test_rate_limiting(self, auth_token_manager_mock, request_mock):
+        client: Client = Client()
+        start_time = datetime.now().timestamp()
+        for i in range(41):
+            client._do_request("GET", "http://localhost:12345")
+        end_time = datetime.now().timestamp()
+
+        # We allow 20 requests per second; 41 requests are required to ensure the test lasts at least 1 seconds if in case it starts at an unlucky time
+        assert end_time - start_time >= 1

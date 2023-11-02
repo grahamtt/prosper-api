@@ -302,3 +302,4 @@ class TestAuthTokenManager:
         auth_token_manager = AuthTokenManager(config_with_valid_token_cache)
 
         assert auth_token_manager.token == self.DEFAULT_TOKEN
+        assert "expires_at" in auth_token_manager.token
