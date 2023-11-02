@@ -42,6 +42,31 @@ class _ListResponse(NamedTuple):
     total_count: int
 
 
+class CreditBureauValues(NamedTuple):
+    """Represents data sourced from TransUnion."""
+
+    g102s_months_since_most_recent_inquiry: float
+    credit_report_date: str
+    at02s_open_accounts: float
+    g041s_accounts_30_or_more_days_past_due_ever: float
+    g093s_number_of_public_records: float
+    g094s_number_of_public_record_bankruptcies: float
+    g095s_months_since_most_recent_public_record: float
+    g218b_number_of_delinquent_accounts: float
+    g980s_inquiries_in_the_last_6_months: float
+    re20s_age_of_oldest_revolving_account_in_months: float
+    s207s_months_since_most_recent_public_record_bankruptcy: float
+    re33s_balance_owed_on_all_revolving_accounts: float
+    at57s_amount_delinquent: float
+    g099s_public_records_last_24_months: float
+    at20s_oldest_trade_open_date: float
+    at03s_current_credit_lines: float
+    re101s_revolving_balance: float
+    bc34s_bankcard_utilization: float
+    at01s_credit_lines: float
+    fico_score: str
+
+
 class Listing(NamedTuple):
     """Represents a Prosper listing.
 
@@ -59,7 +84,7 @@ class Listing(NamedTuple):
     invested: bool
     biddable: bool
     has_mortgage: bool
-    credit_bureau_values_transunion_indexed: dict
+    credit_bureau_values_transunion_indexed: CreditBureauValues
     employment_status_description: str
     investment_type_description: str
     last_updated_date: str
@@ -235,11 +260,6 @@ class Order(NamedTuple):
     order_amount: float = None
     order_amount_placed: float = None
     order_amount_invested: float = None
-
-
-def _build_order(order_dict):
-    order_dict["bid_requests"] = [BidRequest(**b) for b in order_dict["bid_requests"]]
-    return Order(**order_dict)
 
 
 class ListOrdersRequest(NamedTuple):

@@ -1,3 +1,4 @@
+from copy import deepcopy
 from datetime import datetime
 
 import pytest
@@ -133,7 +134,9 @@ class TestClient:
     }
 
     def test_search(self, client_for_api_tests):
-        client_for_api_tests._do_get.return_value = self._SEARCH_LISTINGS_RESULT.copy()
+        client_for_api_tests._do_get.return_value = deepcopy(
+            self._SEARCH_LISTINGS_RESULT
+        )
 
         result = client_for_api_tests.search_listings(SearchListingsRequest())
 
@@ -160,7 +163,9 @@ class TestClient:
         assert result.result[0].borrower_rate == 0.1395
 
     def test_search_when_biddable_none(self, client_for_api_tests):
-        client_for_api_tests._do_get.return_value = self._SEARCH_LISTINGS_RESULT.copy()
+        client_for_api_tests._do_get.return_value = deepcopy(
+            self._SEARCH_LISTINGS_RESULT
+        )
 
         result = client_for_api_tests.search_listings(
             SearchListingsRequest(biddable=None)
@@ -189,7 +194,9 @@ class TestClient:
         assert result.result[0].borrower_rate == 0.1395
 
     def test_search_when_invested(self, client_for_api_tests):
-        client_for_api_tests._do_get.return_value = self._SEARCH_LISTINGS_RESULT.copy()
+        client_for_api_tests._do_get.return_value = deepcopy(
+            self._SEARCH_LISTINGS_RESULT
+        )
 
         result = client_for_api_tests.search_listings(
             SearchListingsRequest(invested=True)

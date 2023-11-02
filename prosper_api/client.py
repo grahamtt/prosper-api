@@ -9,6 +9,8 @@ from prosper_api.config import Config
 from prosper_api.models import (
     Account,
     AmountsByRating,
+    BidRequest,
+    CreditBureauValues,
     Listing,
     ListLoansRequest,
     ListLoansResponse,
@@ -21,7 +23,6 @@ from prosper_api.models import (
     Order,
     SearchListingsRequest,
     SearchListingsResponse,
-    _build_order,
 )
 
 
@@ -104,6 +105,12 @@ class Client:
         resp["pending_bids"] = AmountsByRating(**resp["pending_bids"])
         return Account(**resp)
 
+    def _build_listing(self, listing_dict) -> Listing:
+        listing_dict["credit_bureau_values_transunion_indexed"] = CreditBureauValues(
+            **listing_dict["credit_bureau_values_transunion_indexed"]
+        )
+        return Listing(**listing_dict)
+
     def search_listings(self, request: SearchListingsRequest) -> SearchListingsResponse:
         """Search the Prosper listings.
 
@@ -143,7 +150,7 @@ class Client:
                 "lender_yield_max": request.lender_yield_upper_bound,
             },
         )
-        resp["result"] = [Listing(**r) for r in resp["result"]]
+        resp["result"] = [self._build_listing(r) for r in resp["result"]]
         return SearchListingsResponse(**resp)
 
     def list_notes(self, request: ListNotesRequest = None) -> ListNotesResponse:
@@ -172,6 +179,12 @@ class Client:
         resp["result"] = [Note(**r) for r in resp["result"]]
         return ListNotesResponse(**resp)
 
+    def _build_order(self, order_dict):
+        order_dict["bid_requests"] = [
+            BidRequest(**b) for b in order_dict["bid_requests"]
+        ]
+        return Order(**order_dict)
+
     def order(
         self,
         listing_id: int,
@@ -193,7 +206,7 @@ class Client:
             self._ORDERS_API_URL,
             {"bid_requests": [{"listing_id": listing_id, "bid_amount": amount}]},
         )
-        return _build_order(resp)
+        return self._build_order(resp)
 
     def list_orders(self, request: ListOrdersRequest = None) -> ListOrdersResponse:
         """Lists orders in the account.
@@ -218,7 +231,7 @@ class Client:
                 "limit": request.limit,
             },
         )
-        resp["result"] = [_build_order(r) for r in resp["result"]]
+        resp["result"] = [self._build_order(r) for r in resp["result"]]
         return ListOrdersResponse(**resp)
 
     def list_loans(self, request: ListLoansRequest = None) -> ListLoansResponse:
