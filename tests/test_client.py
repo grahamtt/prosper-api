@@ -506,5 +506,5 @@ class TestClient:
             client._do_request("GET", "http://localhost:12345")
         end_time = datetime.now().timestamp()
 
-        # We allow 20 requests per second; 41 requests are required to ensure the test lasts at least 1 seconds if in case it starts at an unlucky time
+        # We allow 20 requests per second; 41 requests are required to ensure the test lasts at least 1 seconds in case it starts at an unlucky time
         assert end_time - start_time >= 1
