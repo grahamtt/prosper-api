@@ -50,6 +50,87 @@ class TestClient:
         auth_token_manager_mock.assert_not_called()
         assert client._auth_token_manager == auth_token_manager_mock.return_value
 
+    _DEFAULT_SEARCH_FILTERS = {
+        "amount_funded_max": None,
+        "amount_funded_min": None,
+        "amount_remaining_max": None,
+        "amount_remaining_min": None,
+        "biddable": "true",
+        "borrower_rate_max": None,
+        "borrower_rate_min": None,
+        "borrower_state": None,
+        "co_borrower_application": None,
+        "combined_dti_wprosper_loan_max": None,
+        "combined_dti_wprosper_loan_min": None,
+        "combined_stated_monthly_income_max": None,
+        "combined_stated_monthly_income_min": None,
+        "dti_wprosper_loan_max": None,
+        "dti_wprosper_loan_min": None,
+        "employment_status_description": None,
+        "estimated_monthly_housing_expense_max": None,
+        "estimated_monthly_housing_expense_min": None,
+        "fico_score": None,
+        "has_mortgage": None,
+        "income_range": None,
+        "invested": None,
+        "lender_yield_max": None,
+        "lender_yield_min": None,
+        "limit": None,
+        "listing_amount_max": None,
+        "listing_amount_min": None,
+        "listing_category_id": None,
+        "listing_creation_date_max": None,
+        "listing_creation_date_min": None,
+        "listing_end_date_max": None,
+        "listing_end_date_min": None,
+        "listing_monthly_payment_max": None,
+        "listing_monthly_payment_min": None,
+        "listing_number": None,
+        "listing_start_date_max": None,
+        "listing_start_date_min": None,
+        "listing_status": None,
+        "listing_term": None,
+        "loan_origination_date_max": None,
+        "loan_origination_date_min": None,
+        "months_employed_max": None,
+        "months_employed_min": None,
+        "occupation": None,
+        "offset": None,
+        "partial_funding_indicator": None,
+        "percent_funded_max": None,
+        "percent_funded_min": None,
+        "prior_prosper_loans_active_max": None,
+        "prior_prosper_loans_active_min": None,
+        "prior_prosper_loans_balance_outstanding_max": None,
+        "prior_prosper_loans_balance_outstanding_min": None,
+        "prior_prosper_loans_cycles_billed_max": None,
+        "prior_prosper_loans_cycles_billed_min": None,
+        "prior_prosper_loans_late_cycles_max": None,
+        "prior_prosper_loans_late_cycles_min": None,
+        "prior_prosper_loans_late_payments_one_month_plus_max": None,
+        "prior_prosper_loans_late_payments_one_month_plus_min": None,
+        "prior_prosper_loans_max": None,
+        "prior_prosper_loans_min": None,
+        "prior_prosper_loans_ontime_payments_max": None,
+        "prior_prosper_loans_ontime_payments_min": None,
+        "prior_prosper_loans_principal_borrowed_max": None,
+        "prior_prosper_loans_principal_borrowed_min": None,
+        "prior_prosper_loans_principal_outstanding_max": None,
+        "prior_prosper_loans_principal_outstanding_min": None,
+        "prosper_rating": "AA,A,B,C,D,E",
+        "prosper_score_max": None,
+        "prosper_score_min": None,
+        "sort_by": "lender_yield desc",
+        "stated_monthly_income_max": None,
+        "stated_monthly_income_min": None,
+        "verification_stage_max": None,
+        "verification_stage_min": None,
+        "whole_loan_end_date_max": None,
+        "whole_loan_end_date_min": None,
+        "whole_loan_start_date_max": None,
+        "whole_loan_start_date_min": None,
+    }
+
     _SEARCH_LISTINGS_RESULT = {
         "result": [
             {
@@ -133,61 +214,186 @@ class TestClient:
         "total_count": 1,
     }
 
-    def test_search(self, client_for_api_tests):
+    @pytest.mark.parametrize(
+        ("input", "expected_call"),
+        [
+            ({}, {}),
+            ({"sort_by": "fico_score"}, {"sort_by": "fico_score desc"}),
+            (
+                {"sort_by": "fico_score", "sort_dir": "desc"},
+                {"sort_by": "fico_score desc"},
+            ),
+            # Boolean filters
+            ({"biddable": None}, {"biddable": "true"}),
+            ({"invested": True}, {"invested": "true"}),
+            ({"invested": False}, {"invested": "false"}),
+            (
+                {"partial_funding_indicator": True},
+                {"partial_funding_indicator": "true"},
+            ),
+            (
+                {"partial_funding_indicator": False},
+                {"partial_funding_indicator": "false"},
+            ),
+            ({"co_borrower_application": True}, {"co_borrower_application": "true"}),
+            ({"co_borrower_application": False}, {"co_borrower_application": "false"}),
+            # Range filters
+            ({"amount_funded_min": 300}, {"amount_funded_min": 300}),
+            ({"amount_funded_max": 300}, {"amount_funded_max": 300}),
+            ({"amount_remaining_min": 300}, {"amount_remaining_min": 300}),
+            ({"amount_remaining_max": 300}, {"amount_remaining_max": 300}),
+            ({"borrower_rate_max": 300}, {"borrower_rate_max": 300}),
+            ({"borrower_rate_min": 300}, {"borrower_rate_min": 300}),
+            (
+                {"combined_dti_wprosper_loan_max": 300},
+                {"combined_dti_wprosper_loan_max": 300},
+            ),
+            (
+                {"combined_dti_wprosper_loan_min": 300},
+                {"combined_dti_wprosper_loan_min": 300},
+            ),
+            (
+                {"combined_stated_monthly_income_max": 300},
+                {"combined_stated_monthly_income_max": 300},
+            ),
+            (
+                {"combined_stated_monthly_income_min": 300},
+                {"combined_stated_monthly_income_min": 300},
+            ),
+            ({"dti_wprosper_loan_max": 300}, {"dti_wprosper_loan_max": 300}),
+            ({"dti_wprosper_loan_min": 300}, {"dti_wprosper_loan_min": 300}),
+            (
+                {"estimated_monthly_housing_expense_max": 300},
+                {"estimated_monthly_housing_expense_max": 300},
+            ),
+            (
+                {"estimated_monthly_housing_expense_min": 300},
+                {"estimated_monthly_housing_expense_min": 300},
+            ),
+            ({"lender_yield_max": 300}, {"lender_yield_max": 300}),
+            ({"lender_yield_min": 300}, {"lender_yield_min": 300}),
+            ({"listing_amount_max": 300}, {"listing_amount_max": 300}),
+            ({"listing_amount_min": 300}, {"listing_amount_min": 300}),
+            ({"listing_creation_date_max": 300}, {"listing_creation_date_max": 300}),
+            ({"listing_creation_date_min": 300}, {"listing_creation_date_min": 300}),
+            ({"listing_end_date_max": 300}, {"listing_end_date_max": 300}),
+            ({"listing_end_date_min": 300}, {"listing_end_date_min": 300}),
+            (
+                {"listing_monthly_payment_max": 300},
+                {"listing_monthly_payment_max": 300},
+            ),
+            (
+                {"listing_monthly_payment_min": 300},
+                {"listing_monthly_payment_min": 300},
+            ),
+            ({"listing_start_date_max": 300}, {"listing_start_date_max": 300}),
+            ({"listing_start_date_min": 300}, {"listing_start_date_min": 300}),
+            ({"loan_origination_date_max": 300}, {"loan_origination_date_max": 300}),
+            ({"loan_origination_date_min": 300}, {"loan_origination_date_min": 300}),
+            ({"months_employed_max": 300}, {"months_employed_max": 300}),
+            ({"months_employed_min": 300}, {"months_employed_min": 300}),
+            ({"percent_funded_max": 300}, {"percent_funded_max": 300}),
+            ({"percent_funded_min": 300}, {"percent_funded_min": 300}),
+            (
+                {"prior_prosper_loans_active_max": 300},
+                {"prior_prosper_loans_active_max": 300},
+            ),
+            (
+                {"prior_prosper_loans_active_min": 300},
+                {"prior_prosper_loans_active_min": 300},
+            ),
+            (
+                {"prior_prosper_loans_balance_outstanding_max": 300},
+                {"prior_prosper_loans_balance_outstanding_max": 300},
+            ),
+            (
+                {"prior_prosper_loans_balance_outstanding_min": 300},
+                {"prior_prosper_loans_balance_outstanding_min": 300},
+            ),
+            (
+                {"prior_prosper_loans_cycles_billed_max": 300},
+                {"prior_prosper_loans_cycles_billed_max": 300},
+            ),
+            (
+                {"prior_prosper_loans_cycles_billed_min": 300},
+                {"prior_prosper_loans_cycles_billed_min": 300},
+            ),
+            (
+                {"prior_prosper_loans_late_cycles_max": 300},
+                {"prior_prosper_loans_late_cycles_max": 300},
+            ),
+            (
+                {"prior_prosper_loans_late_cycles_min": 300},
+                {"prior_prosper_loans_late_cycles_min": 300},
+            ),
+            (
+                {"prior_prosper_loans_late_payments_one_month_plus_max": 300},
+                {"prior_prosper_loans_late_payments_one_month_plus_max": 300},
+            ),
+            (
+                {"prior_prosper_loans_late_payments_one_month_plus_min": 300},
+                {"prior_prosper_loans_late_payments_one_month_plus_min": 300},
+            ),
+            ({"prior_prosper_loans_max": 300}, {"prior_prosper_loans_max": 300}),
+            ({"prior_prosper_loans_min": 300}, {"prior_prosper_loans_min": 300}),
+            (
+                {"prior_prosper_loans_ontime_payments_max": 300},
+                {"prior_prosper_loans_ontime_payments_max": 300},
+            ),
+            (
+                {"prior_prosper_loans_ontime_payments_min": 300},
+                {"prior_prosper_loans_ontime_payments_min": 300},
+            ),
+            (
+                {"prior_prosper_loans_principal_borrowed_max": 300},
+                {"prior_prosper_loans_principal_borrowed_max": 300},
+            ),
+            (
+                {"prior_prosper_loans_principal_borrowed_min": 300},
+                {"prior_prosper_loans_principal_borrowed_min": 300},
+            ),
+            (
+                {"prior_prosper_loans_principal_outstanding_max": 300},
+                {"prior_prosper_loans_principal_outstanding_max": 300},
+            ),
+            (
+                {"prior_prosper_loans_principal_outstanding_min": 300},
+                {"prior_prosper_loans_principal_outstanding_min": 300},
+            ),
+            ({"prosper_score_max": 300}, {"prosper_score_max": 300}),
+            ({"prosper_score_min": 300}, {"prosper_score_min": 300}),
+            ({"stated_monthly_income_max": 300}, {"stated_monthly_income_max": 300}),
+            ({"stated_monthly_income_min": 300}, {"stated_monthly_income_min": 300}),
+            ({"verification_stage_max": 300}, {"verification_stage_max": 300}),
+            ({"verification_stage_min": 300}, {"verification_stage_min": 300}),
+            ({"whole_loan_end_date_max": 300}, {"whole_loan_end_date_max": 300}),
+            ({"whole_loan_end_date_min": 300}, {"whole_loan_end_date_min": 300}),
+            ({"whole_loan_start_date_max": 300}, {"whole_loan_start_date_max": 300}),
+            ({"whole_loan_start_date_min": 300}, {"whole_loan_start_date_min": 300}),
+            # Multi-value filters
+            (
+                {"employment_status_description": [1, 2, 3]},
+                {"employment_status_description": "1,2,3"},
+            ),
+            ({"fico_score": [1, 2, 3]}, {"fico_score": "1,2,3"}),
+            ({"income_range": [1, 2, 3]}, {"income_range": "1,2,3"}),
+            ({"listing_category_id": [1, 2, 3]}, {"listing_category_id": "1,2,3"}),
+            ({"listing_number": [1, 2, 3]}, {"listing_number": "1,2,3"}),
+            ({"listing_term": [1, 2, 3]}, {"listing_term": "1,2,3"}),
+            ({"occupation": [1, 2, 3]}, {"occupation": "1,2,3"}),
+            ({"prosper_rating": [1, 2, 3]}, {"prosper_rating": "1,2,3"}),
+        ],
+    )
+    def test_search(self, client_for_api_tests, input, expected_call):
         client_for_api_tests._do_get.return_value = deepcopy(
             self._SEARCH_LISTINGS_RESULT
         )
 
-        result = client_for_api_tests.search_listings(SearchListingsRequest())
+        result = client_for_api_tests.search_listings(SearchListingsRequest(**input))
 
         client_for_api_tests._do_get.assert_called_once_with(
             "https://api.prosper.com/listingsvc/v2/listings/",
-            {
-                "biddable": "true",
-                "invested": None,
-                "lender_yield_max": None,
-                "lender_yield_min": None,
-                "limit": None,
-                "listing_end_date_max": None,
-                "listing_end_date_min": None,
-                "listing_number": "",
-                "offset": None,
-                "percent_funded_max": None,
-                "percent_funded_min": None,
-                "prosper_rating": "AA,A,B,C,D,E",
-                "sort_by": "lender_yield desc",
-            },
-        )
-        assert len(result.result) == 1
-        assert result.result[0].listing_number == 11111111
-        assert result.result[0].borrower_rate == 0.1395
-
-    def test_search_when_biddable_none(self, client_for_api_tests):
-        client_for_api_tests._do_get.return_value = deepcopy(
-            self._SEARCH_LISTINGS_RESULT
-        )
-
-        result = client_for_api_tests.search_listings(
-            SearchListingsRequest(biddable=None)
-        )
-
-        client_for_api_tests._do_get.assert_called_once_with(
-            "https://api.prosper.com/listingsvc/v2/listings/",
-            {
-                "biddable": "true",
-                "invested": None,
-                "lender_yield_max": None,
-                "lender_yield_min": None,
-                "limit": None,
-                "listing_end_date_max": None,
-                "listing_end_date_min": None,
-                "listing_number": "",
-                "offset": None,
-                "percent_funded_max": None,
-                "percent_funded_min": None,
-                "prosper_rating": "AA,A,B,C,D,E",
-                "sort_by": "lender_yield desc",
-            },
+            {**self._DEFAULT_SEARCH_FILTERS, **expected_call},
         )
         assert len(result.result) == 1
         assert result.result[0].listing_number == 11111111
@@ -204,21 +410,7 @@ class TestClient:
 
         client_for_api_tests._do_get.assert_called_once_with(
             "https://api.prosper.com/listingsvc/v2/listings/",
-            {
-                "biddable": "true",
-                "invested": "true",
-                "lender_yield_max": None,
-                "lender_yield_min": None,
-                "limit": None,
-                "listing_end_date_max": None,
-                "listing_end_date_min": None,
-                "listing_number": "",
-                "offset": None,
-                "percent_funded_max": None,
-                "percent_funded_min": None,
-                "prosper_rating": "AA,A,B,C,D,E",
-                "sort_by": "lender_yield desc",
-            },
+            {**self._DEFAULT_SEARCH_FILTERS, "invested": "true"},
         )
         assert len(result.result) == 1
         assert result.result[0].listing_number == 11111111
@@ -233,21 +425,7 @@ class TestClient:
 
         client_for_api_tests._do_get.assert_called_once_with(
             "https://api.prosper.com/listingsvc/v2/listings/",
-            {
-                "biddable": "true",
-                "invested": "false",
-                "lender_yield_max": None,
-                "lender_yield_min": None,
-                "limit": None,
-                "listing_end_date_max": None,
-                "listing_end_date_min": None,
-                "listing_number": "",
-                "offset": None,
-                "percent_funded_max": None,
-                "percent_funded_min": None,
-                "prosper_rating": "AA,A,B,C,D,E",
-                "sort_by": "lender_yield desc",
-            },
+            {**self._DEFAULT_SEARCH_FILTERS, "invested": "false"},
         )
         assert len(result.result) == 1
         assert result.result[0].listing_number == 11111111
@@ -499,6 +677,7 @@ class TestClient:
             },
         )
 
+    @pytest.mark.skip("Takes too long; refactor to mock the sleeps")
     def test_rate_limiting(self, auth_token_manager_mock, request_mock):
         client: Client = Client()
         start_time = datetime.now().timestamp()

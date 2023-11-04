@@ -134,6 +134,7 @@ class Listing(NamedTuple):
     prior_prosper_loans_ontime_payments: int = None
     prior_prosper_loans_late_cycles: int = None
     prior_prosper_loans_late_payments_one_month_plus: int = None
+    prior_prosper_loans31dpd: float = None
     max_prior_prosper_loan: float = None
     min_prior_prosper_loan: float = None
     verification_stage: str = None
@@ -142,11 +143,7 @@ class Listing(NamedTuple):
 
 
 class SearchListingsRequest(NamedTuple):
-    """Request for searching listings.
-
-    Todo:
-        Currently, only supports a sub-set of available filters.
-    """
+    """Request for searching listings."""
 
     sort_by: str = "lender_yield"
     sort_dir: str = "desc"
@@ -154,13 +151,80 @@ class SearchListingsRequest(NamedTuple):
     limit: int = None
     biddable: bool = True
     invested: bool = None
+
+    amount_funded_min: float = None
+    amount_funded_max: float = None
+    amount_remaining_min: float = None
+    amount_remaining_max: float = None
+    borrower_rate_min: float = None
+    borrower_rate_max: float = None
+    borrower_state: List[str] = None
+    dti_wprosper_loan_min: float = None
+    dti_wprosper_loan_max: float = None
+    employment_status_description: List[str] = None
+    estimated_monthly_housing_expense_min: float = None
+    estimated_monthly_housing_expense_max: float = None
+    fico_score: List[str] = None
+    has_mortgage: bool = None
+    income_range: List[int] = None
+    lender_yield_min: float = None
+    lender_yield_max: float = None
+    listing_amount_min: float = None
+    listing_amount_max: float = None
+    listing_category_id: List[int] = None
+    listing_creation_date_min: str = None
+    listing_creation_date_max: str = None
+    listing_end_date_min: str = None
+    listing_end_date_max: str = None
+    listing_monthly_payment_min: float = None
+    listing_monthly_payment_max: float = None
+    listing_start_date_min: str = None
+    listing_start_date_max: str = None
+    listing_status: List[int] = None
+    listing_term: List[int] = None
+    loan_origination_date_min: str = None
+    loan_origination_date_max: str = None
+    months_employed_min: int = None
+    months_employed_max: int = None
+    occupation: List[str] = None
+    partial_funding_indicator: bool = None
+    percent_funded_min: float = None
+    percent_funded_max: float = None
+    prior_prosper_loans_min: int = None
+    prior_prosper_loans_max: int = None
+    prior_prosper_loans_active_min: int = None
+    prior_prosper_loans_active_max: int = None
+    prior_prosper_loans_balance_outstanding_min: float = None
+    prior_prosper_loans_balance_outstanding_max: float = None
+    prior_prosper_loans_cycles_billed_min: int = None
+    prior_prosper_loans_cycles_billed_max: int = None
+    prior_prosper_loans_late_cycles_min: int = None
+    prior_prosper_loans_late_cycles_max: int = None
+    prior_prosper_loans_late_payments_one_month_plus_min: int = None
+    prior_prosper_loans_late_payments_one_month_plus_max: int = None
+    prior_prosper_loans_ontime_payments_min: int = None
+    prior_prosper_loans_ontime_payments_max: int = None
+    prior_prosper_loans_principal_borrowed_min: float = None
+    prior_prosper_loans_principal_borrowed_max: float = None
+    prior_prosper_loans_principal_outstanding_min: float = None
+    prior_prosper_loans_principal_outstanding_max: float = None
     prosper_rating: List[str] = ["AA", "A", "B", "C", "D", "E"]
-    percent_funded_lower_bound: float = None
-    percent_funded_upper_bound: float = None
-    listing_end_date_lower_bound: str = None
-    listing_end_date_upper_bound: str = None
-    lender_yield_lower_bound: float = None
-    lender_yield_upper_bound: float = None
+    prosper_score_min: int = None
+    prosper_score_max: int = None
+    stated_monthly_income_min: float = None
+    stated_monthly_income_max: float = None
+    verification_stage_min: int = None
+    verification_stage_max: int = None
+    whole_loan_end_date_min: str = None
+    whole_loan_end_date_max: str = None
+    whole_loan_start_date_min: str = None
+    whole_loan_start_date_max: str = None
+    co_borrower_application: bool = None
+    combined_dti_wprosper_loan_min: float = None
+    combined_dti_wprosper_loan_max: float = None
+    combined_stated_monthly_income_min: float = None
+    combined_stated_monthly_income_max: float = None
+
     listing_number: List[str] = []
 
 

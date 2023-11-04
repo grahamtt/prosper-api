@@ -96,15 +96,8 @@ while True:
         break
 ```
 
-A limited set of filters are available:
-
-* `prosper_rating: List[str] = ["AA", "A", "B", "C", "D", "E"]`
-* `percent_funded_lower_bound: float = None`
-* `percent_funded_upper_bound: float = None`
-* `listing_end_date_lower_bound: str = None`
-* `listing_end_date_upper_bound: str = None`
-* `lender_yield_lower_bound: float = None`
-* `lender_yield_upper_bound: float = None`
+> ℹ️ The full set of filters listed in the [Prosper API docs](https://developers.prosper.com/docs/investor/listings-api/)
+>  are available
 
 ### Place order
 The following will place an order, given a listing id.

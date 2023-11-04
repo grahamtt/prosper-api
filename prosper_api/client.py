@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import List, Optional
 
 import requests
 from backoff import expo, on_exception
@@ -131,23 +131,87 @@ class Client:
                 "sort_by": f"{request.sort_by} {request.sort_dir}",
                 "offset": request.offset,
                 "limit": request.limit,
-                "biddable": "true"
-                if request.biddable or request.biddable is None
-                else "false",
-                "invested": "true"
-                if request.invested
-                else "false"
-                if request.invested is False
-                else None,
-                "prosper_rating": ",".join(request.prosper_rating),
-                # Probably exclusive
-                "listing_number": ",".join(request.listing_number),
-                "percent_funded_min": request.percent_funded_lower_bound,
-                "percent_funded_max": request.percent_funded_upper_bound,
-                "listing_end_date_min": request.listing_end_date_lower_bound,
-                "listing_end_date_max": request.listing_end_date_upper_bound,
-                "lender_yield_min": request.lender_yield_lower_bound,
-                "lender_yield_max": request.lender_yield_upper_bound,
+                "biddable": self._bool_val(request.biddable, "true"),
+                "invested": self._bool_val(request.invested),
+                "amount_funded_min": request.amount_funded_min,
+                "amount_funded_max": request.amount_funded_max,
+                "amount_remaining_min": request.amount_remaining_min,
+                "amount_remaining_max": request.amount_remaining_max,
+                "borrower_rate_min": request.borrower_rate_min,
+                "borrower_rate_max": request.borrower_rate_max,
+                "borrower_state": request.borrower_state,
+                "dti_wprosper_loan_min": request.dti_wprosper_loan_min,
+                "dti_wprosper_loan_max": request.dti_wprosper_loan_max,
+                "employment_status_description": self._list_val(
+                    request.employment_status_description
+                ),
+                "estimated_monthly_housing_expense_min": request.estimated_monthly_housing_expense_min,
+                "estimated_monthly_housing_expense_max": request.estimated_monthly_housing_expense_max,
+                "fico_score": self._list_val(request.fico_score),
+                "has_mortgage": request.has_mortgage,
+                "income_range": self._list_val(request.income_range),
+                "lender_yield_min": request.lender_yield_min,
+                "lender_yield_max": request.lender_yield_max,
+                "listing_amount_min": request.listing_amount_min,
+                "listing_amount_max": request.listing_amount_max,
+                "listing_category_id": self._list_val(request.listing_category_id),
+                "listing_creation_date_min": request.listing_creation_date_min,
+                "listing_creation_date_max": request.listing_creation_date_max,
+                "listing_end_date_min": request.listing_end_date_min,
+                "listing_end_date_max": request.listing_end_date_max,
+                "listing_monthly_payment_min": request.listing_monthly_payment_min,
+                "listing_monthly_payment_max": request.listing_monthly_payment_max,
+                "listing_number": self._list_val(request.listing_number),
+                "listing_start_date_min": request.listing_start_date_min,
+                "listing_start_date_max": request.listing_start_date_max,
+                "listing_status": request.listing_status,
+                "listing_term": self._list_val(request.listing_term),
+                "loan_origination_date_min": request.loan_origination_date_min,
+                "loan_origination_date_max": request.loan_origination_date_max,
+                "months_employed_min": request.months_employed_min,
+                "months_employed_max": request.months_employed_max,
+                "occupation": self._list_val(request.occupation),
+                "partial_funding_indicator": self._bool_val(
+                    request.partial_funding_indicator
+                ),
+                "percent_funded_min": request.percent_funded_min,
+                "percent_funded_max": request.percent_funded_max,
+                "prior_prosper_loans_min": request.prior_prosper_loans_min,
+                "prior_prosper_loans_max": request.prior_prosper_loans_max,
+                "prior_prosper_loans_active_min": request.prior_prosper_loans_active_min,
+                "prior_prosper_loans_active_max": request.prior_prosper_loans_active_max,
+                "prior_prosper_loans_balance_outstanding_min": request.prior_prosper_loans_balance_outstanding_min,
+                "prior_prosper_loans_balance_outstanding_max": request.prior_prosper_loans_balance_outstanding_max,
+                "prior_prosper_loans_cycles_billed_min": request.prior_prosper_loans_cycles_billed_min,
+                "prior_prosper_loans_cycles_billed_max": request.prior_prosper_loans_cycles_billed_max,
+                "prior_prosper_loans_late_cycles_min": request.prior_prosper_loans_late_cycles_min,
+                "prior_prosper_loans_late_cycles_max": request.prior_prosper_loans_late_cycles_max,
+                "prior_prosper_loans_late_payments_one_month_plus_min": request.prior_prosper_loans_late_payments_one_month_plus_min,
+                "prior_prosper_loans_late_payments_one_month_plus_max": request.prior_prosper_loans_late_payments_one_month_plus_max,
+                "prior_prosper_loans_ontime_payments_min": request.prior_prosper_loans_ontime_payments_min,
+                "prior_prosper_loans_ontime_payments_max": request.prior_prosper_loans_ontime_payments_max,
+                "prior_prosper_loans_principal_borrowed_min": request.prior_prosper_loans_principal_borrowed_min,
+                "prior_prosper_loans_principal_borrowed_max": request.prior_prosper_loans_principal_borrowed_max,
+                "prior_prosper_loans_principal_outstanding_min": request.prior_prosper_loans_principal_outstanding_min,
+                "prior_prosper_loans_principal_outstanding_max": request.prior_prosper_loans_principal_outstanding_max,
+                "prosper_rating": self._list_val(request.prosper_rating),
+                "prosper_score_min": request.prosper_score_min,
+                "prosper_score_max": request.prosper_score_max,
+                "stated_monthly_income_min": request.stated_monthly_income_min,
+                "stated_monthly_income_max": request.stated_monthly_income_max,
+                "verification_stage_min": request.verification_stage_min,
+                "verification_stage_max": request.verification_stage_max,
+                "whole_loan_end_date_min": request.whole_loan_end_date_min,
+                "whole_loan_end_date_max": request.whole_loan_end_date_max,
+                "whole_loan_start_date_min": request.whole_loan_start_date_min,
+                "whole_loan_start_date_max": request.whole_loan_start_date_max,
+                "co_borrower_application": self._bool_val(
+                    request.co_borrower_application
+                ),
+                "combined_dti_wprosper_loan_min": request.combined_dti_wprosper_loan_min,
+                "combined_dti_wprosper_loan_max": request.combined_dti_wprosper_loan_max,
+                "combined_stated_monthly_income_min": request.combined_stated_monthly_income_min,
+                "combined_stated_monthly_income_max": request.combined_stated_monthly_income_max,
             },
         )
         resp["result"] = [self._build_listing(r) for r in resp["result"]]
@@ -287,3 +351,9 @@ class Client:
         )
         response.raise_for_status()
         return response.json()
+
+    def _bool_val(self, val: bool, default=None):
+        return "true" if val is True else "false" if val is False else default
+
+    def _list_val(self, val: List[object]):
+        return ",".join(str(v) for v in val) if val else None
