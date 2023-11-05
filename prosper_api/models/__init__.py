@@ -1,4 +1,16 @@
-from typing import List, NamedTuple
+from datetime import date
+from typing import List, Literal, NamedTuple
+
+from prosper_api.models.enums import (
+    BorrowerState,
+    EmploymentStatus,
+    FICOScore,
+    IncomeRange,
+    ListingCategory,
+    ListingStatus,
+    Occupation,
+    ProsperRating,
+)
 
 
 class AmountsByRating(NamedTuple):
@@ -158,35 +170,35 @@ class SearchListingsRequest(NamedTuple):
     amount_remaining_max: float = None
     borrower_rate_min: float = None
     borrower_rate_max: float = None
-    borrower_state: List[str] = None
+    borrower_state: List[str | BorrowerState] = None
     dti_wprosper_loan_min: float = None
     dti_wprosper_loan_max: float = None
-    employment_status_description: List[str] = None
+    employment_status_description: List[str | EmploymentStatus] = None
     estimated_monthly_housing_expense_min: float = None
     estimated_monthly_housing_expense_max: float = None
-    fico_score: List[str] = None
+    fico_score: List[str | FICOScore] = None
     has_mortgage: bool = None
-    income_range: List[int] = None
+    income_range: List[int | IncomeRange] = None
     lender_yield_min: float = None
     lender_yield_max: float = None
     listing_amount_min: float = None
     listing_amount_max: float = None
-    listing_category_id: List[int] = None
-    listing_creation_date_min: str = None
-    listing_creation_date_max: str = None
-    listing_end_date_min: str = None
-    listing_end_date_max: str = None
+    listing_category_id: List[int | ListingCategory] = None
+    listing_creation_date_min: str | date = None
+    listing_creation_date_max: str | date = None
+    listing_end_date_min: str | date = None
+    listing_end_date_max: str | date = None
     listing_monthly_payment_min: float = None
     listing_monthly_payment_max: float = None
-    listing_start_date_min: str = None
-    listing_start_date_max: str = None
-    listing_status: List[int] = None
-    listing_term: List[int] = None
-    loan_origination_date_min: str = None
-    loan_origination_date_max: str = None
+    listing_start_date_min: str | date = None
+    listing_start_date_max: str | date = None
+    listing_status: List[int | ListingStatus] = None
+    listing_term: Literal[24, 36, 48, 60] = None
+    loan_origination_date_min: str | date = None
+    loan_origination_date_max: str | date = None
     months_employed_min: int = None
     months_employed_max: int = None
-    occupation: List[str] = None
+    occupation: List[str | Occupation] = None
     partial_funding_indicator: bool = None
     percent_funded_min: float = None
     percent_funded_max: float = None
@@ -208,24 +220,32 @@ class SearchListingsRequest(NamedTuple):
     prior_prosper_loans_principal_borrowed_max: float = None
     prior_prosper_loans_principal_outstanding_min: float = None
     prior_prosper_loans_principal_outstanding_max: float = None
-    prosper_rating: List[str] = ["AA", "A", "B", "C", "D", "E"]
-    prosper_score_min: int = None
-    prosper_score_max: int = None
+    prosper_rating: List[str | ProsperRating] = [
+        ProsperRating.AA,
+        ProsperRating.A,
+        ProsperRating.B,
+        ProsperRating.C,
+        ProsperRating.D,
+        ProsperRating.E,
+        ProsperRating.HR,
+    ]
+    prosper_score_min: Literal[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11] = None
+    prosper_score_max: Literal[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11] = None
     stated_monthly_income_min: float = None
     stated_monthly_income_max: float = None
-    verification_stage_min: int = None
-    verification_stage_max: int = None
-    whole_loan_end_date_min: str = None
-    whole_loan_end_date_max: str = None
-    whole_loan_start_date_min: str = None
-    whole_loan_start_date_max: str = None
+    verification_stage_min: Literal[1, 2, 3] = None
+    verification_stage_max: Literal[1, 2, 3] = None
+    whole_loan_end_date_min: str | date = None
+    whole_loan_end_date_max: str | date = None
+    whole_loan_start_date_min: str | date = None
+    whole_loan_start_date_max: str | date = None
     co_borrower_application: bool = None
     combined_dti_wprosper_loan_min: float = None
     combined_dti_wprosper_loan_max: float = None
     combined_stated_monthly_income_min: float = None
     combined_stated_monthly_income_max: float = None
 
-    listing_number: List[str] = []
+    listing_number: List[int] = []
 
 
 class SearchListingsResponse(_ListResponse):

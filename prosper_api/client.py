@@ -1,3 +1,4 @@
+from datetime import date
 from typing import List, Optional
 
 import requests
@@ -155,19 +156,31 @@ class Client:
                 "listing_amount_min": request.listing_amount_min,
                 "listing_amount_max": request.listing_amount_max,
                 "listing_category_id": self._list_val(request.listing_category_id),
-                "listing_creation_date_min": request.listing_creation_date_min,
-                "listing_creation_date_max": request.listing_creation_date_max,
-                "listing_end_date_min": request.listing_end_date_min,
-                "listing_end_date_max": request.listing_end_date_max,
+                "listing_creation_date_min": self._date_val(
+                    request.listing_creation_date_min
+                ),
+                "listing_creation_date_max": self._date_val(
+                    request.listing_creation_date_max
+                ),
+                "listing_end_date_min": self._date_val(request.listing_end_date_min),
+                "listing_end_date_max": self._date_val(request.listing_end_date_max),
                 "listing_monthly_payment_min": request.listing_monthly_payment_min,
                 "listing_monthly_payment_max": request.listing_monthly_payment_max,
                 "listing_number": self._list_val(request.listing_number),
-                "listing_start_date_min": request.listing_start_date_min,
-                "listing_start_date_max": request.listing_start_date_max,
+                "listing_start_date_min": self._date_val(
+                    request.listing_start_date_min
+                ),
+                "listing_start_date_max": self._date_val(
+                    request.listing_start_date_max
+                ),
                 "listing_status": request.listing_status,
                 "listing_term": self._list_val(request.listing_term),
-                "loan_origination_date_min": request.loan_origination_date_min,
-                "loan_origination_date_max": request.loan_origination_date_max,
+                "loan_origination_date_min": self._date_val(
+                    request.loan_origination_date_min
+                ),
+                "loan_origination_date_max": self._date_val(
+                    request.loan_origination_date_max
+                ),
                 "months_employed_min": request.months_employed_min,
                 "months_employed_max": request.months_employed_max,
                 "occupation": self._list_val(request.occupation),
@@ -201,10 +214,18 @@ class Client:
                 "stated_monthly_income_max": request.stated_monthly_income_max,
                 "verification_stage_min": request.verification_stage_min,
                 "verification_stage_max": request.verification_stage_max,
-                "whole_loan_end_date_min": request.whole_loan_end_date_min,
-                "whole_loan_end_date_max": request.whole_loan_end_date_max,
-                "whole_loan_start_date_min": request.whole_loan_start_date_min,
-                "whole_loan_start_date_max": request.whole_loan_start_date_max,
+                "whole_loan_end_date_min": self._date_val(
+                    request.whole_loan_end_date_min
+                ),
+                "whole_loan_end_date_max": self._date_val(
+                    request.whole_loan_end_date_max
+                ),
+                "whole_loan_start_date_min": self._date_val(
+                    request.whole_loan_start_date_min
+                ),
+                "whole_loan_start_date_max": self._date_val(
+                    request.whole_loan_start_date_max
+                ),
                 "co_borrower_application": self._bool_val(
                     request.co_borrower_application
                 ),
@@ -352,8 +373,30 @@ class Client:
         response.raise_for_status()
         return response.json()
 
-    def _bool_val(self, val: bool, default=None):
-        return "true" if val is True else "false" if val is False else default
+    @classmethod
+    def _bool_val(cls, val: bool, default=None):
+        if val is True:
+            return "true"
+        if val is False:
+            return "false"
+        if val is None:
+            return default
 
-    def _list_val(self, val: List[object]):
+        raise ValueError(f"Unexpected type {type(val)}")
+
+    @classmethod
+    def _list_val(cls, val: List[object]):
         return ",".join(str(v) for v in val) if val else None
+
+    @classmethod
+    def _date_val(cls, val: str | date):
+        if val is None:
+            return None
+
+        if isinstance(val, str):
+            return date.fromisoformat(val).isoformat()
+
+        if isinstance(val, date):
+            return val.isoformat()
+
+        raise ValueError(f"Unexpected type {type(val)}")

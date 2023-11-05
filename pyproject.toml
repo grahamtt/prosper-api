@@ -68,7 +68,7 @@ profile = "black"
 
 [tool.autohooks.plugins.mutmut]
 arguments = [
-    "--disable-mutation-types=string,fstring,expr_stmt,annassign",
+    "--disable-mutation-types=string,fstring,expr_stmt,annassign,number",
 ]
 
 [tool.ruff.lint]

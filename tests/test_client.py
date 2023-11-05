@@ -1,5 +1,5 @@
 from copy import deepcopy
-from datetime import datetime
+from datetime import date, datetime
 
 import pytest
 
@@ -117,7 +117,7 @@ class TestClient:
         "prior_prosper_loans_principal_borrowed_min": None,
         "prior_prosper_loans_principal_outstanding_max": None,
         "prior_prosper_loans_principal_outstanding_min": None,
-        "prosper_rating": "AA,A,B,C,D,E",
+        "prosper_rating": "AA,A,B,C,D,E,HR",
         "prosper_score_max": None,
         "prosper_score_min": None,
         "sort_by": "lender_yield desc",
@@ -274,10 +274,6 @@ class TestClient:
             ({"lender_yield_min": 300}, {"lender_yield_min": 300}),
             ({"listing_amount_max": 300}, {"listing_amount_max": 300}),
             ({"listing_amount_min": 300}, {"listing_amount_min": 300}),
-            ({"listing_creation_date_max": 300}, {"listing_creation_date_max": 300}),
-            ({"listing_creation_date_min": 300}, {"listing_creation_date_min": 300}),
-            ({"listing_end_date_max": 300}, {"listing_end_date_max": 300}),
-            ({"listing_end_date_min": 300}, {"listing_end_date_min": 300}),
             (
                 {"listing_monthly_payment_max": 300},
                 {"listing_monthly_payment_max": 300},
@@ -286,10 +282,6 @@ class TestClient:
                 {"listing_monthly_payment_min": 300},
                 {"listing_monthly_payment_min": 300},
             ),
-            ({"listing_start_date_max": 300}, {"listing_start_date_max": 300}),
-            ({"listing_start_date_min": 300}, {"listing_start_date_min": 300}),
-            ({"loan_origination_date_max": 300}, {"loan_origination_date_max": 300}),
-            ({"loan_origination_date_min": 300}, {"loan_origination_date_min": 300}),
             ({"months_employed_max": 300}, {"months_employed_max": 300}),
             ({"months_employed_min": 300}, {"months_employed_min": 300}),
             ({"percent_funded_max": 300}, {"percent_funded_max": 300}),
@@ -366,10 +358,55 @@ class TestClient:
             ({"stated_monthly_income_min": 300}, {"stated_monthly_income_min": 300}),
             ({"verification_stage_max": 300}, {"verification_stage_max": 300}),
             ({"verification_stage_min": 300}, {"verification_stage_min": 300}),
-            ({"whole_loan_end_date_max": 300}, {"whole_loan_end_date_max": 300}),
-            ({"whole_loan_end_date_min": 300}, {"whole_loan_end_date_min": 300}),
-            ({"whole_loan_start_date_max": 300}, {"whole_loan_start_date_max": 300}),
-            ({"whole_loan_start_date_min": 300}, {"whole_loan_start_date_min": 300}),
+            # Date range filters
+            (
+                {"listing_creation_date_max": date.fromisoformat("2023-11-04")},
+                {"listing_creation_date_max": "2023-11-04"},
+            ),
+            (
+                {"listing_creation_date_min": date.fromisoformat("2023-11-04")},
+                {"listing_creation_date_min": "2023-11-04"},
+            ),
+            (
+                {"listing_end_date_max": date.fromisoformat("2023-11-04")},
+                {"listing_end_date_max": "2023-11-04"},
+            ),
+            (
+                {"listing_end_date_min": date.fromisoformat("2023-11-04")},
+                {"listing_end_date_min": "2023-11-04"},
+            ),
+            (
+                {"listing_start_date_max": date.fromisoformat("2023-11-04")},
+                {"listing_start_date_max": "2023-11-04"},
+            ),
+            (
+                {"listing_start_date_min": date.fromisoformat("2023-11-04")},
+                {"listing_start_date_min": "2023-11-04"},
+            ),
+            (
+                {"loan_origination_date_max": date.fromisoformat("2023-11-04")},
+                {"loan_origination_date_max": "2023-11-04"},
+            ),
+            (
+                {"loan_origination_date_min": date.fromisoformat("2023-11-04")},
+                {"loan_origination_date_min": "2023-11-04"},
+            ),
+            (
+                {"whole_loan_end_date_max": date.fromisoformat("2023-11-04")},
+                {"whole_loan_end_date_max": "2023-11-04"},
+            ),
+            (
+                {"whole_loan_end_date_min": date.fromisoformat("2023-11-04")},
+                {"whole_loan_end_date_min": "2023-11-04"},
+            ),
+            (
+                {"whole_loan_start_date_max": date.fromisoformat("2023-11-04")},
+                {"whole_loan_start_date_max": "2023-11-04"},
+            ),
+            (
+                {"whole_loan_start_date_min": date.fromisoformat("2023-11-04")},
+                {"whole_loan_start_date_min": "2023-11-04"},
+            ),
             # Multi-value filters
             (
                 {"employment_status_description": [1, 2, 3]},
@@ -676,6 +713,21 @@ class TestClient:
                 "Accept": "application/json",
             },
         )
+
+    def test_bool_val_when_invalid(self):
+        with pytest.raises(ValueError):
+            Client._bool_val("blah")
+
+    def test_date_val_when_not_string_or_date(self):
+        with pytest.raises(ValueError):
+            Client._date_val(1234)
+
+    def test_date_val_when_invalid_date(self):
+        with pytest.raises(ValueError):
+            Client._date_val("asdf")
+
+    def test_date_val_when_string_date(self):
+        assert Client._date_val("2023-11-07") == "2023-11-07"
 
     @pytest.mark.skip("Takes too long; refactor to mock the sleeps")
     def test_rate_limiting(self, auth_token_manager_mock, request_mock):

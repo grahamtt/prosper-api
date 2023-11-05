@@ -1,5 +1,3 @@
-from prosper_api.models import SearchListingsResponse
-
 # Prosper API client for Python
 
 Python trading library for Prosper.com
