@@ -6,6 +6,12 @@ authors = ["Graham Tibbitts <graham.tibbitts@gmail.com>"]
 license = "apache-2.0"
 readme = "README.md"
 packages = [{include = "prosper_api"}]
+classifiers = [
+    "Programming Language :: Python :: 3 :: Only",
+    "License :: OSI Approved :: Apache Software License",
+    "Operating System :: OS Independent",
+    "Topic :: Office/Business :: Financial :: Investment",
+]
 
 [tool.poetry.dependencies]
 python = "^3.9"
