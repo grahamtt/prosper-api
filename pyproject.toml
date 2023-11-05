@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "prosper-api"
-version = "0.1.0"
+version = "0.1.1"
 description = "Python trading library for Prosper.com"
 authors = ["Graham Tibbitts <graham.tibbitts@gmail.com>"]
 license = "apache-2.0"
@@ -12,6 +12,7 @@ classifiers = [
     "Operating System :: OS Independent",
     "Topic :: Office/Business :: Financial :: Investment",
 ]
+repository = "https://github.com/grahamtt/prosper-api"
 
 [tool.poetry.dependencies]
 python = "^3.9"
@@ -37,10 +38,11 @@ autohooks-plugin-ruff = "^23.6.1"
 pydoclint = "^0.3.8"
 pydocstyle = "^6.3.0"
 mutmut = "^2.4.4"
+keyring = { version = "^24.2.0", optional = true }
 
 
-[tool.poetry.group.secure.dependencies]
-keyring = "^24.2.0"
+[tool.poetry.extras]
+secure = ["keyring"]
 
 [tool.pytest.ini_options]
 addopts = "--cov=prosper_api --cov-report=term-missing --cov-fail-under=100"
@@ -84,11 +86,11 @@ fixable = ["ALL"]
 unfixable = []
 
 [tool.poetry-dynamic-versioning]
-enable = true
+enable = false
 vcs = "git"
 metadata = true
 dirty = true
-style = "semver"
+style = "pep440"
 bump = true
 
 [build-system]
