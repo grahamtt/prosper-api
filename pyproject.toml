@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "prosper-api"
-version = "0.1.3"
+version = "0.0.0"
 description = "Python trading library for Prosper.com"
 authors = ["Graham Tibbitts <graham.tibbitts@gmail.com>"]
 license = "apache-2.0"
@@ -86,11 +86,11 @@ fixable = ["ALL"]
 unfixable = []
 
 [tool.poetry-dynamic-versioning]
-enable = false
+enable = true
 vcs = "git"
-metadata = true
+metadata = false
 dirty = true
-style = "pep440"
+style = "semver"
 bump = true
 
 [build-system]

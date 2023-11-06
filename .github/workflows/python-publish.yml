@@ -21,11 +21,11 @@ jobs:
         with:
           poetry-version: '1.6.1'
       - name: Install dependencies
-        run: poetry install --all-extras
+        run: | 
+          poetry self add "poetry-dynamic-versioning[plugin]"
+          poetry install --all-extras
       - name: Run tests
         run: poetry run pytest
-      - name: Build
-        run: poetry build
 #      - name: Create Github release
 #        uses: "marvinpinto/action-automatic-releases@latest"
 #        with:
@@ -34,8 +34,5 @@ jobs:
 #          files: |
 #            dist/*.whl
 #            dist/*.tar.gz
-      - name: Publish package
-        uses: pypa/gh-action-pypi-publish@27b31702a0e7fc50959f5ad993c78deac1bdfc29
-        with:
-          user: __token__
-          password: ${{ secrets.PYPI_API_TOKEN }}
+      - name: Build and publish package
+        run: poetry publish --build --user __token__ --password ${{ secrets.PYPI_API_TOKEN }}
