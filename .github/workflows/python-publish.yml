@@ -35,4 +35,4 @@ jobs:
 #            dist/*.whl
 #            dist/*.tar.gz
       - name: Build and publish package
-        run: poetry publish --build --user __token__ --password ${{ secrets.PYPI_API_TOKEN }}
+        run: poetry publish --build --username __token__ --password ${{ secrets.PYPI_API_TOKEN }}
