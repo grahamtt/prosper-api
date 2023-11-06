@@ -87,10 +87,9 @@ unfixable = []
 
 [tool.poetry-dynamic-versioning]
 enable = true
-vcs = "git"
 metadata = false
-dirty = true
 style = "semver"
+vcs = "git"
 bump = true
 
 [build-system]
