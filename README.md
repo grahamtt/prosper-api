@@ -65,6 +65,8 @@ keyring set prosper-api {USERNAME}
 
 ## Use
 
+See [a sample bot](https://github.com/grahamtt/prosper-auto-invest) for concrete usage.
+
 ### Get account details
 The following will get the details of your account, including available cash and investment allocations.
 
@@ -126,5 +128,4 @@ while True:
     offset += PAGE_SIZE
     if len(notes) >= result.total_count or len(result.result) < PAGE_SIZE:
         break
-
 ```
