@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "prosper-api"
-version = "0.1.11-pre.1"
+version = "0.1.11-pre.3"
 description = "Python trading library for Prosper.com"
 authors = ["Graham Tibbitts <graham.tibbitts@gmail.com>"]
 license = "apache-2.0"
@@ -51,7 +51,7 @@ python_functions = ["*_test", "test_*"]
 
 [tool.autohooks]
 mode = "poetry"
-pre-commit = ["autohooks.plugins.black", "autohooks.plugins.ruff", "autohooks.plugins.isort", "hooks.pydocstyle", "hooks.pydoclint", "autohooks.plugins.pytest", "hooks.tox", "hooks.mutmut", ]
+pre-commit = ["autohooks.plugins.black", "autohooks.plugins.ruff", "autohooks.plugins.isort", "hooks.pydocstyle", "hooks.pydoclint", "autohooks.plugins.pytest", "hooks.tox", "hooks.mutmut", "hooks.dynamic_versioning", ]
 
 [tool.autohooks.plugins.ruff]
 arguments = '--fix'
