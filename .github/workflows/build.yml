@@ -1,0 +1,38 @@
+name: "build"
+
+on:
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  ci:
+    name: "Run tests"
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: [
+          "3.9.18",
+          "3.10.13",
+          "3.11.6",
+          "3.12",
+        ]
+        poetry-version: ["1.6.1"]
+        os: [
+          ubuntu-latest,
+          macos-latest,
+#          windows-latest, # Disabling Windows to get build working
+        ]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Run image
+        uses: abatilo/actions-poetry@v2
+        with:
+          poetry-version: ${{ matrix.poetry-version }}
+      - name: Install dependencies
+        run: poetry install --all-extras
+      - name: Run tests
+        run: poetry run pytest
