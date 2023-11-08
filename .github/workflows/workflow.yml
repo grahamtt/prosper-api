@@ -15,9 +15,9 @@ jobs:
       fail-fast: false
       matrix:
         python-version: [
-#          "3.9", # Disabling 3.9 to get the build working
-          "3.10",
-          "3.11",
+          "3.9.18",
+          "3.10.13",
+          "3.11.6",
           "3.12",
         ]
         poetry-version: ["1.6.1"]
