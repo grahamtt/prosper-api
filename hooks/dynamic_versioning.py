@@ -61,7 +61,7 @@ def precommit(
 
     with stash_unstaged_changes(files):
         try:
-            subprocess.check_output(arguments, stderr=STDOUT).decode("utf-8")
+            out(subprocess.check_output(arguments, stderr=STDOUT).decode("utf-8"))
             ok("Running version increment")
             if report_progress:
                 report_progress.update()
