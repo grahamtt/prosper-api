@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "prosper-api"
-version = "0.1.11"
+version = "0.1.12"
 description = "Python trading library for Prosper.com"
 authors = ["Graham Tibbitts <graham.tibbitts@gmail.com>"]
 license = "apache-2.0"
@@ -15,7 +15,7 @@ classifiers = [
 repository = "https://github.com/grahamtt/prosper-api"
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = "^3.10"
 requests = "^2.31.0"
 toml = "^0.10.2"
 dpath = "^2.1.6"
@@ -51,7 +51,17 @@ python_functions = ["*_test", "test_*"]
 
 [tool.autohooks]
 mode = "poetry"
-pre-commit = ["autohooks.plugins.black", "autohooks.plugins.ruff", "autohooks.plugins.isort", "hooks.pydocstyle", "hooks.pydoclint", "autohooks.plugins.pytest", "hooks.tox", "hooks.mutmut", "hooks.dynamic_versioning", ]
+pre-commit = [
+    "autohooks.plugins.black",
+    "autohooks.plugins.ruff",
+    "autohooks.plugins.isort",
+    "hooks.pydocstyle",
+    "hooks.pydoclint",
+    "autohooks.plugins.pytest",
+#    "hooks.tox", # Commenting out for now because it appears to be running only for Python 3.10
+    "hooks.mutmut",
+    "hooks.dynamic_versioning",
+]
 
 [tool.autohooks.plugins.ruff]
 arguments = '--fix'

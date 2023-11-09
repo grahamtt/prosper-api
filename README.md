@@ -2,6 +2,7 @@
 
 Python trading library for Prosper.com
 
+![GitHub Workflow Status (with event)](https://img.shields.io/github/actions/workflow/status/grahamtt/prosper-api/build-and-release.yml?logo=github)
 ![PyPI - Version](https://img.shields.io/pypi/v/prosper-api?label=prosper-api)
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/prosper-api)
 ![PyPI - License](https://img.shields.io/pypi/l/prosper-api)
@@ -36,8 +37,8 @@ poetry add 'prosper-api[secure]'
 
 
 ## Setup
-The library currently only supports personal use, where the client id and credentials are from the same account. Support
-for multi-account mode is planned.
+> ℹ️ The library currently only supports personal use, where the client id and credentials are from the same account. Support
+for multi-account mode is [planned](https://github.com/grahamtt/prosper-api/issues/3).
 
 ### Default
 
