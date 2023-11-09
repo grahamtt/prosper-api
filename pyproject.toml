@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "prosper-api"
-version = "0.1.12"
+version = "0.1.13"
 description = "Python trading library for Prosper.com"
 authors = ["Graham Tibbitts <graham.tibbitts@gmail.com>"]
 license = "apache-2.0"
@@ -23,6 +23,7 @@ schema = "^0.7.5"
 ratelimit = "^2.2.1"
 backoff = "^2.2.1"
 keyring = { version = "^24.2.0", optional = true }
+simplejson = "^3.19.2"
 
 [tool.poetry.group.dev.dependencies]
 tox = "^4.11.3"
