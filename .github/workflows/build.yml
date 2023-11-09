@@ -11,7 +11,7 @@ jobs:
       fail-fast: false
       matrix:
         python-version: [
-          "3.9.18",
+#          "3.9.18", # Python 3.9 doesn't work with the new-style type hint union
           "3.10.13",
           "3.11.6",
           "3.12",
