@@ -2,6 +2,15 @@
 
 Python trading library for Prosper.com
 
+![PyPI - Version](https://img.shields.io/pypi/v/prosper-api?label=prosper-api)
+![PyPI - Python Version](https://img.shields.io/pypi/pyversions/prosper-api)
+![PyPI - License](https://img.shields.io/pypi/l/prosper-api)
+![Code Climate coverage](https://img.shields.io/codeclimate/coverage/grahamtt/prosper-api?logo=codeclimate)
+![Code Climate maintainability](https://img.shields.io/codeclimate/maintainability-percentage/grahamtt/prosper-api?logo=codeclimate)
+![GitHub commit activity (branch)](https://img.shields.io/github/commit-activity/m/grahamtt/prosper-api?logo=github)
+![GitHub issues](https://img.shields.io/github/issues-raw/grahamtt/prosper-api?logo=github)
+
+
 ## Installation
 
 ### With Pip
