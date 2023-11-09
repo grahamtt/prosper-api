@@ -3,7 +3,7 @@ from datetime import date, datetime
 
 import pytest
 
-from prosper_api.client import Client
+from prosper_api.client import Client, _bool_val, _date_val
 from prosper_api.models import SearchListingsRequest
 
 
@@ -716,18 +716,18 @@ class TestClient:
 
     def test_bool_val_when_invalid(self):
         with pytest.raises(ValueError):
-            Client._bool_val("blah")
+            _bool_val("blah")
 
     def test_date_val_when_not_string_or_date(self):
         with pytest.raises(ValueError):
-            Client._date_val(1234)
+            _date_val(1234)
 
     def test_date_val_when_invalid_date(self):
         with pytest.raises(ValueError):
-            Client._date_val("asdf")
+            _date_val("asdf")
 
     def test_date_val_when_string_date(self):
-        assert Client._date_val("2023-11-07") == "2023-11-07"
+        assert _date_val("2023-11-07") == "2023-11-07"
 
     @pytest.mark.skip("Takes too long; refactor to mock the sleeps")
     def test_rate_limiting(self, auth_token_manager_mock, request_mock):
