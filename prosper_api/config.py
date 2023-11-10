@@ -1,3 +1,4 @@
+from numbers import Number
 from os.path import expanduser
 
 import dpath
@@ -58,14 +59,33 @@ class Config:
         if validate:
             self._config_dict = self._SCHEMA.validate(self._config_dict)
 
-    def get(self, key: str) -> str:
-        """Get the specified config value as a string.
+    def get(self, key: str) -> object:
+        """Get the specified config value.
 
         Args:
             key (str): The '.' separated path to the config value.
 
         Returns:
-            str: The stored config value for the given key, or None if it doesn't
+            object: The stored config value for the given key, or None if it doesn't
                 exist.
         """
         return dpath.get(self._config_dict, key, separator=".", default=None)
+
+    def get_as_bool(self, key: str, default: bool = False):
+        """Get the specified value interpreted as a boolean.
+
+        Specifically, the literal value `true`, string values 'true', 't', 'yes', and 'y' (case-insensitive), and any
+        numeric value != 0 will return True, otherwise, False is returned.
+        """
+        value = self.get(key)
+        if not value:
+            return default
+
+        truthy_strings = {"true", "t", "yes", "y"}
+        if isinstance(value, str) and value.lower() in truthy_strings:
+            return True
+
+        if isinstance(value, Number) and value != 0:
+            return True
+
+        return False

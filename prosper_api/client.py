@@ -1,8 +1,10 @@
+import logging
 from datetime import date
 from decimal import Decimal
 from typing import List, Optional
 
 import requests
+import simplejson as json
 from backoff import expo, on_exception
 from ratelimit import RateLimitException, limits
 
@@ -26,6 +28,8 @@ from prosper_api.models import (
     SearchListingsRequest,
     SearchListingsResponse,
 )
+
+logger = logging.getLogger()
 
 
 def _bool_val(val: bool, default=None):
@@ -97,6 +101,9 @@ class Client:
     _NOTES_API_URL = "https://api.prosper.com/v1/notes/"
     _ORDERS_API_URL = "https://api.prosper.com/v1/orders/"
     _LOANS_API_URL = "https://api.prosper.com/v1/loans/"
+    _RETURN_FLOATS_CONFIG_PATH = "client.return-floats"
+
+    _has_warned_about_floats = False
 
     def __init__(
         self,
@@ -115,6 +122,10 @@ class Client:
 
         if auth_token_manager is None:
             auth_token_manager = AuthTokenManager(config)
+
+        self.return_floats = config.get_as_bool(self._RETURN_FLOATS_CONFIG_PATH)
+        if self.return_floats:
+            self._warn_about_floats()
 
         self._auth_token_manager = auth_token_manager
 
@@ -377,6 +388,9 @@ class Client:
     )  # pragma: no mutate
     @limits(calls=20, period=1)  # pragma: no mutate
     def _do_request(self, method, url, params={}, data={}):
+        self._check_for_floats(params)
+        self._check_for_floats(data)
+
         auth_token = self._auth_token_manager.get_token()
 
         response = requests.request(
@@ -390,4 +404,17 @@ class Client:
             },
         )
         response.raise_for_status()
-        return response.json()
+        text = response.text
+        return json.loads(text, use_decimal=not self.return_floats)
+
+    def _check_for_floats(self, values: dict):
+        for val in values.values():
+            if isinstance(val, float):
+                self._warn_about_floats()
+
+    def _warn_about_floats(self):
+        if not self._has_warned_about_floats:
+            logger.warning(
+                "WARNING: Floating point numbers are not recommended for representing currency values due to their inexact representation of fractional values. You are strongly recommended to use Decimals instead. See https://stackoverflow.com/a/3730040/303601 for more info."
+            )
+            self._has_warned_about_floats = True  # pragma: no mutate

@@ -6,6 +6,13 @@ TEST_CONFIG = """
 [testSection]
 testString="stringValue"
 testNumber=123
+testBoolTrue=true
+testBoolFalse=false
+testBoolStringTrue="Y"
+testBoolStringFalse="N"
+testBoolNumberTrue=1
+testBoolNumberFalse=0
+testBoolOther={}
 """
 
 
@@ -15,6 +22,19 @@ class TestConfig:
 
         assert config.get("testSection.testString") == "stringValue"
         assert config.get("testSection.testNumber") == 123
+
+    def test_get_as_bool(self):
+        config = Config(config_string=TEST_CONFIG, validate=False)
+
+        assert config.get_as_bool("testSection.testBoolTrue") is True
+        assert config.get_as_bool("testSection.testBoolFalse") is False
+        assert config.get_as_bool("testSection.testBoolStringTrue") is True
+        assert config.get_as_bool("testSection.testBoolStringFalse") is False
+        assert config.get_as_bool("testSection.testBoolNumberTrue") is True
+        assert config.get_as_bool("testSection.testBoolNumberFalse") is False
+        assert config.get_as_bool("testSection.testBoolOther") is False
+        assert config.get_as_bool("testSection.testBoolNotFound") is False
+        assert config.get_as_bool("testSection.testBoolNotFound", True) is True
 
     def test_get_invalid_key(self):
         config = Config(config_string=TEST_CONFIG, validate=False)

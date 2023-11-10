@@ -1,5 +1,6 @@
 from copy import deepcopy
 from datetime import date, datetime
+from decimal import Decimal
 
 import pytest
 
@@ -678,13 +679,15 @@ class TestClient:
         assert len(result.result) == 1
         assert result.result[0].loan_number == 11111
 
-    def test_do_get(self, auth_token_manager_mock, config_mock, request_mock):
+    def test_do_get(self, auth_token_manager_mock, config_mock, request_mock, caplog):
         auth_token_manager_mock.return_value.get_token.return_value = "auth_token"
-        request_mock.return_value.json.return_value = {"p1": "v1", "p2": 2}
+        request_mock.return_value.text = '{"p1": "v1", "p2": 2.0}'
+        config_mock.return_value.get_as_bool.return_value = False
 
-        response = Client()._do_get("some_url", {"param1": "value1", "param2": 2})
+        response = Client()._do_get("some_url", {"param1": "value1", "param2": 2.0})
 
-        assert response == {"p1": "v1", "p2": 2}
+        assert response == {"p1": "v1", "p2": Decimal("2.0")}
+        assert isinstance(response["p2"], Decimal)
         request_mock.assert_called_once_with(
             "GET",
             "some_url",
@@ -695,14 +698,18 @@ class TestClient:
                 "Accept": "application/json",
             },
         )
+        assert caplog.records[-1].message.startswith(
+            "WARNING: Floating point numbers are not recommended for representing currency"
+        )
 
-    def test_do_post(self, auth_token_manager_mock, config_mock, request_mock):
+    def test_do_post(self, auth_token_manager_mock, config_mock, request_mock, caplog):
         auth_token_manager_mock.return_value.get_token.return_value = "auth_token"
-        request_mock.return_value.json.return_value = {"p1": "v1", "p2": 2}
+        request_mock.return_value.text = '{"p1": "v1", "p2": 2.0}'
+        config_mock.return_value.get_as_bool.return_value = False
 
-        response = Client()._do_post("some_url", {"param1": "value1", "param2": 2})
+        response = Client()._do_post("some_url", {"param1": "value1", "param2": 2.0})
 
-        assert response == {"p1": "v1", "p2": 2}
+        assert response == {"p1": "v1", "p2": Decimal("2.0")}
         request_mock.assert_called_once_with(
             "POST",
             "some_url",
@@ -712,6 +719,9 @@ class TestClient:
                 "Authorization": "bearer auth_token",
                 "Accept": "application/json",
             },
+        )
+        assert caplog.records[-1].message.startswith(
+            "WARNING: Floating point numbers are not recommended for representing currency"
         )
 
     def test_bool_val_when_invalid(self):
