@@ -38,3 +38,30 @@ jobs:
         run: poetry install --all-extras
       - name: Run tests
         run: poetry run pytest
+
+  code-coverage: # TODO: Maybe make this conditional so it can run on pull requests
+    name: "Code coverage"
+    needs: ci
+    runs-on: "ubuntu-latest"
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: '3.x'
+      - name: Run image
+        uses: abatilo/actions-poetry@v2
+        with:
+          poetry-version: '1.6.1'
+      - name: Install dependencies
+        run: | 
+          poetry self add "poetry-dynamic-versioning[plugin]"
+          poetry install --all-extras
+      - name: Test & publish code coverage
+        uses: paambaati/codeclimate-action@v5.0.0
+        env:
+          CC_TEST_REPORTER_ID: ${{secrets.CC_TEST_REPORTER_ID}}
+        with:
+          coverageCommand: poetry run pytest
+          coverageLocations: ${{github.workspace}}/dist/coverage.info:lcov
