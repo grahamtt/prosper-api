@@ -11,34 +11,36 @@ Python trading library for Prosper.com
 ![GitHub commit activity (branch)](https://img.shields.io/github/commit-activity/m/grahamtt/prosper-api?logo=github)
 ![GitHub issues](https://img.shields.io/github/issues-raw/grahamtt/prosper-api?logo=github)
 
-
 ## Installation
 
 ### With Pip
+
 ```commandline
 pip install prosper-api
 ```
 
 #### Optional `keyring` support
+
 ```commandline
 pip install 'prosper-api[secure]'
 ```
 
 ### With Poetry
+
 ```commandline
 poetry add prosper-api
 ```
 
 #### Optional `keyring` support
+
 ```commandline
 poetry add 'prosper-api[secure]'
 ```
 
-
-
 ## Setup
+
 > ℹ️ The library currently only supports personal use, where the client id and credentials are from the same account. Support
-for multi-account mode is [planned](https://github.com/grahamtt/prosper-api/issues/3).
+> for multi-account mode is [planned](https://github.com/grahamtt/prosper-api/issues/3).
 
 ### Config file location
 
@@ -60,7 +62,7 @@ password = "AWESOME_PASSWORD"
 
 ### More secure
 
-> ℹ️ You must have installed `keyring` or used the '[secure]' mode when installing the library.
+> ℹ️ You must have installed `keyring` or used the '\[secure\]' mode when installing the library.
 
 Remove the `client-secret` and `password` portions of the config:
 
@@ -84,6 +86,7 @@ keyring set prosper-api {USERNAME}
 See [a sample bot](https://github.com/grahamtt/prosper-auto-invest) for concrete usage.
 
 ### Get account details
+
 The following will get the details of your account, including available cash and investment allocations.
 
 ```python
@@ -94,6 +97,7 @@ account: Account = client.get_account_info()
 ```
 
 ### Search listings
+
 The following will get all the current listings you haven't invested in.
 
 ```python
@@ -113,9 +117,10 @@ while True:
 ```
 
 > ℹ️ The full set of filters listed in the [Prosper API docs](https://developers.prosper.com/docs/investor/listings-api/)
->  are available
+> are available
 
 ### Place order
+
 The following will place an order, given a listing id.
 
 ```python
@@ -128,6 +133,7 @@ order_result: Order = client.order(listing_id, order_dollar_amount)
 ```
 
 ### List notes
+
 The following will list all the notes in your account. The same pattern can be used to list orders, loans, and payments.
 
 ```python
