@@ -2,12 +2,13 @@
 
 Python trading library for Prosper.com
 
-![GitHub Workflow Status (with event)](https://img.shields.io/github/actions/workflow/status/grahamtt/prosper-api/build-and-release.yml?logo=github)
+[![GitHub Workflow Status (with event)](https://img.shields.io/github/actions/workflow/status/grahamtt/prosper-api/build-and-release.yml?logo=github)](https://github.com/grahamtt/prosper-api)
 ![PyPI - Version](https://img.shields.io/pypi/v/prosper-api?label=prosper-api)
-![PyPI - Python Version](https://img.shields.io/pypi/pyversions/prosper-api)
+[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/prosper-api)](https://pypi.org/project/prosper-api/)
 ![PyPI - License](https://img.shields.io/pypi/l/prosper-api)
-![Code Climate coverage](https://img.shields.io/codeclimate/coverage/grahamtt/prosper-api?logo=codeclimate)
-![Code Climate maintainability](https://img.shields.io/codeclimate/maintainability-percentage/grahamtt/prosper-api?logo=codeclimate)
+[![Code Climate coverage](https://img.shields.io/codeclimate/coverage/grahamtt/prosper-api?logo=codeclimate)](https://codeclimate.com/github/grahamtt/prosper-api)
+[![Code Climate maintainability](https://img.shields.io/codeclimate/maintainability-percentage/grahamtt/prosper-api?logo=codeclimate)](https://codeclimate.com/github/grahamtt/prosper-api)
+[![OpenSSF Best Practices](https://www.bestpractices.dev/projects/8063/badge)](https://www.bestpractices.dev/projects/8063)
 ![GitHub commit activity (branch)](https://img.shields.io/github/commit-activity/m/grahamtt/prosper-api?logo=github)
 ![GitHub issues](https://img.shields.io/github/issues-raw/grahamtt/prosper-api?logo=github)
 
