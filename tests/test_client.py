@@ -679,50 +679,177 @@ class TestClient:
         assert len(result.result) == 1
         assert result.result[0].loan_number == 11111
 
-    def test_do_get(self, auth_token_manager_mock, config_mock, request_mock, caplog):
+    @pytest.mark.parametrize(
+        [
+            "return_float_config",
+            "input",
+            "return_val",
+            "expected_output",
+            "expect_warning",
+        ],
+        [
+            (
+                False,
+                {"param1": "value1", "param2": 2.0},
+                '{"p1": "v1", "p2": 2.0}',
+                {"p1": "v1", "p2": Decimal("2.0")},
+                True,
+            ),
+            (
+                True,
+                {"param1": "value1", "param2": 2.0},
+                '{"p1": "v1", "p2": 2.0}',
+                {"p1": "v1", "p2": 2.0},
+                True,
+            ),
+            (
+                False,
+                {"param1": "value1", "param2": Decimal(2.0)},
+                '{"p1": "v1", "p2": 2.0}',
+                {"p1": "v1", "p2": Decimal("2.0")},
+                False,
+            ),
+            (
+                True,
+                {"param1": "value1", "param2": Decimal(2.0)},
+                '{"p1": "v1", "p2": 2.0}',
+                {"p1": "v1", "p2": 2.0},
+                True,
+            ),
+        ],
+    )
+    def test_do_get(
+        self,
+        auth_token_manager_mock,
+        config_mock,
+        request_mock,
+        caplog,
+        return_float_config: bool,
+        input: dict,
+        return_val: str,
+        expected_output: dict,
+        expect_warning: bool,
+    ):
         auth_token_manager_mock.return_value.get_token.return_value = "auth_token"
-        request_mock.return_value.text = '{"p1": "v1", "p2": 2.0}'
-        config_mock.return_value.get_as_bool.return_value = False
+        request_mock.return_value.text = return_val
+        config_mock.return_value.get_as_bool.return_value = return_float_config
 
-        response = Client()._do_get("some_url", {"param1": "value1", "param2": 2.0})
+        response = Client()._do_get("some_url", input)
 
-        assert response == {"p1": "v1", "p2": Decimal("2.0")}
-        assert isinstance(response["p2"], Decimal)
+        assert response == expected_output
+        assert isinstance(response["p2"], type(expected_output["p2"]))
         request_mock.assert_called_once_with(
             "GET",
             "some_url",
-            params={"param1": "value1", "param2": 2},
+            params=input,
             json={},
             headers={
                 "Authorization": "bearer auth_token",
                 "Accept": "application/json",
             },
         )
-        assert caplog.records[-1].message.startswith(
-            "WARNING: Floating point numbers are not recommended for representing currency"
-        )
+        if expect_warning:
+            assert [
+                r
+                for r in caplog.records
+                if r.message.startswith(
+                    "WARNING: Floating point numbers are not recommended for representing currency"
+                )
+            ]
+        else:
+            assert not [
+                r
+                for r in caplog.records
+                if r.message.startswith(
+                    "WARNING: Floating point numbers are not recommended for representing currency"
+                )
+            ]
 
-    def test_do_post(self, auth_token_manager_mock, config_mock, request_mock, caplog):
+    @pytest.mark.parametrize(
+        [
+            "return_float_config",
+            "input",
+            "return_val",
+            "expected_output",
+            "expect_warning",
+        ],
+        [
+            (
+                False,
+                {"param1": "value1", "param2": 2.0},
+                '{"p1": "v1", "p2": 2.0}',
+                {"p1": "v1", "p2": Decimal("2.0")},
+                True,
+            ),
+            (
+                True,
+                {"param1": "value1", "param2": 2.0},
+                '{"p1": "v1", "p2": 2.0}',
+                {"p1": "v1", "p2": 2.0},
+                True,
+            ),
+            (
+                False,
+                {"param1": "value1", "param2": Decimal(2.0)},
+                '{"p1": "v1", "p2": 2.0}',
+                {"p1": "v1", "p2": Decimal("2.0")},
+                False,
+            ),
+            (
+                True,
+                {"param1": "value1", "param2": Decimal(2.0)},
+                '{"p1": "v1", "p2": 2.0}',
+                {"p1": "v1", "p2": 2.0},
+                True,
+            ),
+        ],
+    )
+    def test_do_post(
+        self,
+        auth_token_manager_mock,
+        config_mock,
+        request_mock,
+        caplog,
+        return_float_config: bool,
+        input: dict,
+        return_val: str,
+        expected_output: dict,
+        expect_warning: bool,
+    ):
         auth_token_manager_mock.return_value.get_token.return_value = "auth_token"
-        request_mock.return_value.text = '{"p1": "v1", "p2": 2.0}'
-        config_mock.return_value.get_as_bool.return_value = False
+        request_mock.return_value.text = return_val
+        config_mock.return_value.get_as_bool.return_value = return_float_config
 
-        response = Client()._do_post("some_url", {"param1": "value1", "param2": 2.0})
+        response = Client()._do_post("some_url", input)
 
-        assert response == {"p1": "v1", "p2": Decimal("2.0")}
+        assert response == expected_output
+        assert isinstance(response["p2"], type(expected_output["p2"]))
         request_mock.assert_called_once_with(
             "POST",
             "some_url",
             params={},
-            json={"param1": "value1", "param2": 2},
+            json=input,
             headers={
                 "Authorization": "bearer auth_token",
                 "Accept": "application/json",
             },
         )
-        assert caplog.records[-1].message.startswith(
-            "WARNING: Floating point numbers are not recommended for representing currency"
-        )
+        if expect_warning:
+            assert [
+                r
+                for r in caplog.records
+                if r.message.startswith(
+                    "WARNING: Floating point numbers are not recommended for representing currency"
+                )
+            ]
+        else:
+            assert not [
+                r
+                for r in caplog.records
+                if r.message.startswith(
+                    "WARNING: Floating point numbers are not recommended for representing currency"
+                )
+            ]
 
     def test_bool_val_when_invalid(self):
         with pytest.raises(ValueError):
