@@ -1,7 +1,7 @@
 import logging
 from datetime import date
 from decimal import Decimal
-from typing import List, Optional
+from typing import List, Optional, Union
 
 import requests
 import simplejson as json
@@ -47,7 +47,7 @@ def _list_val(val: List[object]):
     return ",".join(str(v) for v in val) if val else None
 
 
-def _date_val(val: str | date):
+def _date_val(val: Union[str, date]):
     if val is None:
         return None
 
@@ -58,6 +58,18 @@ def _date_val(val: str | date):
         return val.isoformat()
 
     raise ValueError(f"Unexpected type {type(val)}")
+
+
+def _build_listing(listing_dict) -> Listing:
+    listing_dict["credit_bureau_values_transunion_indexed"] = CreditBureauValues(
+        **listing_dict["credit_bureau_values_transunion_indexed"]
+    )
+    return Listing(**listing_dict)
+
+
+def _build_order(order_dict):
+    order_dict["bid_requests"] = [BidRequest(**b) for b in order_dict["bid_requests"]]
+    return Order(**order_dict)
 
 
 class Client:
@@ -146,17 +158,13 @@ class Client:
         resp["pending_bids"] = AmountsByRating(**resp["pending_bids"])
         return Account(**resp)
 
-    def _build_listing(self, listing_dict) -> Listing:
-        listing_dict["credit_bureau_values_transunion_indexed"] = CreditBureauValues(
-            **listing_dict["credit_bureau_values_transunion_indexed"]
-        )
-        return Listing(**listing_dict)
-
-    def search_listings(self, request: SearchListingsRequest) -> SearchListingsResponse:
+    def search_listings(
+        self, request: Union[SearchListingsRequest, None]
+    ) -> SearchListingsResponse:
         """Search the Prosper listings.
 
         Args:
-            request (SearchListingsRequest): Configures the search, sort, and
+            request (Union[SearchListingsRequest, None]): Configures the search, sort, and
                 pagination parameters.
 
         Returns:
@@ -166,6 +174,9 @@ class Client:
         See Also:
             https://developers.prosper.com/docs/investor/listings-api/
         """
+        if request is None:
+            request = SearchListingsRequest()
+
         resp = self._do_get(
             self._SEARCH_API_URL,
             {
@@ -265,7 +276,7 @@ class Client:
                 "combined_stated_monthly_income_max": request.combined_stated_monthly_income_max,
             },
         )
-        resp["result"] = [self._build_listing(r) for r in resp["result"]]
+        resp["result"] = [_build_listing(r) for r in resp["result"]]
         return SearchListingsResponse(**resp)
 
     def list_notes(self, request: ListNotesRequest = None) -> ListNotesResponse:
@@ -294,22 +305,16 @@ class Client:
         resp["result"] = [Note(**r) for r in resp["result"]]
         return ListNotesResponse(**resp)
 
-    def _build_order(self, order_dict):
-        order_dict["bid_requests"] = [
-            BidRequest(**b) for b in order_dict["bid_requests"]
-        ]
-        return Order(**order_dict)
-
     def order(
         self,
         listing_id: int,
-        amount: float | Decimal,
+        amount: Union[float, Decimal],
     ) -> Order:
         """Execute an order for a given listing and amount.
 
         Args:
             listing_id (int): Identifies the listing to make an order against.
-            amount (float | Decimal): The amount to bid for the order.
+            amount (Union[float, Decimal]): The amount to bid for the order.
 
         Returns:
             Order: The in-progress order.
@@ -321,7 +326,7 @@ class Client:
             self._ORDERS_API_URL,
             {"bid_requests": [{"listing_id": listing_id, "bid_amount": amount}]},
         )
-        return self._build_order(resp)
+        return _build_order(resp)
 
     def list_orders(self, request: ListOrdersRequest = None) -> ListOrdersResponse:
         """Lists orders in the account.
@@ -346,7 +351,7 @@ class Client:
                 "limit": request.limit,
             },
         )
-        resp["result"] = [self._build_order(r) for r in resp["result"]]
+        resp["result"] = [_build_order(r) for r in resp["result"]]
         return ListOrdersResponse(**resp)
 
     def list_loans(self, request: ListLoansRequest = None) -> ListLoansResponse:
@@ -375,10 +380,14 @@ class Client:
         resp["result"] = [Loan(**r) for r in resp["result"]]
         return ListLoansResponse(**resp)
 
-    def _do_get(self, url, query_params={}):
+    def _do_get(self, url, query_params=None):
+        if query_params is None:
+            query_params = {}
         return self._do_request("GET", url, params=query_params)
 
-    def _do_post(self, url, data={}):
+    def _do_post(self, url, data=None):
+        if data is None:
+            data = {}
         return self._do_request("POST", url, data=data)
 
     @on_exception(
@@ -387,7 +396,11 @@ class Client:
         max_tries=8,
     )  # pragma: no mutate
     @limits(calls=20, period=1)  # pragma: no mutate
-    def _do_request(self, method, url, params={}, data={}):
+    def _do_request(self, method, url, params=None, data=None):
+        if params is None:
+            params = {}
+        if data is None:
+            data = {}
         self._check_for_floats(params)
         self._check_for_floats(data)
 

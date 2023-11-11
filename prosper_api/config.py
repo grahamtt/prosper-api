@@ -1,5 +1,6 @@
 from numbers import Number
 from os.path import expanduser
+from typing import Union
 
 import dpath
 from schema import Optional, Regex, Schema
@@ -70,6 +71,14 @@ class Config:
                 exist.
         """
         return dpath.get(self._config_dict, key, separator=".", default=None)
+
+    def get_as_str(self, key, default: Union[str, None] = None):
+        """Get the specified value interpreted as a string."""
+        value = self.get(key)
+        if value is None:
+            return default
+
+        return str(value)
 
     def get_as_bool(self, key: str, default: bool = False):
         """Get the specified value interpreted as a boolean.

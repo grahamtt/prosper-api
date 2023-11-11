@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "prosper-api"
-version = "0.2.0"
+version = "0.2.1"
 description = "Python trading library for Prosper.com"
 authors = ["Graham Tibbitts <graham.tibbitts@gmail.com>"]
 license = "apache-2.0"
@@ -15,7 +15,7 @@ classifiers = [
 repository = "https://github.com/grahamtt/prosper-api"
 
 [tool.poetry.dependencies]
-python = "^3.10"
+python = "^3.8"
 requests = "^2.31.0"
 toml = "^0.10.2"
 dpath = "^2.1.6"

@@ -42,11 +42,11 @@ class AuthTokenManager:
         Raises:
             AttributeError: If the client_secret or password can't be resolved.
         """
-        self.token_cache_path = config.get(_TOKEN_CACHE)
-        self.client_id = config.get(_CLIENT_ID)
-        self.client_secret = config.get(_CLIENT_SECRET)
-        self.username = config.get(_USERNAME)
-        self.password = config.get(_PASSWORD)
+        self.token_cache_path = config.get_as_str(_TOKEN_CACHE)
+        self.client_id = config.get_as_str(_CLIENT_ID)
+        self.client_secret = config.get_as_str(_CLIENT_SECRET)
+        self.username = config.get_as_str(_USERNAME)
+        self.password = config.get_as_str(_PASSWORD)
 
         if not self.client_secret:
             try:

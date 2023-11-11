@@ -14,10 +14,10 @@ DEFAULT_ARGUMENTS = ()
 
 def check_dynamic_versioning_installed() -> None:
     try:
-        subprocess.check_output(["poetry", "dynamic-versioning", "--help"])
-    except subprocess.CalledProcessError:
+        subprocess.check_output(["poetry-dynamic-versioning", "--help"], stderr=STDOUT)
+    except subprocess.CalledProcessError as e:
         raise RuntimeError(
-            'Could not find dynamic_versioning. Please install via `poetry self add "poetry-dynamic-versioning[plugin]"`.'
+            f'Could not find dynamic_versioning. Please install via `poetry self add "poetry-dynamic-versioning[plugin]"`.\nDebug: {e.stdout.decode("utf-8")}'
         ) from None
 
 
@@ -56,7 +56,7 @@ def precommit(
         report_progress.init(1)
 
     ret = 0
-    arguments = ["poetry", "dynamic-versioning"]
+    arguments = ["poetry-dynamic-versioning"]
     arguments.extend(get_dynamic_versioning_arguments(config))
 
     with stash_unstaged_changes(files):

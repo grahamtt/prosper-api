@@ -218,6 +218,7 @@ class TestClient:
     @pytest.mark.parametrize(
         ("input", "expected_call"),
         [
+            (None, {}),
             ({}, {}),
             ({"sort_by": "fico_score"}, {"sort_by": "fico_score desc"}),
             (
@@ -426,8 +427,9 @@ class TestClient:
         client_for_api_tests._do_get.return_value = deepcopy(
             self._SEARCH_LISTINGS_RESULT
         )
+        request = None if input is None else SearchListingsRequest(**input)
 
-        result = client_for_api_tests.search_listings(SearchListingsRequest(**input))
+        result = client_for_api_tests.search_listings(request)
 
         client_for_api_tests._do_get.assert_called_once_with(
             "https://api.prosper.com/listingsvc/v2/listings/",
@@ -690,6 +692,13 @@ class TestClient:
         [
             (
                 False,
+                None,
+                '{"p1": "v1", "p2": 2.0}',
+                {"p1": "v1", "p2": Decimal("2.0")},
+                False,
+            ),
+            (
+                False,
                 {"param1": "value1", "param2": 2.0},
                 '{"p1": "v1", "p2": 2.0}',
                 {"p1": "v1", "p2": Decimal("2.0")},
@@ -741,7 +750,7 @@ class TestClient:
         request_mock.assert_called_once_with(
             "GET",
             "some_url",
-            params=input,
+            params=input if input else {},
             json={},
             headers={
                 "Authorization": "bearer auth_token",
@@ -774,6 +783,13 @@ class TestClient:
             "expect_warning",
         ],
         [
+            (
+                False,
+                None,
+                '{"p1": "v1", "p2": 2.0}',
+                {"p1": "v1", "p2": Decimal("2.0")},
+                False,
+            ),
             (
                 False,
                 {"param1": "value1", "param2": 2.0},
@@ -828,7 +844,7 @@ class TestClient:
             "POST",
             "some_url",
             params={},
-            json=input,
+            json=input if input else {},
             headers={
                 "Authorization": "bearer auth_token",
                 "Accept": "application/json",
