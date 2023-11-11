@@ -4,7 +4,7 @@ build-backend = "poetry_dynamic_versioning.backend"
 
 [tool.poetry]
 name = "prosper-api"
-version = "0.4.0"
+version = "0.4.1-pre.2"
 description = "Python trading library for Prosper.com"
 authors = ["Graham Tibbitts <graham.tibbitts@gmail.com>"]
 license = "apache-2.0"
@@ -49,6 +49,7 @@ pydoclint = "^0.3.8"
 pydocstyle = "^6.3.0"
 mutmut = "^2.4.4"
 toml-sort = "^0.23.1"
+mdformat-gfm = "^0.3.5"
 
 [tool.autohooks]
 mode = "poetry"
@@ -59,6 +60,7 @@ pre-commit = [
     "hooks.pydocstyle",
     "hooks.pydoclint",
     "hooks.tomlsort",
+    "hooks.mdformat",
     "autohooks.plugins.pytest",
     # "hooks.tox", # Commenting out for now because it appears to be running only for Python 3.10
     "hooks.mutmut",
