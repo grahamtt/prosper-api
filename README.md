@@ -40,9 +40,15 @@ poetry add 'prosper-api[secure]'
 > ℹ️ The library currently only supports personal use, where the client id and credentials are from the same account. Support
 for multi-account mode is [planned](https://github.com/grahamtt/prosper-api/issues/3).
 
+### Config file location
+
+- Linux/Unix: `$HOME/.config/prosper-api/config.toml`
+- Windows: `%HOMEDIR%%HOMEPATH\AppData\Local\prosper-api\prosper-api\config.toml`
+- MacOs: `$HOME/Library/Application Support/prosper-api/config.toml`
+
 ### Default
 
-Create a file at `$HOME/.prosper-api/config.toml` with the following contents:
+Create a config file with the following contents:
 
 ```toml
 [credentials]

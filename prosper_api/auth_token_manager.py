@@ -1,7 +1,8 @@
 import json
 import logging
 from datetime import datetime, timedelta
-from os.path import isfile
+from os import makedirs
+from os.path import dirname, isfile
 
 import requests
 
@@ -110,6 +111,7 @@ class AuthTokenManager:
             datetime.now() + timedelta(seconds=self.token[_EXPIRES_IN_KEY] - 10)
         ).timestamp()
         logging.debug(f"Set expires at to {self.token[_EXPIRES_AT_KEY]}")
+        makedirs(dirname(self.token_cache_path), exist_ok=True)
         with open(self.token_cache_path, "w") as token_cache_file:
             json.dump(self.token, token_cache_file)
 

@@ -1,8 +1,9 @@
 from numbers import Number
-from os.path import expanduser
+from os.path import exists, isfile, join
 from typing import Union
 
 import dpath
+from platformdirs import user_cache_dir, user_config_dir
 from schema import Optional, Regex, Schema
 from toml import load, loads
 
@@ -16,8 +17,10 @@ _TOKEN_CACHE = "auth.token-cache"
 class Config:
     """Holds and allows access to prosper-api config values."""
 
-    _DEFAULT_CONFIG_PATH = expanduser("~/.prosper-api/config.toml")  # pragma: no mutate
-    _DEFAULT_TOKEN_CACHE_PATH = expanduser("~/.prosper-api/token-cache")
+    _DEFAULT_CONFIG_PATH = join(
+        user_config_dir("prosper-api"), "config.toml"
+    )  # pragma: no mutate
+    _DEFAULT_TOKEN_CACHE_PATH = join(user_cache_dir("prosper-api"), "token-cache")
 
     _SCHEMA = Schema(
         {
@@ -43,17 +46,24 @@ class Config:
         """Builds a config class instance.
 
         Args:
-            config_path (str): Path to the config file (defaults to
-                `~/.prosper-api/config.toml`).
+            config_path (str): Path to the config file.
             config_string (str): A TOML string representing the config; this option is
-                mainly used for unit tests.
+                mainly used for unit tests. If `config_path` exists, it will be used instead of this.
             validate (bool): Specify whether the config file will be validated against
                 the internal schema.
+
+        Raises:
+            FileNotFoundError: If the config file isn't present and a config_string isn't provided
         """
         if config_string:
             self._config_dict = loads(config_string)
 
         elif config_path:
+            if not exists(config_path) or not isfile(config_path):
+                raise FileNotFoundError(
+                    f"The config file was not found at '{config_path}'; see the documentation for setup instructions."
+                )
+
             with open(config_path) as config_file:
                 self._config_dict = load(config_file)
 

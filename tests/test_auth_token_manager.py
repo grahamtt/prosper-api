@@ -86,6 +86,10 @@ class TestAuthTokenManager:
         return mocker.patch("keyring.get_password")
 
     @pytest.fixture
+    def makedirs_mock(self, mocker):
+        return mocker.patch("prosper_api.auth_token_manager.makedirs")
+
+    @pytest.fixture
     def auth_token_manager(self, config):
         return AuthTokenManager(config)
 
@@ -207,7 +211,7 @@ class TestAuthTokenManager:
         auth_token_manager_for_gen_token._cache_token.assert_called_once()
 
     @freezegun.freeze_time("2023-10-07 12:00:01")
-    def test_cache_token(self, auth_token_manager):
+    def test_cache_token(self, auth_token_manager, makedirs_mock):
         with TemporaryDirectory() as tempdir:
             auth_token_manager.token = self.DEFAULT_TOKEN
             auth_token_manager.token_cache_path = join(
@@ -221,6 +225,7 @@ class TestAuthTokenManager:
 
             assert actual_saved_token == auth_token_manager.token
             assert actual_saved_token[_EXPIRES_AT_KEY] == 1696683590
+            makedirs_mock.assert_called_once_with(tempdir, exist_ok=True)
 
     def test_get_token_when_no_token(
         self, auth_token_manager_for_get_token: AuthTokenManager

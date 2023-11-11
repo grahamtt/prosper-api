@@ -1,4 +1,7 @@
+import tempfile
 from os.path import dirname, join
+
+import pytest
 
 from prosper_api.config import Config
 
@@ -42,6 +45,15 @@ class TestConfig:
         assert config.get("invalidSection.testString") is None
         assert config.get("testSection.invalidKey") is None
 
+    def test_bad_path_throws(self):
+        with pytest.raises(FileNotFoundError):
+            Config("THIS_IS_A_BAD_CONFIG_PATH")
+
+    def test_config_path_is_directory_throws(self):
+        with tempfile.TemporaryDirectory() as tempdir:
+            with pytest.raises(FileNotFoundError):
+                Config(tempdir)
+
     def test_valid_config_with_defaults(self):
         config = Config(
             config_path=join(dirname(__file__), "data", "TEST_CONFIG_DEFAULTS.toml")
@@ -54,7 +66,7 @@ class TestConfig:
         )
         assert config.get("credentials.username") == "test@test.test"
         assert config.get("credentials.password") == "password_value"
-        assert config.get("auth.token-cache").endswith("/.prosper-api/token-cache")
+        assert config.get("auth.token-cache").endswith("/prosper-api/token-cache")
 
     def test_valid_config_no_defaults(self):
         config = Config(
