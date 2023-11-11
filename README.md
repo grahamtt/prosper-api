@@ -3,8 +3,8 @@
 Python trading library for Prosper.com
 
 [![GitHub Workflow Status (with event)](https://img.shields.io/github/actions/workflow/status/grahamtt/prosper-api/build-and-release.yml?logo=github)](https://github.com/grahamtt/prosper-api)
-![PyPI - Version](https://img.shields.io/pypi/v/prosper-api?label=prosper-api)
-[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/prosper-api)](https://pypi.org/project/prosper-api/)
+[![PyPI - Version](https://img.shields.io/pypi/v/prosper-api?label=prosper-api)](https://pypi.org/project/prosper-api/)
+![PyPI - Python Version](https://img.shields.io/pypi/pyversions/prosper-api)
 ![PyPI - License](https://img.shields.io/pypi/l/prosper-api)
 [![Code Climate coverage](https://img.shields.io/codeclimate/coverage/grahamtt/prosper-api?logo=codeclimate)](https://codeclimate.com/github/grahamtt/prosper-api)
 [![Code Climate maintainability](https://img.shields.io/codeclimate/maintainability-percentage/grahamtt/prosper-api?logo=codeclimate)](https://codeclimate.com/github/grahamtt/prosper-api)
