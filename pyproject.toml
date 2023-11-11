@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "prosper-api"
-version = "0.2.1"
+version = "0.3.0"
 description = "Python trading library for Prosper.com"
 authors = ["Graham Tibbitts <graham.tibbitts@gmail.com>"]
 license = "apache-2.0"
