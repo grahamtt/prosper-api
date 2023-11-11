@@ -1,6 +1,10 @@
+[build-system]
+requires = ["poetry-core>=1.0.0", "poetry-dynamic-versioning>=1.0.0,<2.0.0"]
+build-backend = "poetry_dynamic_versioning.backend"
+
 [tool.poetry]
 name = "prosper-api"
-version = "0.3.1"
+version = "0.4.0"
 description = "Python trading library for Prosper.com"
 authors = ["Graham Tibbitts <graham.tibbitts@gmail.com>"]
 license = "apache-2.0"
@@ -22,9 +26,12 @@ dpath = "^2.1.6"
 schema = "^0.7.5"
 ratelimit = "^2.2.1"
 backoff = "^2.2.1"
-keyring = { version = "^24.2.0", optional = true }
+keyring = {version = "^24.2.0", optional = true}
 simplejson = "^3.19.2"
 platformdirs = "^3.11.0"
+
+[tool.poetry.extras]
+secure = ["keyring"]
 
 [tool.poetry.group.dev.dependencies]
 tox = "^4.11.3"
@@ -41,15 +48,7 @@ autohooks-plugin-ruff = "^23.6.1"
 pydoclint = "^0.3.8"
 pydocstyle = "^6.3.0"
 mutmut = "^2.4.4"
-
-
-[tool.poetry.extras]
-secure = ["keyring"]
-
-[tool.pytest.ini_options]
-addopts = "--cov=prosper_api --cov-report=term-missing --cov-report=lcov:dist/coverage.info --cov-fail-under=100"
-testpaths = "tests"
-python_functions = ["*_test", "test_*"]
+toml-sort = "^0.23.1"
 
 [tool.autohooks]
 mode = "poetry"
@@ -59,43 +58,29 @@ pre-commit = [
     "autohooks.plugins.isort",
     "hooks.pydocstyle",
     "hooks.pydoclint",
+    "hooks.tomlsort",
     "autohooks.plugins.pytest",
-#    "hooks.tox", # Commenting out for now because it appears to be running only for Python 3.10
+    # "hooks.tox", # Commenting out for now because it appears to be running only for Python 3.10
     "hooks.mutmut",
     "hooks.dynamic_versioning",
 ]
-
-[tool.autohooks.plugins.ruff]
-arguments = '--fix'
-
-[tool.autohooks.plugins.pydocstyle]
-include = 'prosper_api/*.py'
-
-[tool.autohooks.plugins.pydoclint]
-include = 'prosper_api/*.py'
-
-[tool.pydocstyle]
-inherit = false
-convention = "google"
-add_ignore = ['D100', 'D104']
-
-[tool.pydoclint]
-style="google"
-allow-init-docstring=true
-
-[tool.isort]
-profile = "black"
 
 [tool.autohooks.plugins.mutmut]
 arguments = [
     "--disable-mutation-types=string,fstring,expr_stmt,annassign,number",
 ]
 
-[tool.ruff.lint]
-extend-ignore = ["E501"]
+[tool.autohooks.plugins.pydoclint]
+include = 'prosper_api/*.py'
 
-fixable = ["ALL"]
-unfixable = []
+[tool.autohooks.plugins.pydocstyle]
+include = 'prosper_api/*.py'
+
+[tool.autohooks.plugins.ruff]
+arguments = '--fix'
+
+[tool.isort]
+profile = "black"
 
 [tool.poetry-dynamic-versioning]
 enable = true
@@ -104,6 +89,26 @@ style = "semver"
 vcs = "git"
 bump = true
 
-[build-system]
-requires = ["poetry-core>=1.0.0", "poetry-dynamic-versioning>=1.0.0,<2.0.0"]
-build-backend = "poetry_dynamic_versioning.backend"
+[tool.pydoclint]
+style = "google"
+allow-init-docstring = true
+
+[tool.pydocstyle]
+inherit = false
+convention = "google"
+add_ignore = ['D100', 'D104']
+
+[tool.pytest.ini_options]
+addopts = "--cov=prosper_api --cov-report=term-missing --cov-report=lcov:dist/coverage.info --cov-fail-under=100"
+testpaths = "tests"
+python_functions = ["*_test", "test_*"]
+
+[tool.ruff.lint]
+extend-ignore = ["E501"]
+fixable = ["ALL"]
+unfixable = []
+
+[tool.tomlsort]
+trailing_comma_inline_array = true
+spaces_indent_inline_array = 4
+sort_first = ["tool.poetry"]
