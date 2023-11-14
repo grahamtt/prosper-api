@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, datetime
 from decimal import Decimal
 from typing import List, Literal, NamedTuple, Union
 
@@ -9,7 +9,12 @@ from prosper_api.models.enums import (
     IncomeRange,
     ListingCategory,
     ListingStatus,
+    LoanDefaultReason,
+    LoanStatus,
+    NoteStatus,
     Occupation,
+    OrderSource,
+    OrderStatus,
     ProsperRating,
 )
 
@@ -40,9 +45,9 @@ class Account(NamedTuple):
     total_account_value: Union[float, Decimal]
     pending_deposit: Union[float, Decimal]
     last_deposit_amount: Union[float, Decimal]
-    last_deposit_date: str
+    last_deposit_date: Union[str, date]
     last_withdraw_amount: Union[float, Decimal]
-    last_withdraw_date: str
+    last_withdraw_date: Union[str, date]
     external_user_id: str
     prosper_account_digest: str
     invested_notes: AmountsByRating
@@ -59,7 +64,7 @@ class CreditBureauValues(NamedTuple):
     """Represents data sourced from TransUnion."""
 
     g102s_months_since_most_recent_inquiry: Union[float, Decimal]
-    credit_report_date: str
+    credit_report_date: Union[str, datetime]
     at02s_open_accounts: Union[float, Decimal]
     g041s_accounts_30_or_more_days_past_due_ever: Union[float, Decimal]
     g093s_number_of_public_records: Union[float, Decimal]
@@ -88,28 +93,28 @@ class Listing(NamedTuple):
     """
 
     listing_number: int
-    prosper_rating: str
+    prosper_rating: ProsperRating
     listing_title: str
-    listing_start_date: str
-    listing_creation_date: str
-    listing_status: int
+    listing_start_date: Union[str, datetime]
+    listing_creation_date: Union[str, datetime]
+    listing_status: ListingStatus
     listing_status_reason: str
     invested: bool
     biddable: bool
     has_mortgage: bool
     credit_bureau_values_transunion_indexed: CreditBureauValues
-    employment_status_description: str
+    employment_status_description: EmploymentStatus
     investment_type_description: str
-    last_updated_date: str
+    last_updated_date: Union[str, datetime]
     decision_bureau: str
     member_key: str
-    borrower_state: str
+    borrower_state: BorrowerState
     co_borrower_application: bool
     income_verifiable: bool
-    occupation: str = None
+    occupation: Occupation = None
     loan_number: int = None
-    listing_end_date: str = None
-    loan_origination_date: str = None
+    listing_end_date: Union[str, datetime] = None
+    loan_origination_date: Union[str, datetime] = None
     months_employed: Union[float, Decimal] = None
     investment_product_id: int = None
     listing_amount: Union[float, Decimal] = None
@@ -125,7 +130,7 @@ class Listing(NamedTuple):
     listing_monthly_payment: Union[float, Decimal] = None
     prosper_score: int = None
     listing_category_id: int = None
-    income_range: int = None
+    income_range: IncomeRange = None
     income_range_description: str = None
     stated_monthly_income: Union[float, Decimal] = None
     dti_wprosper_loan: Union[float, Decimal] = None
@@ -279,7 +284,7 @@ class Note(NamedTuple):
     note_sale_fees_paid: Union[float, Decimal]
     loan_note_id: str
     listing_number: int
-    note_status: int
+    note_status: NoteStatus
     note_status_description: str
     is_sold: bool
     is_sold_folio: bool
@@ -287,7 +292,7 @@ class Note(NamedTuple):
     amount_borrowed: Union[float, Decimal]
     borrower_rate: Union[float, Decimal]
     lender_yield: Union[float, Decimal]
-    prosper_rating: str
+    prosper_rating: ProsperRating
     term: int
     age_in_months: int
     accrued_interest: Union[float, Decimal]
@@ -297,11 +302,11 @@ class Note(NamedTuple):
     loan_extension_term: int
     is_in_bankruptcy: bool
     co_borrower_application: bool
-    origination_date: str
+    origination_date: Union[str, date]
     days_past_due: int
-    next_payment_due_date: str
-    ownership_start_date: str
-    ownership_end_date: str = None
+    next_payment_due_date: Union[str, date]
+    ownership_start_date: Union[str, date]
+    ownership_end_date: Union[str, date] = None
     note_default_reason: str = None
     note_default_reason_description: str = None
 
@@ -338,10 +343,10 @@ class Order(NamedTuple):
     """Represents an order placed on one or more listings."""
 
     order_id: str
-    order_date: str
+    order_date: Union[str, datetime]
     bid_requests: List[BidRequest]
-    order_status: str
-    source: str
+    order_status: OrderStatus
+    source: OrderSource
     order_amount: Union[float, Decimal] = None
     order_amount_placed: Union[float, Decimal] = None
     order_amount_invested: Union[float, Decimal] = None
@@ -368,10 +373,10 @@ class Loan(NamedTuple):
     loan_number: int
     amount_borrowed: Union[float, Decimal]
     borrower_rate: Union[float, Decimal]
-    prosper_rating: str
+    prosper_rating: ProsperRating
     term: int
     age_in_months: int
-    origination_date: str
+    origination_date: Union[str, date]
     days_past_due: int
     principal_balance: Union[float, Decimal]
     service_fees_paid: Union[float, Decimal]
@@ -381,10 +386,10 @@ class Loan(NamedTuple):
     late_fees_paid: Union[float, Decimal]
     collection_fees_paid: Union[float, Decimal]
     debt_sale_proceeds_received: Union[float, Decimal]
-    loan_status: int
+    loan_status: LoanStatus
     loan_status_description: str
-    loan_default_reason: int
-    next_payment_due_date: str
+    loan_default_reason: LoanDefaultReason
+    next_payment_due_date: Union[str, date]
     next_payment_due_amount: Union[float, Decimal]
     loan_default_reason_description: str = None
 

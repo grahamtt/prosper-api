@@ -9,6 +9,7 @@ class _DefaultEnum(Enum):
 class ProsperRating(_DefaultEnum):
     """Prosper ratings."""
 
+    NA = "N/A"
     NR = "NR"
     HR = "HR"
     E = "E"
@@ -72,48 +73,42 @@ class ListingStatus(_DefaultEnum):
 class Occupation(_DefaultEnum):
     """Occupations."""
 
-    ACCOUNTANT_CPA = "Accountant / CPA"
+    ACCOUNTANT_CPA = "Accountant/CPA"
     ANALYST = "Analyst"
     ARCHITECT = "Architect"
     ATTORNEY = "Attorney"
     BIOLOGIST = "Biologist"
-    BUS = "Bus"
-    DRIVER = "Driver"
-    CAR = "Car"
-    DEALER = "Dealer"
+    BUS_DRIVER = "Bus Driver"
+    CAR_DEALER = "Car Dealer"
     CHEMIST = "Chemist"
-    CIVIL = "Civil"
-    SERVICE = "Service"
+    CIVIL_SERVICE = "Civil Service"
     CLERGY = "Clergy"
     CLERICAL = "Clerical"
-    COMPUTER = "Computer"
-    PROGRAMMER = "Programmer"
+    COMPUTER_PROGRAMMER = "Computer Programmer"
     CONSTRUCTION = "Construction"
     DENTIST = "Dentist"
     DOCTOR = "Doctor"
-    ENGINEER_CHEMICAL = "Engineer – Chemical"
-    ENGINEER_ELECTRICAL = "Engineer – Electrical"
-    ENGINEER_MECHANICAL = "Engineer – Mechanical"
+    ENGINEER_CHEMICAL = "Engineer - Chemical"
+    ENGINEER_ELECTRICAL = "Engineer - Electrical"
+    ENGINEER_MECHANICAL = "Engineer - Mechanical"
     EXECUTIVE = "Executive"
     FIREMAN = "Fireman"
-    FLIGHT = "Flight"
-    ATTENDANT = "Attendant"
+    FLIGHT_ATTENDANT = "Flight Attendant"
     FOOD_SERVICE = "Food Service"
     FOOD_SERVICE_MANAGEMENT = "Food Service Management"
     HOMEMAKER = "Homemaker"
     JUDGE = "Judge"
     LABORER = "Laborer"
     LANDSCAPING = "Landscaping"
-    MEDICAL = "Medical"
-    TECHNICIAN = "Technician"
+    MEDICAL_TECHNICIAN = "Medical Technician"
     MILITARY_ENLISTED = "Military Enlisted"
     MILITARY_OFFICER = "Military Officer"
     NURSE_PLN = "Nurse (LPN)"
     NURSE_RN = "Nurse (RN)"
-    NURSES_AIDE = "Nurse’s Aide"
+    NURSES_AIDE = "Nurse's Aide"
     PHARMACIST = "Pharmacist"
-    PILOT = "Pilot Private / Commercial"
-    POLICE_CORRECTION_OFFICER = "Police Officer / Correction Officer"
+    PILOT = "Pilot - Private/Commercial"
+    POLICE_CORRECTION_OFFICER = "Police Officer/Correction Officer"
     POSTAL_SERVICE = "Postal Service"
     PRINCIPAL = "Principal"
     PROFESSIONAL = "Professional"
@@ -121,33 +116,29 @@ class Occupation(_DefaultEnum):
     PSYCHOLOGIST = "Psychologist"
     REALTOR = "Realtor"
     RELIGIOUS = "Religious"
-    RETAIL = "Retail"
-    MANAGEMENT = "Management"
-    SALES = "Sales"
-    COMMISSION = "Commission"
-    SALES_RETAIL = "Sales Retail"
+    RETAIL_MANAGEMENT = "Retail Management"
+    SALES_COMMISSION = "Sales - Commission"
+    SALES_RETAIL = "Sales - Retail"
     SCIENTIST = "Scientist"
-    ADMINISTRATIVE = "Administrative"
-    ASSISTANT = "Assistant"
-    SKILLED = "Skilled"
-    LABOR = "Labor"
-    SOCIAL = "Social"
-    WORKER = "Worker"
-    STUDENT_COLLEGE_FRESHMAN = "Student – College Freshman"
-    STUDENT_COLLEGE_SOPHOMORE = "Student – College Sophomore"
-    STUDENT_COLLEGE_JUNIOR = "Student – College Junior"
-    STUDENT_COLLEGE_SENIOR = "Student – College Senior"
-    STUDENT_COLLEGE_GRADUATE_STUDENT = "Student – College Graduate Student"
-    STUDENT_COMMUNITY_COLLEGE = "Student – Community College"
-    STUDENT_TECHNICAL_SCHOOL = "Student – Technical School"
+    ADMINISTRATIVE_ASSISTANT = "Administrative Assistant"
+    SELF_EMPLOYED = "Self Employed"
+    SKILLED_LABOR = "Skilled Labor"
+    SOCIAL_WORKER = "Social Worker"
+    STUDENT_COLLEGE_FRESHMAN = "Student - College Freshman"
+    STUDENT_COLLEGE_SOPHOMORE = "Student - College Sophomore"
+    STUDENT_COLLEGE_JUNIOR = "Student - College Junior"
+    STUDENT_COLLEGE_SENIOR = "Student - College Senior"
+    STUDENT_COLLEGE_GRADUATE_STUDENT = "Student - College Graduate Student"
+    STUDENT_COMMUNITY_COLLEGE = "Student - Community College"
+    STUDENT_TECHNICAL_SCHOOL = "Student - Technical School"
     TEACHER = "Teacher"
     TEACHERS_AIDE = "Teacher’s Aide"
-    TRADESMAN_CARPENTER = "Tradesman – Carpenter"
-    TRADESMAN_ELECTRICIAN = "Tradesman – Electrician"
-    TRADESMAN_MECHANIC = "Tradesman – Mechanic"
-    TRADESMAN_PLUMBER = "Tradesman – Plumber"
+    TRADESMAN_CARPENTER = "Tradesman - Carpenter"
+    TRADESMAN_ELECTRICIAN = "Tradesman - Electrician"
+    TRADESMAN_MECHANIC = "Tradesman - Mechanic"
+    TRADESMAN_PLUMBER = "Tradesman - Plumber"
     TRUCK_DRIVER = "Truck Driver"
-    WAITER_WAITRESS = "Waiter / Waitress"
+    WAITER_WAITRESS = "Waiter/Waitress"
     OTHER = "Other"
     INVESTOR = "Investor"
 
@@ -158,6 +149,8 @@ class EmploymentStatus(_DefaultEnum):
     EMPLOYED = "Employed"
     SELF_EMPLOYED = "Self-employed"
     RETIRED = "Retired"
+    NOT_EMPLOYED = "Not employed"
+    OTHER = "Other"
 
 
 class FICOScore(_DefaultEnum):
@@ -232,3 +225,55 @@ class BorrowerState(_DefaultEnum):
     WISCONSIN = "WI"
     WEST_VIRGINIA = "WV"
     WYOMING = "WY"
+
+
+class LoanStatus(_DefaultEnum):
+    """Status of loan."""
+
+    ORIGINATION_DELAYED = 0
+    CURRENT = 1
+    CHARGED_OFF = 2
+    DEFAULTED = 3
+    COMPLETED = 4
+    FINAL_PAYMENT_IN_PROGRESS = 5
+    CANCELLED = 6
+
+
+class LoanDefaultReason(_DefaultEnum):
+    """Reason for loan default."""
+
+    NOT_IN_DEFAULT = 0
+    DELINQUENCY = 1
+    BANKRUPTCY = 2
+    DECEASED = 3
+    REPURCHASED = 4
+    PAID_IN_FULL = 5
+    SETTLED_IN_FULL = 6
+    SOLD = 7
+
+
+class NoteStatus(_DefaultEnum):
+    """Status of note."""
+
+    ORIGINATION_DELAYED = 0
+    CURRENT = 1
+    CHARGED_OFF = 2
+    DEFAULTED = 3
+    COMPLETED = 4
+    FINAL_PAYMENT_IN_PROGRESS = 5
+    CANCELLED = 6
+
+
+class OrderStatus(_DefaultEnum):
+    """Status of order."""
+
+    IN_PROGRESS = "IN_PROGRESS"
+    COMPLETED = "COMPLETED"
+
+
+class OrderSource(_DefaultEnum):
+    """Source of order."""
+
+    API = "API"
+    AI = "AI"
+    MI = "MI"

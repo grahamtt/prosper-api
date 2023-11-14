@@ -8,22 +8,17 @@ import simplejson as json
 from backoff import expo, on_exception
 from ratelimit import RateLimitException, limits
 
+from prosper_api import serde
 from prosper_api.auth_token_manager import AuthTokenManager
 from prosper_api.config import Config
 from prosper_api.models import (
     Account,
-    AmountsByRating,
-    BidRequest,
-    CreditBureauValues,
-    Listing,
     ListLoansRequest,
     ListLoansResponse,
     ListNotesRequest,
     ListNotesResponse,
     ListOrdersRequest,
     ListOrdersResponse,
-    Loan,
-    Note,
     Order,
     SearchListingsRequest,
     SearchListingsResponse,
@@ -58,18 +53,6 @@ def _date_val(val: Union[str, date]):
         return val.isoformat()
 
     raise ValueError(f"Unexpected type {type(val)}")
-
-
-def _build_listing(listing_dict) -> Listing:
-    listing_dict["credit_bureau_values_transunion_indexed"] = CreditBureauValues(
-        **listing_dict["credit_bureau_values_transunion_indexed"]
-    )
-    return Listing(**listing_dict)
-
-
-def _build_order(order_dict):
-    order_dict["bid_requests"] = [BidRequest(**b) for b in order_dict["bid_requests"]]
-    return Order(**order_dict)
 
 
 class Client:
@@ -139,6 +122,7 @@ class Client:
         if self.return_floats:
             self._warn_about_floats()
 
+        self._config = config
         self._auth_token_manager = auth_token_manager
 
     def get_account_info(self) -> Account:
@@ -154,9 +138,7 @@ class Client:
             self._ACCOUNT_API_URL,
             {},
         )
-        resp["invested_notes"] = AmountsByRating(**resp["invested_notes"])
-        resp["pending_bids"] = AmountsByRating(**resp["pending_bids"])
-        return Account(**resp)
+        return self._parse_json(resp, Account)
 
     def search_listings(
         self, request: Union[SearchListingsRequest, None]
@@ -276,8 +258,7 @@ class Client:
                 "combined_stated_monthly_income_max": request.combined_stated_monthly_income_max,
             },
         )
-        resp["result"] = [_build_listing(r) for r in resp["result"]]
-        return SearchListingsResponse(**resp)
+        return self._parse_json(resp, SearchListingsResponse)
 
     def list_notes(self, request: ListNotesRequest = None) -> ListNotesResponse:
         """List notes in the account.
@@ -302,8 +283,7 @@ class Client:
                 "limit": request.limit,
             },
         )
-        resp["result"] = [Note(**r) for r in resp["result"]]
-        return ListNotesResponse(**resp)
+        return self._parse_json(resp, ListNotesResponse)
 
     def order(
         self,
@@ -326,7 +306,7 @@ class Client:
             self._ORDERS_API_URL,
             {"bid_requests": [{"listing_id": listing_id, "bid_amount": amount}]},
         )
-        return _build_order(resp)
+        return self._parse_json(resp, Order)
 
     def list_orders(self, request: ListOrdersRequest = None) -> ListOrdersResponse:
         """Lists orders in the account.
@@ -351,8 +331,7 @@ class Client:
                 "limit": request.limit,
             },
         )
-        resp["result"] = [_build_order(r) for r in resp["result"]]
-        return ListOrdersResponse(**resp)
+        return self._parse_json(resp, ListOrdersResponse)
 
     def list_loans(self, request: ListLoansRequest = None) -> ListLoansResponse:
         """Lists loans associated with the account.
@@ -377,8 +356,7 @@ class Client:
                 "limit": request.limit,
             },
         )
-        resp["result"] = [Loan(**r) for r in resp["result"]]
-        return ListLoansResponse(**resp)
+        return self._parse_json(resp, ListLoansResponse)
 
     def _do_get(self, url, query_params=None):
         if query_params is None:
@@ -417,8 +395,16 @@ class Client:
             },
         )
         response.raise_for_status()
-        text = response.text
-        return json.loads(text, use_decimal=not self.return_floats)
+        return response.text
+
+    def _parse_json(self, text, type_def: type) -> object:
+        return json.loads(
+            text,
+            use_decimal=not self.return_floats,
+            object_hook=serde.get_type_introspecting_object_hook(
+                type_def, self._config
+            ),
+        )
 
     def _check_for_floats(self, values: dict):
         for val in values.values():
