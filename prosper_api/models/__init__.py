@@ -15,7 +15,6 @@ from prosper_api.models.enums import (
     ListingStatus,
     LoanDefaultReason,
     LoanStatus,
-    NoteStatus,
     Occupation,
     OrderSource,
     OrderStatus,
@@ -288,7 +287,7 @@ class Note(NamedTuple):
     note_sale_fees_paid: Union[float, Decimal]
     loan_note_id: str
     listing_number: int
-    note_status: NoteStatus
+    note_status: LoanStatus
     note_status_description: str
     is_sold: bool
     is_sold_folio: bool

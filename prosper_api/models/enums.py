@@ -266,18 +266,6 @@ class LoanDefaultReason(_DefaultEnum):
     SOLD = 7
 
 
-class NoteStatus(_DefaultEnum):
-    """Status of note."""
-
-    ORIGINATION_DELAYED = 0
-    CURRENT = 1
-    CHARGED_OFF = 2
-    DEFAULTED = 3
-    COMPLETED = 4
-    FINAL_PAYMENT_IN_PROGRESS = 5
-    CANCELLED = 6
-
-
 class OrderStatus(_DefaultEnum):
     """Status of order."""
 
