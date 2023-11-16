@@ -32,6 +32,8 @@ class AuthTokenManager:
     attempts to refresh the auth token using the refresh token; if that fails, the
     full auth is re-executed.
 
+    See Also:
+        https://developers.prosper.com/docs/authenticating-with-oauth-2-0/password-flow/
     """
 
     def __init__(self, config: Config):
