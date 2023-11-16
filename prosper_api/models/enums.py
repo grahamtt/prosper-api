@@ -10,7 +10,6 @@ class ProsperRating(_DefaultEnum):
     """Prosper ratings."""
 
     NA = "N/A"
-    NR = "NR"
     HR = "HR"
     E = "E"
     D = "D"
