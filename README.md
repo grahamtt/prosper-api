@@ -157,6 +157,10 @@ while True:
         break
 ```
 
+## Feedback
+
+This project uses [GitHub issues](https://github.com/grahamtt/prosper-api/issues) for feature requests and bug reports.
+
 ## Contributing
 
 This project uses [Poetry](https://python-poetry.org/docs/) to manage dependencies and building. Follow the instructions
