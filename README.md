@@ -78,8 +78,8 @@ For each command, you will be prompted to enter the corresponding secret. For 'C
 'USERNAME' enter the corresponding password.
 
 ```commandline
-keyring set prosper-api {CLIENT_ID}
-keyring set prosper-api {USERNAME}
+keyring set prosper-api '{CLIENT_ID}'
+keyring set prosper-api '{USERNAME}'
 ```
 
 ## Use
@@ -91,7 +91,8 @@ See [a sample bot](https://github.com/grahamtt/prosper-auto-invest) for concrete
 The following will get the details of your account, including available cash and investment allocations.
 
 ```python
-from prosper_api.client import Client, Account
+from prosper_api.client import Client
+from prosper_api.models import Account
 
 client = Client()
 account: Account = client.get_account_info()
@@ -102,7 +103,8 @@ account: Account = client.get_account_info()
 The following will get all the current listings you haven't invested in.
 
 ```python
-from prosper_api.client import Client, Listing, SearchListingsRequest, SearchListingsResponse
+from prosper_api.client import Client
+from prosper_api.models import Listing, SearchListingsRequest, SearchListingsResponse
 from typing import List
 
 PAGE_SIZE=25
@@ -125,7 +127,8 @@ while True:
 The following will place an order, given a listing id.
 
 ```python
-from prosper_api.client import Client, Order
+from prosper_api.client import Client
+from prosper_api.models import Order
 
 client = Client()
 listing_id: int = 12341234
@@ -138,7 +141,8 @@ order_result: Order = client.order(listing_id, order_dollar_amount)
 The following will list all the notes in your account. The same pattern can be used to list orders, loans, and payments.
 
 ```python
-from prosper_api.client import Client, Note, ListNotesRequest, ListNotesResponse
+from prosper_api.client import Client
+from prosper_api.models import Note, ListNotesRequest, ListNotesResponse
 from typing import List
 
 client = Client()
