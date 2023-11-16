@@ -28,3 +28,9 @@ class TestSerde:
         object_hook({"untyped": 4})
 
         # TODO: Add assertions
+
+    def test_get_type_introspecting_object_hook_no_matching_type(self, config_mock):
+        object_hook = get_type_introspecting_object_hook(TestSerde, config_mock)
+        result = object_hook({"unrecognized": 1234})
+
+        assert result == {"unrecognized": 1234}

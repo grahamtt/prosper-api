@@ -36,6 +36,9 @@ def get_type_introspecting_object_hook(
     def object_hook(obj: dict) -> type_def:
         new_obj = {}
         inner_model = _get_matching_model(obj)
+        if inner_model is None:
+            return obj
+
         inner_annotations = inner_model.__annotations__ if inner_model else {}
         for key, val in obj.items():
             val_type = inner_annotations[key] if key in inner_annotations else None
