@@ -1,3 +1,4 @@
+import builtins
 import logging
 import sys
 
@@ -11,8 +12,6 @@ def configure_logging(caplog):
 
 @pytest.fixture
 def mock_import_keyring(monkeypatch):
-    import builtins
-
     real_import = builtins.__import__
 
     def new_import(name, _globals, _locals, fromlist, level):

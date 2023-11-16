@@ -51,7 +51,7 @@ class AuthTokenManager:
 
         if not self.client_secret:
             try:
-                import keyring
+                import keyring  # noqa: autoimport
 
                 self.client_secret = keyring.get_password("prosper-api", self.client_id)
             except ImportError:
@@ -62,7 +62,7 @@ class AuthTokenManager:
 
         if not self.password:
             try:
-                import keyring
+                import keyring  # noqa: autoimport
 
                 self.password = keyring.get_password("prosper-api", self.username)
             except ImportError:

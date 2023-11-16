@@ -70,6 +70,20 @@ class ListingStatus(_DefaultEnum):
     PENDING_REVIEW = 7
 
 
+class InvestmentType(_DefaultEnum):
+    """Investment type of the listing."""
+
+    WHOLE = 0
+    FRACTIONAL = 1
+
+
+class InvestmentProduct(_DefaultEnum):
+    """Investment product of the listing."""
+
+    STANDARD = 0
+    SERIES_1 = 1
+
+
 class Occupation(_DefaultEnum):
     """Occupations."""
 
@@ -277,3 +291,30 @@ class OrderSource(_DefaultEnum):
     API = "API"
     AI = "AI"
     MI = "MI"
+
+
+class BidStatus(_DefaultEnum):
+    """Status of bid."""
+
+    PENDING = "PENDING"
+    INVESTED = "INVESTED"
+    EXPIRED = "EXPIRED"
+
+
+class BidResult(_DefaultEnum):
+    """Result of bid."""
+
+    NONE = "NONE"
+    AMOUNT_BID_TOO_HIGH = "AMOUNT_BID_TOO_HIGH"
+    AMOUNT_BID_TOO_LOW = "AMOUNT_BID_TOO_LOW"
+    BID_FAILED = "BID_FAILED"
+    BID_SUCCEEDED = "BID_SUCCEEDED"
+    CANNOT_BID_ON_FRACTIONAL_LOANS = "CANNOT_BID_ON_FRACTIONAL_LOANS"
+    CANNOT_BID_ON_OWN_LISTING = "CANNOT_BID_ON_OWN_LISTING"
+    INSUFFICIENT_FUNDS = "INSUFFICIENT_FUNDS"
+    INTERNAL_ERROR = "INTERNAL_ERROR"
+    INVESTMENT_ORDER_ALREADY_PROCESSED = "INVESTMENT_ORDER_ALREADY_PROCESSED"
+    LENDER_NOT_ELIGIBLE_TO_BID = "LENDER_NOT_ELIGIBLE_TO_BID"
+    LISTING_NOT_BIDDABLE = "LISTING_NOT_BIDDABLE"
+    SUITABILITY_REQUIREMENTS_NOT_MET = "SUITABILITY_REQUIREMENTS_NOT_MET"
+    PARTIAL_BID_SUCCEEDED = "PARTIAL_BID_SUCCEEDED"

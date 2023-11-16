@@ -3,10 +3,14 @@ from decimal import Decimal
 from typing import List, Literal, NamedTuple, Union
 
 from prosper_api.models.enums import (
+    BidResult,
+    BidStatus,
     BorrowerState,
     EmploymentStatus,
     FICOScore,
     IncomeRange,
+    InvestmentProduct,
+    InvestmentType,
     ListingCategory,
     ListingStatus,
     LoanDefaultReason,
@@ -82,7 +86,7 @@ class CreditBureauValues(NamedTuple):
     re101s_revolving_balance: Union[float, Decimal]
     bc34s_bankcard_utilization: Union[float, Decimal]
     at01s_credit_lines: Union[float, Decimal]
-    fico_score: str
+    fico_score: FICOScore
 
 
 class Listing(NamedTuple):
@@ -116,7 +120,7 @@ class Listing(NamedTuple):
     listing_end_date: Union[str, datetime] = None
     loan_origination_date: Union[str, datetime] = None
     months_employed: Union[float, Decimal] = None
-    investment_product_id: int = None
+    investment_product_id: InvestmentProduct = None
     listing_amount: Union[float, Decimal] = None
     amount_funded: Union[float, Decimal] = None
     amount_remaining: Union[float, Decimal] = None
@@ -137,7 +141,7 @@ class Listing(NamedTuple):
     lender_indicator: int = None
     channel_code: int = None
     amount_participation: Union[float, Decimal] = None
-    investment_typeid: int = None
+    investment_typeid: InvestmentType = None
     estimated_monthly_housing_expense: Union[float, Decimal] = None
     historical_return: Union[float, Decimal] = None
     historical_return_10th_pctl: Union[float, Decimal] = None
@@ -333,10 +337,10 @@ class BidRequest(NamedTuple):
     """
 
     listing_id: int
-    bid_status: str
+    bid_status: BidStatus
     bid_amount: Union[float, Decimal]
     bid_amount_placed: Union[float, Decimal] = None
-    bid_result: str = None
+    bid_result: BidResult = None
 
 
 class Order(NamedTuple):
