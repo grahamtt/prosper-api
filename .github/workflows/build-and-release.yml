@@ -12,7 +12,7 @@ jobs:
       fail-fast: false
       matrix:
         python-version: [
-#          "3.8", # Some dev dependencies aren't supported
+          "3.8",
           "3.9",
           "3.10",
           "3.11",
@@ -35,7 +35,7 @@ jobs:
         with:
           poetry-version: ${{ matrix.poetry-version }}
       - name: Install dependencies
-        run: poetry install --all-extras
+        run: poetry install --without dev --with test --all-extras
       - name: Run tests
         run: poetry run pytest
 
@@ -57,7 +57,7 @@ jobs:
       - name: Install dependencies
         run: | 
           poetry self add "poetry-dynamic-versioning[plugin]"
-          poetry install --all-extras
+          poetry install --without dev --with test --all-extras
       - name: Test & publish code coverage
         uses: paambaati/codeclimate-action@v5.0.0
         env:
@@ -75,4 +75,3 @@ jobs:
 #            dist/*.tar.gz
       - name: Build and publish package
         run: poetry publish --build --username __token__ --password ${{ secrets.PYPI_API_TOKEN }}
-        continue-on-error: true
