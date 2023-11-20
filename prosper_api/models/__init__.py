@@ -48,9 +48,9 @@ class Account(NamedTuple):
     total_account_value: Union[float, Decimal]
     pending_deposit: Union[float, Decimal]
     last_deposit_amount: Union[float, Decimal]
-    last_deposit_date: Union[str, date]
+    last_deposit_date: Union[str, datetime]
     last_withdraw_amount: Union[float, Decimal]
-    last_withdraw_date: Union[str, date]
+    last_withdraw_date: Union[str, datetime]
     external_user_id: str
     prosper_account_digest: str
     invested_notes: AmountsByRating
