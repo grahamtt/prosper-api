@@ -4,7 +4,7 @@ build-backend = "poetry_dynamic_versioning.backend"
 
 [tool.poetry]
 name = "prosper-api"
-version = "0.5.8"
+version = "0.5.9-pre.1"
 description = "Python trading library for Prosper.com"
 authors = ["Graham Tibbitts <graham.tibbitts@gmail.com>"]
 license = "apache-2.0"
@@ -19,7 +19,7 @@ classifiers = [
 repository = "https://github.com/grahamtt/prosper-api"
 
 [tool.poetry.dependencies]
-python = ">3.9,<4.0"
+python = ">=3.9,<4.0"
 requests = "^2.31.0"
 toml = "^0.10.2"
 dpath = "^2.1.6"
@@ -34,7 +34,7 @@ platformdirs = "^3.11.0"
 secure = ["keyring"]
 
 [tool.poetry.group.dev.dependencies]
-prosper-shared = "^0.1.10"
+prosper-shared = "^0.1.11"
 
 [tool.poetry.group.test.dependencies]
 pytest = "^7.4.2"
