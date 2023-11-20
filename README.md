@@ -157,6 +157,19 @@ while True:
         break
 ```
 
+## Configuration
+
+The following is a full list of the available configuration values:
+
+- `auth.token-cache` (str): The path where the auth token cache should be stored. Defaults to `os.path.join(platformdirs.user_cache_dir("prosper-api"), "token-cache")`
+- `client.return-floats` (bool): Indicates whether float values should be returned instead of Decimals (not recommended). Defaults to `False`.
+- `client.return-strings-not-dates` (bool): Indicates whether string values should be returned instead of `date` and `datetime` objests. Defaults to `False`.
+- `client.return-strings-not-enums` (bool): Indicates whether string values should be returned instead of the corresponding enum values. Defaults to `False`.
+- `credentials.client-id` (str): The Prosper client id to use for authentication.
+- `credentials.client-secret` (str): The Prosper client secret corresponding to the client id.
+- `credentials.username` (str): The Prosper username to use for authentication.
+- `credentials.password` (str): The password corresponding to the username.
+
 ## Feedback
 
 This project uses [GitHub issues](https://github.com/grahamtt/prosper-api/issues) for feature requests and bug reports.
