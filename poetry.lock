@@ -606,6 +606,20 @@ testing = ["covdefaults (>=2.3)", "coverage (>=7.3.2)", "diff-cover (>=8)", "pyt
 typing = ["typing-extensions (>=4.8)"]
 
 [[package]]
+name = "freezegun"
+version = "1.2.2"
+description = "Let your Python tests travel through time"
+optional = false
+python-versions = ">=3.6"
+files = [
+    {file = "freezegun-1.2.2-py3-none-any.whl", hash = "sha256:ea1b963b993cb9ea195adbd893a48d573fda951b0da64f60883d7e988b606c9f"},
+    {file = "freezegun-1.2.2.tar.gz", hash = "sha256:cd22d1ba06941384410cd967d8a99d5ae2442f57dfafeff2fda5de8dc5c05446"},
+]
+
+[package.dependencies]
+python-dateutil = ">=2.7"
+
+[[package]]
 name = "glob2"
 version = "0.7"
 description = "Version of the glob module that can capture patterns and supports recursive wildcards"
@@ -1964,4 +1978,4 @@ secure = ["keyring"]
 [metadata]
 lock-version = "2.0"
 python-versions = ">3.9,<4.0"
-content-hash = "24c45650dd6cb18d3bea00964eb2607a28327663bf9aa8cf73be2b11df5143a3"
+content-hash = "5105594cf13a017afe195440ce7e2ad08aca1c0217405f0889ceae2efab3d844"

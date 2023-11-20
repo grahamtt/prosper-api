@@ -4,7 +4,7 @@ build-backend = "poetry_dynamic_versioning.backend"
 
 [tool.poetry]
 name = "prosper-api"
-version = "0.5.5"
+version = "0.5.6"
 description = "Python trading library for Prosper.com"
 authors = ["Graham Tibbitts <graham.tibbitts@gmail.com>"]
 license = "apache-2.0"
@@ -41,6 +41,7 @@ pytest = "^7.4.2"
 pytest-cov = "^4.1.0"
 pytest-mock = "^3.11.1"
 pytest-sugar = "^0.9.7"
+freezegun = "^1.2.2"
 
 [tool.autohooks]
 mode = "poetry"
