@@ -145,7 +145,7 @@ class Occupation(_DefaultEnum):
     STUDENT_COMMUNITY_COLLEGE = "Student - Community College"
     STUDENT_TECHNICAL_SCHOOL = "Student - Technical School"
     TEACHER = "Teacher"
-    TEACHERS_AIDE = "Teacher’s Aide"
+    TEACHERS_AIDE = "Teacher's Aide"
     TRADESMAN_CARPENTER = "Tradesman - Carpenter"
     TRADESMAN_ELECTRICIAN = "Tradesman - Electrician"
     TRADESMAN_MECHANIC = "Tradesman - Mechanic"
