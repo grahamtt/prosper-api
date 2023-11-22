@@ -65,13 +65,13 @@ jobs:
         with:
           coverageCommand: poetry run pytest
           coverageLocations: ${{github.workspace}}/dist/coverage.info:lcov
-#      - name: Create Github release
-#        uses: "marvinpinto/action-automatic-releases@latest"
-#        with:
-#          repo_token: "${{ secrets.GITHUB_TOKEN }}"
-#          prerelease: false
-#          files: |
-#            dist/*.whl
-#            dist/*.tar.gz
+      - name: Create Github release
+        uses: "marvinpinto/action-automatic-releases@latest"
+        with:
+          repo_token: ${{ secrets.RELEASE_TOKEN }}
+          prerelease: false
+          files: |
+            dist/*.whl
+            dist/*.tar.gz
       - name: Build and publish package
         run: poetry publish --build --username __token__ --password ${{ secrets.PYPI_API_TOKEN }}
