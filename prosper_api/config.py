@@ -1,4 +1,5 @@
 from copy import deepcopy
+from decimal import Decimal
 from numbers import Number
 from os.path import exists, isfile, join
 from typing import Union
@@ -96,6 +97,14 @@ class Config:
             return default
 
         return str(value)
+
+    def get_as_decimal(self, key, default: Union[Decimal, None] = None):
+        """Get the specified value interpreted as a decimal."""
+        value = self.get(key)
+        if value is None:
+            return default
+
+        return Decimal(value)
 
     def get_as_bool(self, key: str, default: bool = False):
         """Get the specified value interpreted as a boolean.

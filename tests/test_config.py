@@ -1,4 +1,5 @@
 import tempfile
+from decimal import Decimal
 from os.path import dirname, join
 
 import pytest
@@ -16,6 +17,8 @@ testBoolStringFalse="N"
 testBoolNumberTrue=1
 testBoolNumberFalse=0
 testBoolOther={}
+testDecimalString="123.456"
+testDecimalFloat=123.456
 """
 
 
@@ -38,6 +41,20 @@ class TestConfig:
         assert config.get_as_bool("testSection.testBoolOther") is False
         assert config.get_as_bool("testSection.testBoolNotFound") is False
         assert config.get_as_bool("testSection.testBoolNotFound", True) is True
+
+    def test_get_as_decimal(self):
+        config = Config(config_string=TEST_CONFIG, validate=False)
+
+        assert config.get_as_decimal("testSection.testDecimalString") == Decimal(
+            "123.456"
+        )
+        assert config.get_as_decimal("testSection.testDecimalFloat") == pytest.approx(
+            Decimal("123.456")
+        )
+        assert config.get_as_decimal("testSection.testDecimalNotFound") is None
+        assert config.get_as_decimal(
+            "testSection.testDecimalNotFound", Decimal("0")
+        ) == Decimal("0")
 
     def test_get_invalid_key(self):
         config = Config(config_string=TEST_CONFIG, validate=False)
