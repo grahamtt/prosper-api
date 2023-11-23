@@ -2,7 +2,6 @@ import json
 from datetime import datetime
 from os.path import join
 from tempfile import TemporaryDirectory
-from unittest.mock import call
 
 import freezegun
 import pytest
@@ -104,62 +103,35 @@ class TestAuthTokenManager:
         mocker.patch.object(auth_token_manager, "_cache_token", mocker.MagicMock())
         return auth_token_manager
 
-    def test_init_when_creds_not_present_and_keyring_not_available(
-        self, mock_import_keyring, config_with_no_creds
-    ):
-        with pytest.raises(AttributeError):
-            AuthTokenManager(config_with_no_creds)
+    def test_init_when_creds_not_present(self, config_with_no_creds, caplog):
+        AuthTokenManager(config_with_no_creds)
 
-    def test_init_when_client_secret_not_present_and_keyring_not_available(
-        self, mock_import_keyring, config_with_no_creds: Config
-    ):
+        assert len(caplog.messages) == 0
+
+    def test_init_when_password_present(self, config_with_no_creds: Config, caplog):
         config_with_no_creds._config_dict["credentials"]["password"] = "password_value"
-        with pytest.raises(AttributeError):
-            AuthTokenManager(config_with_no_creds)
+        AuthTokenManager(config_with_no_creds)
 
-    def test_init_when_password_not_present_and_keyring_not_available(
-        self, mock_import_keyring, config_with_no_creds
+        assert caplog.messages[-1].startswith("Providing secrets via config files")
+
+    def test_init_when_client_secret_present(
+        self, config_with_no_creds: Config, caplog
     ):
         config_with_no_creds._config_dict["credentials"][
             "client-secret"
         ] = "client_secret_value"
-        with pytest.raises(AttributeError):
-            AuthTokenManager(config_with_no_creds)
+        AuthTokenManager(config_with_no_creds)
 
-    def test_init_when_client_id_in_keyring_but_not_password(
-        self, config_with_no_creds, keyring_get_password_mock
-    ):
-        def get_password_side_effect(service, username):
-            if username == "0123456789abcdef0123456789abcdef":
-                return "client_id_12341234"
-            if username == "test@test.test":
-                return None
+        assert caplog.messages[-1].startswith("Providing secrets via config files")
 
-        keyring_get_password_mock.side_effect = get_password_side_effect
+    def test_init_when_both_secrets_present(self, config_with_no_creds: Config, caplog):
+        config_with_no_creds._config_dict["credentials"]["password"] = "password_value"
+        config_with_no_creds._config_dict["credentials"][
+            "client-secret"
+        ] = "client_secret_value"
+        AuthTokenManager(config_with_no_creds)
 
-        with pytest.raises(AttributeError):
-            AuthTokenManager(config_with_no_creds)
-
-        keyring_get_password_mock.assert_has_calls(
-            [
-                call("prosper-api", "0123456789abcdef0123456789abcdef"),
-                call("prosper-api", "test@test.test"),
-            ]
-        )
-
-    def test_init_when_password_in_keyring_but_not_client_id(
-        self, config_with_no_creds, keyring_get_password_mock
-    ):
-        def get_password_side_effect(service, username):
-            if username == "0123456789abcdef0123456789abcdef":
-                return None
-            if username == "test@test.test":
-                return "password_value"
-
-        keyring_get_password_mock.side_effect = get_password_side_effect
-
-        with pytest.raises(AttributeError):
-            AuthTokenManager(config_with_no_creds)
+        assert caplog.messages[-1].startswith("Providing secrets via config files")
 
     def test_initial_auth(
         self, auth_token_manager_for_gen_token: AuthTokenManager, request_mock
@@ -183,6 +155,43 @@ class TestAuthTokenManager:
 
         assert auth_token_manager_for_gen_token.token == self.DEFAULT_TOKEN
         auth_token_manager_for_gen_token._cache_token.assert_called_once()
+
+    def test_initial_auth_when_no_client_id_present(
+        self, mocker, config_with_no_creds, request_mock, keyring_get_password_mock
+    ):
+        auth_token_manager = AuthTokenManager(config_with_no_creds)
+        mocker.patch.object(auth_token_manager, "_cache_token", mocker.MagicMock())
+
+        fetch_secret_mock = mocker.MagicMock()
+        mocker.patch.object(auth_token_manager, "_fetch_secret", fetch_secret_mock)
+
+        def get_password_side_effect(username):
+            if username == "0123456789abcdef0123456789abcdef":
+                return "fedcba0987654321fedcba0987654321"
+            if username == "test@test.test":
+                return "password_value"
+
+        fetch_secret_mock.side_effect = get_password_side_effect
+
+        request_mock.return_value.json.return_value = self.DEFAULT_TOKEN
+
+        auth_token_manager._initial_auth()
+
+        request_mock.assert_called_once_with(
+            "POST",
+            "https://api.prosper.com/v1/security/oauth/token",
+            data={
+                "grant_type": "password",
+                "client_id": "0123456789abcdef0123456789abcdef",
+                "client_secret": "fedcba0987654321fedcba0987654321",
+                "username": "test@test.test",
+                "password": "password_value",
+            },
+            headers={"accept": "application/json"},
+        )
+
+        assert auth_token_manager.token == self.DEFAULT_TOKEN
+        auth_token_manager._cache_token.assert_called_once()
 
     def test_refresh_auth(
         self, auth_token_manager_for_gen_token: AuthTokenManager, request_mock
@@ -308,3 +317,10 @@ class TestAuthTokenManager:
 
         assert auth_token_manager.token == self.DEFAULT_TOKEN
         assert "expires_at" in auth_token_manager.token
+
+    def test_fetch_secret(self, keyring_get_password_mock, config_with_no_creds):
+        auth_token_manager = AuthTokenManager(config_with_no_creds)
+
+        auth_token_manager._fetch_secret("ID")
+
+        keyring_get_password_mock.assert_called_once_with("prosper-api", "ID")
