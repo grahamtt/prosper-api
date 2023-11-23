@@ -1,3 +1,4 @@
+from copy import deepcopy
 from numbers import Number
 from os.path import exists, isfile, join
 from typing import Union
@@ -41,6 +42,7 @@ class Config:
         self,
         config_path: str = _DEFAULT_CONFIG_PATH,
         config_string: str = None,
+        config_dict: dict = None,
         validate: bool = True,
     ):
         """Builds a config class instance.
@@ -48,14 +50,19 @@ class Config:
         Args:
             config_path (str): Path to the config file.
             config_string (str): A TOML string representing the config; this option is
-                mainly used for unit tests. If `config_path` exists, it will be used instead of this.
+                mainly used for unit tests. Overrides `config_path` if present.
+            config_dict (dict): A Python dict representing the config. Overrides both
+                `config_path` and `config_string` if present.
             validate (bool): Specify whether the config file will be validated against
                 the internal schema.
 
         Raises:
             FileNotFoundError: If the config file isn't present and a config_string isn't provided
         """
-        if config_string:
+        if config_dict:
+            self._config_dict = deepcopy(config_dict)
+
+        elif config_string:
             self._config_dict = loads(config_string)
 
         elif config_path:

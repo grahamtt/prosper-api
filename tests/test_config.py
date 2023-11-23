@@ -90,3 +90,12 @@ class TestConfig:
         )
 
         assert config.get("extra-section.extra-key") == "extra value"
+
+    def test_init_with_config_dict(self):
+        config = Config(
+            config_dict={"section": {"key1": "value1", "key2": "value2"}},
+            validate=False,
+        )
+
+        assert config.get_as_str("section.key1") == "value1"
+        assert config.get_as_str("section.key2") == "value2"
