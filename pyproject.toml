@@ -34,12 +34,13 @@ backoff = "^2.2.1"
 keyring = {version = "^24.2.0", optional = true}
 simplejson = "^3.19.2"
 platformdirs = "^3.11.0"
+prosper-shared = "^0.1.19"
 
 [tool.poetry.extras]
 secure = ["keyring"]
 
 [tool.poetry.group.dev.dependencies]
-prosper-shared = "^0.1.11"
+prosper-shared = { version = "^0.1.19", extras = ["dev"] }
 
 [tool.poetry.group.test.dependencies]
 pytest = "^7.4.2"

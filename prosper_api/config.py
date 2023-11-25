@@ -113,7 +113,7 @@ class Config:
         numeric value != 0 will return True, otherwise, False is returned.
         """
         value = self.get(key)
-        if not value:
+        if value is None:
             return default
 
         truthy_strings = {"true", "t", "yes", "y"}
