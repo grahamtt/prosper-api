@@ -4,7 +4,7 @@ from os.path import join
 
 import pytest
 from platformdirs import user_config_dir
-from schema import SchemaError
+from schema import SchemaError, SchemaMissingKeyError
 
 from prosper_api.config import Config
 
@@ -194,5 +194,6 @@ class TestConfig:
             any_order=False,
         )
 
-    def autoconfig_integration_test(self):
-        Config.autoconfig("prosper-api", validate=True)
+    def test_integration_autoconfig_validation_error(self):
+        with pytest.raises(SchemaMissingKeyError):
+            Config.autoconfig("unknown-app", validate=True)
