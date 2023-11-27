@@ -7,7 +7,6 @@ Notes:
 import logging
 from datetime import date, datetime
 from decimal import Decimal
-from enum import Enum
 from typing import Callable, Union
 
 from prosper_shared.omni_config import SchemaType, config_schema
@@ -99,10 +98,6 @@ def get_type_introspecting_object_hook(
                 new_obj[key] = (
                     val_type.from_value(val_type, val) if parse_enums else val
                 )
-                continue
-
-            if issubclass(val_type, Enum):
-                new_obj[key] = val_type._value2member_map_[val] if parse_enums else val
                 continue
 
             new_obj[key] = val
