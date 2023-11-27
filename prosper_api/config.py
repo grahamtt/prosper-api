@@ -1,82 +1,49 @@
+import argparse
 from copy import deepcopy
 from decimal import Decimal
+from importlib.util import find_spec
 from numbers import Number
-from os.path import exists, isfile, join
-from typing import Union
+from os import getcwd
+from os.path import join
+from typing import List, Union
 
 import dpath
-from platformdirs import user_cache_dir, user_config_dir
-from schema import Optional, Regex, Schema
-from toml import load, loads
-
-_CLIENT_ID = "credentials.client-id"
-_CLIENT_SECRET = "credentials.client-secret"
-_USERNAME = "credentials.username"
-_PASSWORD = "credentials.password"
-_TOKEN_CACHE = "auth.token-cache"
+from platformdirs import user_config_dir
+from prosper_shared.omni_config import (
+    ArgParseSource,
+    ConfigurationSource,
+    EnvironmentVariableSource,
+    JsonConfigurationSource,
+    SchemaType,
+    TomlConfigurationSource,
+    YamlConfigurationSource,
+    merge_config,
+    realize_config_schemata,
+    realize_input_schemata,
+)
+from schema import Schema
 
 
 class Config:
     """Holds and allows access to prosper-api config values."""
 
-    _DEFAULT_CONFIG_PATH = join(
-        user_config_dir("prosper-api"), "config.toml"
-    )  # pragma: no mutate
-    _DEFAULT_TOKEN_CACHE_PATH = join(user_cache_dir("prosper-api"), "token-cache")
-
-    _SCHEMA = Schema(
-        {
-            "credentials": {
-                "client-id": Regex(r"^[a-f0-9]{32}$"),
-                Optional("client-secret"): Regex(r"^[a-f0-9]{32}$"),
-                "username": str,
-                Optional("password"): str,
-            },
-            Optional("auth", default={"token-cache": _DEFAULT_TOKEN_CACHE_PATH}): {
-                Optional("token-cache", default=_DEFAULT_TOKEN_CACHE_PATH): str
-            },
-            Optional(str): {str: object},
-        }
-    )
-
     def __init__(
         self,
-        config_path: str = _DEFAULT_CONFIG_PATH,
-        config_string: str = None,
         config_dict: dict = None,
-        validate: bool = True,
+        schema: SchemaType = None,
     ):
         """Builds a config class instance.
 
         Args:
-            config_path (str): Path to the config file.
-            config_string (str): A TOML string representing the config; this option is
-                mainly used for unit tests. Overrides `config_path` if present.
-            config_dict (dict): A Python dict representing the config. Overrides both
-                `config_path` and `config_string` if present.
-            validate (bool): Specify whether the config file will be validated against
-                the internal schema.
-
-        Raises:
-            FileNotFoundError: If the config file isn't present and a config_string isn't provided
+            config_dict (dict): A Python dict representing the config.
+            schema (SchemaType): Validate the config against this schema. Unexpected or missing values will cause a validation error.
         """
-        if config_dict:
-            self._config_dict = deepcopy(config_dict)
+        self._config_dict = deepcopy(config_dict)
 
-        elif config_string:
-            self._config_dict = loads(config_string)
-
-        elif config_path:
-            if not exists(config_path) or not isfile(config_path):
-                raise FileNotFoundError(
-                    f"The config file was not found at '{config_path}'; see the documentation for setup instructions."
-                )
-
-            with open(config_path) as config_file:
-                self._config_dict = load(config_file)
-
-        if validate:
-            self._config_dict = self._SCHEMA.validate(self._config_dict)
+        if schema:
+            self._config_dict = Schema(schema, ignore_extra_keys=False).validate(
+                self._config_dict
+            )
 
     def get(self, key: str) -> object:
         """Get the specified config value.
@@ -124,3 +91,113 @@ class Config:
             return True
 
         return False
+
+    @classmethod
+    def autoconfig(
+        cls,
+        app_names: Union[str, List[str]],
+        arg_parse: argparse.ArgumentParser = None,
+        validate: bool = False,
+    ) -> "Config":
+        """Sets up a Config with default configuration sources.
+
+        Gets config files from the following locations:
+        1. The default config directory for the given app name.
+        2. The working directory, including searching `pyproject.toml` for a `tools.{app_name}` section, if present.
+        3. Environment variables prefixed by 'APP_NAME_' for each of the given app names.
+        4. The given argparse instance.
+
+        Config values found lower in the chain will override previous values for the same key.
+
+        Args:
+            app_names (Union[str, List[str]]): An ordered list of app names for which look for configs.
+            arg_parse (argparse.ArgumentParser): A pre-configured argparse instance.
+            validate (bool): Whether to validate the config prior to returning it.
+
+        Returns:
+            Config: A configured Config instance.
+        """
+        if isinstance(app_names, str):
+            app_names = [app_names]
+
+        config_schemata = realize_config_schemata()
+        input_schemata = realize_input_schemata()
+        schema = merge_config([*config_schemata, *input_schemata])
+
+        conf_sources: List[ConfigurationSource] = [
+            JsonConfigurationSource(join(user_config_dir(app_name), "config.json"))
+            for app_name in app_names
+        ]
+        if _has_yaml():
+            conf_sources += [
+                YamlConfigurationSource(join(user_config_dir(app_name), "config.yml"))
+                for app_name in app_names
+            ]
+            conf_sources += [
+                YamlConfigurationSource(join(user_config_dir(app_name), "config.yaml"))
+                for app_name in app_names
+            ]
+
+        if _has_toml():
+            conf_sources += [
+                TomlConfigurationSource(join(user_config_dir(app_name), "config.toml"))
+                for app_name in app_names
+            ]
+
+        conf_sources += [
+            JsonConfigurationSource(join(getcwd(), f".{app_name}.json"))
+            for app_name in app_names
+        ]
+
+        if _has_yaml():
+            conf_sources += [
+                YamlConfigurationSource(join(getcwd(), f".{app_name}.yml"))
+                for app_name in app_names
+            ]
+            conf_sources += [
+                YamlConfigurationSource(join(getcwd(), f".{app_name}.yaml"))
+                for app_name in app_names
+            ]
+
+        if _has_toml():
+            conf_sources += [
+                TomlConfigurationSource(join(getcwd(), f".{app_name}.toml"))
+                for app_name in app_names
+            ]
+            conf_sources += [
+                TomlConfigurationSource(
+                    join(getcwd(), ".pyproject.toml"), f"tools.{app_name}"
+                )
+                for app_name in app_names
+            ]
+
+        conf_sources += [
+            EnvironmentVariableSource(
+                _kebab_case_to_upper_train_case(app_name), separator="__"
+            )
+            for app_name in app_names
+        ]
+        if arg_parse:
+            conf_sources.append(ArgParseSource(arg_parse))
+
+        config_dict = merge_config([c.read() for c in conf_sources])
+
+        config_dict = (
+            Schema(schema, ignore_extra_keys=True).validate(config_dict)
+            if validate
+            else config_dict
+        )
+
+        return Config(config_dict=config_dict)
+
+
+def _kebab_case_to_upper_train_case(name: str) -> str:
+    return name.replace("-", "_").upper()
+
+
+def _has_yaml():
+    return find_spec("yaml")
+
+
+def _has_toml():
+    return find_spec("toml")

@@ -96,7 +96,6 @@ class Client:
     _NOTES_API_URL = "https://api.prosper.com/v1/notes/"
     _ORDERS_API_URL = "https://api.prosper.com/v1/orders/"
     _LOANS_API_URL = "https://api.prosper.com/v1/loans/"
-    _RETURN_FLOATS_CONFIG_PATH = "client.return-floats"
 
     _has_warned_about_floats = False
 
@@ -113,13 +112,13 @@ class Client:
                 AuthTokenManager. Omit to use the default one.
         """
         if config is None:
-            config = Config()
+            config = Config.autoconfig("prosper-api")
 
         if auth_token_manager is None:
             auth_token_manager = AuthTokenManager(config)
 
-        self.return_floats = config.get_as_bool(self._RETURN_FLOATS_CONFIG_PATH)
-        if self.return_floats:
+        self.parse_decimals = config.get_as_bool(serde._PARSE_DECIMALS_CONFIG_PATH)
+        if not self.parse_decimals:
             self._warn_about_floats()
 
         self._config = config
@@ -400,7 +399,7 @@ class Client:
     def _parse_json(self, text, type_def: type) -> object:
         return json.loads(
             text,
-            use_decimal=not self.return_floats,
+            use_decimal=self.parse_decimals,
             object_hook=serde.get_type_introspecting_object_hook(
                 type_def, self._config
             ),

@@ -10,6 +10,7 @@ from prosper_api.auth_token_manager import (
     _ACCESS_TOKEN_KEY,
     _EXPIRES_AT_KEY,
     AuthTokenManager,
+    _schema,
 )
 from prosper_api.config import Config
 
@@ -25,30 +26,30 @@ class TestAuthTokenManager:
     @pytest.fixture
     def config(self):
         config = Config(
-            config_string="""
-                [credentials]
-                client-id = "0123456789abcdef0123456789abcdef"
-                client-secret = "fedcba0987654321fedcba0987654321"
-                username = "test@test.test"
-                password = "password_value"
-
-                [auth]
-                token-cache = "///NOT_A_VALID_PATH///"
-            """
+            config_dict={
+                "credentials": {
+                    "client-id": "0123456789abcdef0123456789abcdef",
+                    "client-secret": "fedcba0987654321fedcba0987654321",
+                    "username": "test@test.test",
+                    "password": "password_value",
+                },
+                "auth": {"token-cache": "///NOT_A_VALID_PATH///"},
+            },
+            schema=_schema(),
         )
         return config
 
     @pytest.fixture
     def config_with_no_creds(self):
         config = Config(
-            config_string="""
-                [credentials]
-                client-id = "0123456789abcdef0123456789abcdef"
-                username = "test@test.test"
-
-                [auth]
-                token-cache = "///NOT_A_VALID_PATH///"
-            """
+            config_dict={
+                "credentials": {
+                    "client-id": "0123456789abcdef0123456789abcdef",
+                    "username": "test@test.test",
+                },
+                "auth": {"token-cache": "///NOT_A_VALID_PATH///"},
+            },
+            schema=_schema(),
         )
         return config
 
@@ -63,16 +64,14 @@ class TestAuthTokenManager:
     @pytest.fixture
     def config_with_valid_token_cache(self, temp_token_cache):
         config = Config(
-            config_string=f"""
-                [credentials]
-                client-id = "0123456789abcdef0123456789abcdef"
-                client-secret = "fedcba0987654321fedcba0987654321"
-                username = "test@test.test"
-                password = "password_value"
-    
-                [auth]
-                token-cache = "{temp_token_cache}"
-            """
+            config_dict={
+                "credentials": {
+                    "client-id": "0123456789abcdef0123456789abcdef",
+                    "username": "test@test.test",
+                },
+                "auth": {"token-cache": f"{temp_token_cache}"},
+            },
+            schema=_schema(),
         )
         return config
 

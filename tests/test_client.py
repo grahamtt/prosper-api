@@ -6,7 +6,7 @@ from json import dumps
 import pytest
 
 from prosper_api.client import Client, _bool_val, _date_val
-from prosper_api.models import SearchListingsRequest
+from prosper_api.models import BidStatus, SearchListingsRequest
 
 
 class TestClient:
@@ -32,8 +32,10 @@ class TestClient:
     def test_init_default(self, config_mock, auth_token_manager_mock):
         client: Client = Client()
 
-        config_mock.assert_called_once()
-        auth_token_manager_mock.assert_called_once_with(config_mock.return_value)
+        config_mock.autoconfig.assert_called_once()
+        auth_token_manager_mock.assert_called_once_with(
+            config_mock.autoconfig.return_value
+        )
         assert client._auth_token_manager == auth_token_manager_mock.return_value
 
     def test_init_default_auth_token_manager(
@@ -185,7 +187,7 @@ class TestClient:
                     "stated_monthly_income": 8333.33,
                     "income_verifiable": True,
                     "dti_wprosper_loan": 0.2478,
-                    "borrower_state": "AA",
+                    "borrower_state": "AL",
                     "prior_prosper_loans_active": 0,
                     "prior_prosper_loans": 0,
                     "prior_prosper_loans_late_cycles": 0,
@@ -215,7 +217,8 @@ class TestClient:
             ],
             "result_count": 1,
             "total_count": 1,
-        }
+        },
+        default=str,
     )
 
     @pytest.mark.parametrize(
@@ -440,7 +443,7 @@ class TestClient:
         )
         assert len(result.result) == 1
         assert result.result[0].listing_number == 11111111
-        assert result.result[0].borrower_rate == 0.1395
+        assert result.result[0].borrower_rate == Decimal("0.1395")
 
     def test_search_when_invested(self, client_for_api_tests):
         client_for_api_tests._do_get.return_value = deepcopy(
@@ -457,7 +460,7 @@ class TestClient:
         )
         assert len(result.result) == 1
         assert result.result[0].listing_number == 11111111
-        assert result.result[0].borrower_rate == 0.1395
+        assert result.result[0].borrower_rate == Decimal("0.1395")
 
     def test_search_when_not_invested(self, client_for_api_tests):
         client_for_api_tests._do_get.return_value = self._SEARCH_LISTINGS_RESULT
@@ -472,7 +475,7 @@ class TestClient:
         )
         assert len(result.result) == 1
         assert result.result[0].listing_number == 11111111
-        assert result.result[0].borrower_rate == 0.1395
+        assert result.result[0].borrower_rate == Decimal("0.1395")
 
     def test_list_notes(self, client_for_api_tests):
         client_for_api_tests._do_get.return_value = dumps(
@@ -532,7 +535,7 @@ class TestClient:
             {"limit": None, "offset": None, "sort_by": "prosper_rating desc"},
         )
         assert len(result.result) == 1
-        assert result.result[0].principal_balance_pro_rata_share == 69.738100
+        assert result.result[0].principal_balance_pro_rata_share == Decimal("69.738100")
 
     def test_get_account_info(self, client_for_api_tests):
         client_for_api_tests._do_get.return_value = dumps(
@@ -579,8 +582,8 @@ class TestClient:
         client_for_api_tests._do_get.assert_called_once_with(
             "https://api.prosper.com/v1/accounts/prosper/", {}
         )
-        assert account.total_account_value == 1111.11
-        assert account.invested_notes.E == 1111.056157
+        assert account.total_account_value == Decimal("1111.11")
+        assert account.invested_notes.E == Decimal("1111.056157")
 
     def test_order(self, client_for_api_tests):
         client_for_api_tests._do_post.return_value = dumps(
@@ -607,7 +610,7 @@ class TestClient:
         )
         assert result.order_id == "AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAA"
         assert len(result.bid_requests) == 1
-        assert result.bid_requests[0].bid_status == "PENDING"
+        assert result.bid_requests[0].bid_status == BidStatus.PENDING
 
     def test_list_orders(self, client_for_api_tests):
         client_for_api_tests._do_get.return_value = dumps(
@@ -696,25 +699,19 @@ class TestClient:
 
     @pytest.mark.parametrize(
         [
-            "return_float_config",
-            "input",
+            "parse_decimals_config",
+            "input_val",
             "return_val",
             "expect_warning",
         ],
         [
             (
-                False,
+                True,
                 None,
                 '{"p1": "v1", "p2": 2.0}',
                 False,
             ),
             (
-                False,
-                {"param1": "value1", "param2": 2.0},
-                '{"p1": "v1", "p2": 2.0}',
-                True,
-            ),
-            (
                 True,
                 {"param1": "value1", "param2": 2.0},
                 '{"p1": "v1", "p2": 2.0}',
@@ -722,12 +719,18 @@ class TestClient:
             ),
             (
                 False,
+                {"param1": "value1", "param2": 2.0},
+                '{"p1": "v1", "p2": 2.0}',
+                True,
+            ),
+            (
+                True,
                 {"param1": "value1", "param2": Decimal(2.0)},
                 '{"p1": "v1", "p2": 2.0}',
                 False,
             ),
             (
-                True,
+                False,
                 {"param1": "value1", "param2": Decimal(2.0)},
                 '{"p1": "v1", "p2": 2.0}',
                 True,
@@ -740,22 +743,24 @@ class TestClient:
         config_mock,
         request_mock,
         caplog,
-        return_float_config: bool,
-        input: dict,
+        parse_decimals_config: bool,
+        input_val: dict,
         return_val: str,
         expect_warning: bool,
     ):
         auth_token_manager_mock.return_value.get_token.return_value = "auth_token"
         request_mock.return_value.text = return_val
-        config_mock.return_value.get_as_bool.return_value = return_float_config
+        config_mock.autoconfig.return_value.get_as_bool.return_value = (
+            parse_decimals_config
+        )
 
-        response = Client()._do_get("some_url", input)
+        response = Client()._do_get("some_url", input_val)
 
         assert response == return_val
         request_mock.assert_called_once_with(
             "GET",
             "some_url",
-            params=input if input else {},
+            params=input_val if input_val else {},
             json={},
             headers={
                 "Authorization": "bearer auth_token",
@@ -781,25 +786,19 @@ class TestClient:
 
     @pytest.mark.parametrize(
         [
-            "return_float_config",
-            "input",
+            "parse_decimals_config",
+            "input_val",
             "return_val",
             "expect_warning",
         ],
         [
             (
-                False,
+                True,
                 None,
                 '{"p1": "v1", "p2": 2.0}',
                 False,
             ),
             (
-                False,
-                {"param1": "value1", "param2": 2.0},
-                '{"p1": "v1", "p2": 2.0}',
-                True,
-            ),
-            (
                 True,
                 {"param1": "value1", "param2": 2.0},
                 '{"p1": "v1", "p2": 2.0}',
@@ -807,12 +806,18 @@ class TestClient:
             ),
             (
                 False,
+                {"param1": "value1", "param2": 2.0},
+                '{"p1": "v1", "p2": 2.0}',
+                True,
+            ),
+            (
+                True,
                 {"param1": "value1", "param2": Decimal(2.0)},
                 '{"p1": "v1", "p2": 2.0}',
                 False,
             ),
             (
-                True,
+                False,
                 {"param1": "value1", "param2": Decimal(2.0)},
                 '{"p1": "v1", "p2": 2.0}',
                 True,
@@ -825,23 +830,25 @@ class TestClient:
         config_mock,
         request_mock,
         caplog,
-        return_float_config: bool,
-        input: dict,
+        parse_decimals_config: bool,
+        input_val: dict,
         return_val: str,
         expect_warning: bool,
     ):
         auth_token_manager_mock.return_value.get_token.return_value = "auth_token"
         request_mock.return_value.text = return_val
-        config_mock.return_value.get_as_bool.return_value = return_float_config
+        config_mock.autoconfig.return_value.get_as_bool.return_value = (
+            parse_decimals_config
+        )
 
-        response = Client()._do_post("some_url", input)
+        response = Client()._do_post("some_url", input_val)
 
         assert response == return_val
         request_mock.assert_called_once_with(
             "POST",
             "some_url",
             params={},
-            json=input if input else {},
+            json=input_val if input_val else {},
             headers={
                 "Authorization": "bearer auth_token",
                 "Accept": "application/json",

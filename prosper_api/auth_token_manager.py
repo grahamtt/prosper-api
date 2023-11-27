@@ -2,18 +2,15 @@ import json
 import logging
 from datetime import datetime, timedelta
 from os import makedirs
-from os.path import dirname, isfile
+from os.path import dirname, isfile, join
 
 import requests
+from platformdirs import user_cache_dir
+from prosper_shared.omni_config import SchemaType, config_schema
+from schema import Optional as SchemaOptional
+from schema import Regex
 
-from prosper_api.config import (
-    _CLIENT_ID,
-    _CLIENT_SECRET,
-    _PASSWORD,
-    _TOKEN_CACHE,
-    _USERNAME,
-    Config,
-)
+from prosper_api.config import Config
 
 logger = logging.getLogger(__name__)
 
@@ -22,6 +19,31 @@ _ACCESS_TOKEN_KEY = "access_token"
 _REFRESH_TOKEN_KEY = "refresh_token"
 _EXPIRES_IN_KEY = "expires_in"
 _EXPIRES_AT_KEY = "expires_at"
+
+
+_CLIENT_ID_CONFIG_PATH = "credentials.client-id"
+_CLIENT_SECRET_CONFIG_PATH = "credentials.client-secret"
+_USERNAME_CONFIG_PATH = "credentials.username"
+_PASSWORD_CONFIG_PATH = "credentials.password"
+_TOKEN_CACHE_CONFIG_PATH = "auth.token-cache"
+
+
+@config_schema
+def _schema() -> SchemaType:
+    return {
+        "credentials": {
+            "client-id": Regex(r"^[a-f0-9]{32}$"),
+            SchemaOptional("client-secret"): Regex(r"^[a-f0-9]{32}$"),
+            "username": str,
+            SchemaOptional("password"): str,
+        },
+        SchemaOptional("auth"): {
+            SchemaOptional(
+                "token-cache",
+                default=join(user_cache_dir("prosper-api"), "token-cache"),
+            ): str
+        },
+    }
 
 
 class AuthTokenManager:
@@ -42,11 +64,11 @@ class AuthTokenManager:
         Args:
             config (Config): A prosper-api config
         """
-        self.token_cache_path = config.get_as_str(_TOKEN_CACHE)
-        self.client_id = config.get_as_str(_CLIENT_ID)
-        self.client_secret = config.get_as_str(_CLIENT_SECRET)
-        self.username = config.get_as_str(_USERNAME)
-        self.password = config.get_as_str(_PASSWORD)
+        self.token_cache_path = config.get_as_str(_TOKEN_CACHE_CONFIG_PATH)
+        self.client_id = config.get_as_str(_CLIENT_ID_CONFIG_PATH)
+        self.client_secret = config.get_as_str(_CLIENT_SECRET_CONFIG_PATH)
+        self.username = config.get_as_str(_USERNAME_CONFIG_PATH)
+        self.password = config.get_as_str(_PASSWORD_CONFIG_PATH)
 
         if self.client_secret or self.password:
             logger.warning(

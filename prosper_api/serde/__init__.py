@@ -1,8 +1,17 @@
+"""Module for serializing and deserializing JSON values into python dicts.
+
+Notes:
+    1. Needs to be refactored into an external library.
+"""
+
 import logging
 from datetime import date, datetime
 from decimal import Decimal
 from enum import Enum
 from typing import Callable, Union
+
+from prosper_shared.omni_config import SchemaType, config_schema
+from schema import Optional
 
 from prosper_api import models
 from prosper_api.config import Config
@@ -11,8 +20,20 @@ logger = logging.getLogger()
 
 _object_hooks_by_type = {}
 
-_RETURN_STRINGS_NOT_DATES_CONFIG_PATH = "client.return-strings-not-dates"
-_RETURN_STRINGS_NOT_ENUMS_CONFIG_PATH = "client.return-strings-not-enums"
+_PARSE_DECIMALS_CONFIG_PATH = "serde.parse-decimals"
+_PARSE_DATES_CONFIG_PATH = "serde.parse-dates"
+_PARSE_ENUMS_CONFIG_PATH = "serde.parse-enums"
+
+
+@config_schema
+def _schema() -> SchemaType:
+    return {
+        Optional("serde"): {
+            Optional("parse-decimals", default=True): bool,
+            Optional("parse-dates", default=True): bool,
+            Optional("parse-enums", default=True): bool,
+        }
+    }
 
 
 def get_type_introspecting_object_hook(
@@ -30,8 +51,8 @@ def get_type_introspecting_object_hook(
     if type_def in _object_hooks_by_type:
         return _object_hooks_by_type[type_def]
 
-    return_strings_not_dates = config.get_as_bool(_RETURN_STRINGS_NOT_DATES_CONFIG_PATH)
-    return_strings_not_enums = config.get_as_bool(_RETURN_STRINGS_NOT_ENUMS_CONFIG_PATH)
+    parse_dates = config.get_as_bool(_PARSE_DATES_CONFIG_PATH)
+    parse_enums = config.get_as_bool(_PARSE_ENUMS_CONFIG_PATH)
 
     def object_hook(obj: dict) -> type_def:
         new_obj = {}
@@ -51,16 +72,14 @@ def get_type_introspecting_object_hook(
             #     continue
 
             if val_type == Union[str, date]:
-                new_obj[key] = (
-                    val if return_strings_not_dates else date.fromisoformat(val)
-                )
+                new_obj[key] = date.fromisoformat(val) if parse_dates else val
                 continue
 
             if val_type == Union[str, datetime]:
                 new_obj[key] = (
-                    str
-                    if return_strings_not_dates
-                    else datetime.strptime(val, "%Y-%m-%d %H:%M:%S %z")
+                    datetime.strptime(val, "%Y-%m-%d %H:%M:%S %z")
+                    if parse_dates
+                    else val
                 )
                 continue
 
@@ -76,12 +95,14 @@ def get_type_introspecting_object_hook(
             #     new_obj[key] = val  # Will have been parsed and replaced previously
             #     continue
 
-            if issubclass(val_type, Enum):
+            if hasattr(val_type, "from_value"):
                 new_obj[key] = (
-                    val
-                    if return_strings_not_enums
-                    else val_type._value2member_map_[val]
+                    val_type.from_value(val_type, val) if parse_enums else val
                 )
+                continue
+
+            if issubclass(val_type, Enum):
+                new_obj[key] = val_type._value2member_map_[val] if parse_enums else val
                 continue
 
             new_obj[key] = val
