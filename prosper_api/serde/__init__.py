@@ -27,7 +27,10 @@ _PARSE_ENUMS_CONFIG_PATH = "serde.parse-enums"
 @config_schema
 def _schema() -> SchemaType:
     return {
-        Optional("serde"): {
+        Optional(
+            "serde",
+            default={"parse-decimals": True, "parse-dates": True, "parse-enums": True},
+        ): {
             Optional("parse-decimals", default=True): bool,
             Optional("parse-dates", default=True): bool,
             Optional("parse-enums", default=True): bool,
