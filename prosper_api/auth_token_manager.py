@@ -26,6 +26,7 @@ _CLIENT_SECRET_CONFIG_PATH = "credentials.client-secret"
 _USERNAME_CONFIG_PATH = "credentials.username"
 _PASSWORD_CONFIG_PATH = "credentials.password"
 _TOKEN_CACHE_CONFIG_PATH = "auth.token-cache"
+_DEFAULT_TOKEN_CACHE_PATH = join(user_cache_dir("prosper-api"), "token-cache")
 
 
 @config_schema
@@ -37,10 +38,10 @@ def _schema() -> SchemaType:
             "username": str,
             SchemaOptional("password"): str,
         },
-        SchemaOptional("auth"): {
+        SchemaOptional("auth", default={"token-cache": _DEFAULT_TOKEN_CACHE_PATH}): {
             SchemaOptional(
                 "token-cache",
-                default=join(user_cache_dir("prosper-api"), "token-cache"),
+                default=_DEFAULT_TOKEN_CACHE_PATH,
             ): str
         },
     }
