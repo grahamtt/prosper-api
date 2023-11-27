@@ -39,13 +39,10 @@ prosper-shared = "^0.1.22"
 secure = ["keyring"]
 
 [tool.poetry.group.dev.dependencies]
-prosper-shared = { version = "^0.1.22", extras = ["dev","toml","yaml"] }
+prosper-shared = { version = "^0.1.22", extras = ["dev"] }
 
 [tool.poetry.group.test.dependencies]
-pytest = "^7.4.2"
-pytest-cov = "^4.1.0"
-pytest-mock = "^3.11.1"
-pytest-sugar = "^0.9.7"
+prosper-shared = { version = "^0.1.22", extras = ["toml","yaml"] }
 freezegun = "^1.2.2"
 
 [tool.autohooks]
