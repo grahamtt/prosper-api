@@ -21,6 +21,7 @@ from prosper_shared.omni_config import (
     realize_config_schemata,
     realize_input_schemata,
 )
+from prosper_shared.omni_config._define import _arg_parse_from_schema
 from schema import Schema
 
 
@@ -177,8 +178,9 @@ class Config:
             )
             for app_name in app_names
         ]
-        if arg_parse:
-            conf_sources.append(ArgParseSource(arg_parse))
+        conf_sources.append(
+            ArgParseSource(arg_parse if arg_parse else _arg_parse_from_schema(schema))
+        )
 
         config_dict = merge_config([c.read() for c in conf_sources])
 

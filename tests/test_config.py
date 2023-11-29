@@ -1,3 +1,4 @@
+import sys
 from decimal import Decimal
 from os import getcwd
 from os.path import join
@@ -194,6 +195,8 @@ class TestConfig:
             any_order=False,
         )
 
-    def test_integration_autoconfig_validation_error(self):
+    def test_integration_autoconfig_validation_error(self, mocker):
+        mocker.patch.object(sys, "argv", ["prog-name"])
+
         with pytest.raises(SchemaMissingKeyError):
             Config.autoconfig("unknown-app", validate=True)

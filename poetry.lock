@@ -1194,13 +1194,13 @@ files = [
 
 [[package]]
 name = "platformdirs"
-version = "3.11.0"
+version = "4.0.0"
 description = "A small Python package for determining appropriate platform-specific dirs, e.g. a \"user data dir\"."
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "platformdirs-3.11.0-py3-none-any.whl", hash = "sha256:e9d171d00af68be50e9202731309c4e658fd8bc76f55c11c7dd760d023bda68e"},
-    {file = "platformdirs-3.11.0.tar.gz", hash = "sha256:cf8ee52a3afdb965072dcc652433e0c7e3e40cf5ea1477cd4b3b1d2eb75495b3"},
+    {file = "platformdirs-4.0.0-py3-none-any.whl", hash = "sha256:118c954d7e949b35437270383a3f2531e99dd93cf7ce4dc8340d3356d30f173b"},
+    {file = "platformdirs-4.0.0.tar.gz", hash = "sha256:cb633b2bcf10c51af60beb0ab06d2f1d69064b43abf4c185ca6b28865f3f9731"},
 ]
 
 [package.extras]
@@ -1256,13 +1256,13 @@ files = [
 
 [[package]]
 name = "prosper-shared"
-version = "0.1.23"
+version = "0.1.24"
 description = ""
 optional = false
 python-versions = ">=3.9,<4.0"
 files = [
-    {file = "prosper_shared-0.1.23-py3-none-any.whl", hash = "sha256:f90fb20045b93e4797e2c526de29c95534cd63680fad496f7d8d924906ef8e38"},
-    {file = "prosper_shared-0.1.23.tar.gz", hash = "sha256:a858e28f76a471d1b74521e61b5f89a2cef9a8a7d6515c3d60b4fe27804abb77"},
+    {file = "prosper_shared-0.1.24-py3-none-any.whl", hash = "sha256:9fdc5fbab06cfe914cc5f5d1b1af0b97c674845bd7ac4fc2f0bd7ba4c49997eb"},
+    {file = "prosper_shared-0.1.24.tar.gz", hash = "sha256:a2d6df975d60ecb3e77169992ee98878dd5677a1a7db4fb67f3753319143118c"},
 ]
 
 [package.dependencies]
@@ -2058,4 +2058,4 @@ secure = ["keyring"]
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.9,<4.0"
-content-hash = "eef4966ff70e90c494b2796532e3847bc65db84f04949dc181c4901230175070"
+content-hash = "cecf09636e7d483957ed7d52bf8d3d13a9f5710a1dcc7291ea5147ccc02008ac"
