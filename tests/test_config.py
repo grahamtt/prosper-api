@@ -108,14 +108,13 @@ class TestConfig:
             )
 
     def test_autoconfig(self, mocker):
-        argparse_mock = mocker.MagicMock()
+        mocker.patch("sys.exit")
         json_config_mock = mocker.patch("prosper_api.config.JsonConfigurationSource")
         toml_config_mock = mocker.patch("prosper_api.config.TomlConfigurationSource")
         yaml_config_mock = mocker.patch("prosper_api.config.YamlConfigurationSource")
         env_config_mock = mocker.patch("prosper_api.config.EnvironmentVariableSource")
-        argparse_config_mock = mocker.patch("prosper_api.config.ArgParseSource")
 
-        Config.autoconfig(["app_name1", "app_name2"], argparse_mock)
+        Config.autoconfig(["app_name1", "app_name2"])
 
         json_config_mock.assert_has_calls(
             [
@@ -182,14 +181,6 @@ class TestConfig:
                 mocker.call("APP_NAME1", separator="__"),
                 mocker.call("APP_NAME2", separator="__"),
                 mocker.call().read(),
-                mocker.call().read(),
-            ],
-            any_order=False,
-        )
-
-        argparse_config_mock.assert_has_calls(
-            [
-                mocker.call(argparse_mock),
                 mocker.call().read(),
             ],
             any_order=False,

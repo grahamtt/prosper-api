@@ -17,11 +17,12 @@ from prosper_shared.omni_config import (
     SchemaType,
     TomlConfigurationSource,
     YamlConfigurationSource,
+    arg_parse_from_schema,
+    extract_defaults_from_schema,
     merge_config,
     realize_config_schemata,
     realize_input_schemata,
 )
-from prosper_shared.omni_config._define import _arg_parse_from_schema
 from schema import Schema
 
 
@@ -125,7 +126,9 @@ class Config:
         input_schemata = realize_input_schemata()
         schema = merge_config([*config_schemata, *input_schemata])
 
-        conf_sources: List[ConfigurationSource] = [
+        conf_sources: List[ConfigurationSource] = [extract_defaults_from_schema(schema)]
+
+        conf_sources += [
             JsonConfigurationSource(join(user_config_dir(app_name), "config.json"))
             for app_name in app_names
         ]
@@ -179,10 +182,12 @@ class Config:
             for app_name in app_names
         ]
         conf_sources.append(
-            ArgParseSource(arg_parse if arg_parse else _arg_parse_from_schema(schema))
+            ArgParseSource(arg_parse if arg_parse else arg_parse_from_schema(schema))
         )
 
-        config_dict = merge_config([c.read() for c in conf_sources])
+        config_dict = merge_config(
+            [(c.read() if not isinstance(c, dict) else c) for c in conf_sources]
+        )
 
         config_dict = (
             Schema(schema, ignore_extra_keys=True).validate(config_dict)
