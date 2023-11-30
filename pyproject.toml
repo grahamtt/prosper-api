@@ -100,7 +100,7 @@ convention = "google"
 add_ignore = ['D100', 'D104']
 
 [tool.pytest.ini_options]
-#addopts = "--cov=prosper_api --cov-report=term-missing --cov-report=lcov:dist/coverage.info --cov-fail-under=100"
+addopts = "--cov=prosper_api --cov-report=term-missing --cov-report=lcov:dist/coverage.info --cov-fail-under=100"
 testpaths = "tests"
 python_functions = ["*_test", "test_*"]
 
