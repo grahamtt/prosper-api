@@ -182,7 +182,9 @@ class Config:
             for app_name in app_names
         ]
         conf_sources.append(
-            ArgParseSource(arg_parse if arg_parse else arg_parse_from_schema(schema))
+            ArgParseSource(
+                arg_parse if arg_parse else arg_parse_from_schema(app_names[-1], schema)
+            )
         )
 
         config_dict = merge_config(
