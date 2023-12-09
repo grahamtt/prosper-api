@@ -159,6 +159,8 @@ while True:
 
 ## Configuration
 
+<!-- TODO: This should be generated from the available configs -->
+
 The following is a full list of the available configuration values:
 
 - `auth.token-cache` (str): The path where the auth token cache should be stored. Defaults to `os.path.join(platformdirs.user_cache_dir("prosper-api"), "token-cache")`
