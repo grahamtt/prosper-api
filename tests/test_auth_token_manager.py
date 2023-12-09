@@ -5,6 +5,7 @@ from tempfile import TemporaryDirectory
 
 import freezegun
 import pytest
+from prosper_shared.omni_config import Config
 
 from prosper_api.auth_token_manager import (
     _ACCESS_TOKEN_KEY,
@@ -12,7 +13,6 @@ from prosper_api.auth_token_manager import (
     AuthTokenManager,
     _schema,
 )
-from prosper_api.config import Config
 
 
 class TestAuthTokenManager:

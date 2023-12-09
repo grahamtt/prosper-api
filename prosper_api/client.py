@@ -6,11 +6,11 @@ from typing import List, Optional, Union
 import requests
 import simplejson as json
 from backoff import expo, on_exception
+from prosper_shared.omni_config import Config
 from ratelimit import RateLimitException, limits
 
 from prosper_api import serde
 from prosper_api.auth_token_manager import AuthTokenManager
-from prosper_api.config import Config
 from prosper_api.models import (
     Account,
     ListLoansRequest,

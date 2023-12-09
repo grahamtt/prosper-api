@@ -6,11 +6,9 @@ from os.path import dirname, isfile, join
 
 import requests
 from platformdirs import user_cache_dir
-from prosper_shared.omni_config import SchemaType, config_schema
+from prosper_shared.omni_config import Config, SchemaType, config_schema
 from schema import Optional as SchemaOptional
 from schema import Regex
-
-from prosper_api.config import Config
 
 logger = logging.getLogger(__name__)
 

@@ -9,11 +9,10 @@ from datetime import date, datetime
 from decimal import Decimal
 from typing import Callable, Union
 
-from prosper_shared.omni_config import SchemaType, config_schema
+from prosper_shared.omni_config import Config, SchemaType, config_schema
 from schema import Optional
 
 from prosper_api import models
-from prosper_api.config import Config
 
 logger = logging.getLogger()
 
