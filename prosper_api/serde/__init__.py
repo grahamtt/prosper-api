@@ -18,7 +18,7 @@ logger = logging.getLogger()
 
 _object_hooks_by_type = {}
 
-_PARSE_DECIMALS_CONFIG_PATH = "serde.parse-decimals"
+_PARSE_DECIMALS_CONFIG_PATH = "serde.use-decimals"
 _PARSE_DATES_CONFIG_PATH = "serde.parse-dates"
 _PARSE_ENUMS_CONFIG_PATH = "serde.parse-enums"
 
@@ -30,7 +30,7 @@ def _schema() -> SchemaType:
             "serde",
             default={"parse-decimals": True, "parse-dates": True, "parse-enums": True},
         ): {
-            Optional("parse-decimals", default=True): bool,
+            Optional("use-decimals", default=True): bool,
             Optional("parse-dates", default=True): bool,
             Optional("parse-enums", default=True): bool,
         }

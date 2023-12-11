@@ -114,6 +114,7 @@ class Listing(NamedTuple):
     borrower_state: BorrowerState
     co_borrower_application: bool
     income_verifiable: bool
+    lender_yield: Union[float, Decimal]
     occupation: Occupation = None
     loan_number: int = None
     listing_end_date: Union[str, datetime] = None
@@ -126,7 +127,6 @@ class Listing(NamedTuple):
     percent_funded: Union[float, Decimal] = None
     partial_funding_indicator: bool = None
     funding_threshold: Union[float, Decimal] = None
-    lender_yield: Union[float, Decimal] = None
     borrower_rate: Union[float, Decimal] = None
     borrower_apr: Union[float, Decimal] = None
     listing_term: int = None

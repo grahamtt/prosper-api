@@ -27,7 +27,7 @@ class TestSerde:
         object_hook = get_type_introspecting_object_hook(TempClass, config_mock)
         object_hook({"untyped": 4})
 
-        # TODO: Add assertions
+        # FIXME: Add assertions
 
     def test_get_type_introspecting_object_hook_no_matching_type(self, config_mock):
         object_hook = get_type_introspecting_object_hook(TestSerde, config_mock)

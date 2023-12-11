@@ -397,6 +397,8 @@ class Client:
         return response.text
 
     def _parse_json(self, text, type_def: type) -> object:
+        # TODO: Move into 'serde' package
+        #   The 'serde' package should define a `to_json` method or similar the `client` can consume
         return json.loads(
             text,
             use_decimal=self.parse_decimals,
