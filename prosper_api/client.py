@@ -383,6 +383,8 @@ class Client:
 
         auth_token = self._auth_token_manager.get_token()
 
+        logger.debug(f"API Call: {method} {url}; query: {params}; payload: {data}")
+
         response = requests.request(
             method,
             url,
