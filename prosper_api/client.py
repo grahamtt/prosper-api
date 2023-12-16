@@ -4,7 +4,6 @@ from decimal import Decimal
 from typing import List, Optional, Union
 
 import requests
-import simplejson as json
 from backoff import expo, on_exception
 from prosper_shared.omni_config import Config
 from ratelimit import RateLimitException, limits
@@ -23,6 +22,7 @@ from prosper_api.models import (
     SearchListingsRequest,
     SearchListingsResponse,
 )
+from prosper_api.serde import Serde
 
 logger = logging.getLogger()
 
@@ -117,12 +117,13 @@ class Client:
         if auth_token_manager is None:
             auth_token_manager = AuthTokenManager(config)
 
-        self.parse_decimals = config.get_as_bool(serde._PARSE_DECIMALS_CONFIG_PATH)
+        self.parse_decimals = config.get_as_bool(serde._USE_DECIMALS_CONFIG_PATH)
         if not self.parse_decimals:
             self._warn_about_floats()
 
         self._config = config
         self._auth_token_manager = auth_token_manager
+        self._serde = Serde(config)
 
     def get_account_info(self) -> Account:
         """Get the account metadata.
@@ -137,7 +138,7 @@ class Client:
             self._ACCOUNT_API_URL,
             {},
         )
-        return self._parse_json(resp, Account)
+        return self._serde.deserialize(resp, Account)
 
     def search_listings(
         self, request: Union[SearchListingsRequest, None]
@@ -257,7 +258,7 @@ class Client:
                 "combined_stated_monthly_income_max": request.combined_stated_monthly_income_max,
             },
         )
-        return self._parse_json(resp, SearchListingsResponse)
+        return self._serde.deserialize(resp, SearchListingsResponse)
 
     def list_notes(self, request: ListNotesRequest = None) -> ListNotesResponse:
         """List notes in the account.
@@ -282,7 +283,7 @@ class Client:
                 "limit": request.limit,
             },
         )
-        return self._parse_json(resp, ListNotesResponse)
+        return self._serde.deserialize(resp, ListNotesResponse)
 
     def order(
         self,
@@ -305,7 +306,7 @@ class Client:
             self._ORDERS_API_URL,
             {"bid_requests": [{"listing_id": listing_id, "bid_amount": amount}]},
         )
-        return self._parse_json(resp, Order)
+        return self._serde.deserialize(resp, Order)
 
     def list_orders(self, request: ListOrdersRequest = None) -> ListOrdersResponse:
         """Lists orders in the account.
@@ -330,7 +331,7 @@ class Client:
                 "limit": request.limit,
             },
         )
-        return self._parse_json(resp, ListOrdersResponse)
+        return self._serde.deserialize(resp, ListOrdersResponse)
 
     def list_loans(self, request: ListLoansRequest = None) -> ListLoansResponse:
         """Lists loans associated with the account.
@@ -355,7 +356,7 @@ class Client:
                 "limit": request.limit,
             },
         )
-        return self._parse_json(resp, ListLoansResponse)
+        return self._serde.deserialize(resp, ListLoansResponse)
 
     def _do_get(self, url, query_params=None):
         if query_params is None:
@@ -397,17 +398,6 @@ class Client:
         )
         response.raise_for_status()
         return response.text
-
-    def _parse_json(self, text, type_def: type) -> object:
-        # TODO: Move into 'serde' package
-        #   The 'serde' package should define a `to_json` method or similar the `client` can consume
-        return json.loads(
-            text,
-            use_decimal=self.parse_decimals,
-            object_hook=serde.get_type_introspecting_object_hook(
-                type_def, self._config
-            ),
-        )
 
     def _check_for_floats(self, values: dict):
         for val in values.values():

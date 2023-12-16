@@ -1,7 +1,19 @@
+from typing import NamedTuple
+
 import pytest
 
-from prosper_api.models import Listing, Loan, Note
-from prosper_api.serde import get_type_introspecting_object_hook
+from prosper_api.models import Account
+from prosper_api.serde import ModelTreeWalker, Serde
+
+
+class TestClass1(NamedTuple):
+    age: int
+    name: str
+
+
+class TestClass2(NamedTuple):
+    num_items: int
+    customer: TestClass1
 
 
 class TestSerde:
@@ -9,28 +21,32 @@ class TestSerde:
     def config_mock(self, mocker):
         return mocker.patch("prosper_api.client.Config")
 
-    def test_get_type_introspecting_object_hook_cache(self, config_mock):
-        assert get_type_introspecting_object_hook(
-            Note, config_mock
-        ) is get_type_introspecting_object_hook(Note, config_mock)
-        assert get_type_introspecting_object_hook(
-            Listing, config_mock
-        ) is not get_type_introspecting_object_hook(Loan, config_mock)
+    @pytest.mark.parametrize(
+        ["json_str", "output_class", "expected_result"],
+        [
+            (
+                '{"age":38,"name": "Sean Spencer"}',
+                TestClass1,
+                TestClass1(38, "Sean Spencer"),
+            ),
+            (
+                '{"num_items":3,"customer":{"age":38,"name": "Sean Spencer"}}',
+                TestClass2,
+                TestClass2(3, TestClass1(38, "Sean Spencer")),
+            ),
+            (
+                '{"num_items":3,"customer":{"age":38,"name": "Sean Spencer"},"unknown_key":51}',
+                TestClass2,
+                {
+                    "num_items": 3,
+                    "customer": TestClass1(38, "Sean Spencer"),
+                    "unknown_key": 51,
+                },
+            ),
+        ],
+    )
+    def test_serde(self, config_mock, json_str, output_class, expected_result):
+        assert Serde(config_mock).deserialize(json_str, output_class) == expected_result
 
-    @pytest.mark.skip
-    def test_get_type_introspecting_object_hook_untyped_object(
-        self, config_mock, caplog
-    ):
-        class TempClass:
-            untyped = "asdf"
-
-        object_hook = get_type_introspecting_object_hook(TempClass, config_mock)
-        object_hook({"untyped": 4})
-
-        # FIXME: Add assertions
-
-    def test_get_type_introspecting_object_hook_no_matching_type(self, config_mock):
-        object_hook = get_type_introspecting_object_hook(TestSerde, config_mock)
-        result = object_hook({"unrecognized": 1234})
-
-        assert result == {"unrecognized": 1234}
+    def test_model_tree_walker(self):
+        assert next(ModelTreeWalker(Account)) == Account
