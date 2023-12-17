@@ -5,10 +5,11 @@ from typing import List, Optional, Union
 
 import requests
 from backoff import expo, on_exception
+from prosper_shared import serde
 from prosper_shared.omni_config import Config
+from prosper_shared.serde import Serde
 from ratelimit import RateLimitException, limits
 
-from prosper_api import serde
 from prosper_api.auth_token_manager import AuthTokenManager
 from prosper_api.models import (
     Account,
@@ -22,7 +23,6 @@ from prosper_api.models import (
     SearchListingsRequest,
     SearchListingsResponse,
 )
-from prosper_api.serde import Serde
 
 logger = logging.getLogger()
 
