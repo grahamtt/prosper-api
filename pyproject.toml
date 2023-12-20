@@ -33,16 +33,16 @@ backoff = "^2.2.1"
 keyring = {version = "^24.2.0", optional = true}
 simplejson = "^3.19.2"
 platformdirs = "^4.0.0"
-prosper-shared = "^0.1.40"
+prosper-shared = "^0.1.43"
 
 [tool.poetry.extras]
 secure = ["keyring"]
 
 [tool.poetry.group.dev.dependencies]
-prosper-shared = { version = "^0.1.40", extras = ["dev"] }
+prosper-shared = { version = ">0", extras = ["dev"] }
 
 [tool.poetry.group.test.dependencies]
-prosper-shared = { version = "^0.1.40", extras = ["toml","yaml"] }
+prosper-shared = { version = ">0", extras = ["toml","yaml"] }
 pytest = "^7.4.2"
 pytest-cov = "^4.1.0"
 pytest-mock = "^3.11.1"

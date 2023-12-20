@@ -6,9 +6,8 @@ from os.path import dirname, isfile, join
 
 import requests
 from platformdirs import user_cache_dir
-from prosper_shared.omni_config import Config, SchemaType, config_schema
-from schema import Optional as SchemaOptional
-from schema import Regex
+from prosper_shared.omni_config import Config, ConfigKey, SchemaType, config_schema
+from schema import Optional, Regex
 
 logger = logging.getLogger(__name__)
 
@@ -31,14 +30,27 @@ _DEFAULT_TOKEN_CACHE_PATH = join(user_cache_dir("prosper-api"), "token-cache")
 def _schema() -> SchemaType:
     return {
         "credentials": {
-            "client-id": Regex(r"^[a-f0-9]{32}$"),
-            SchemaOptional("client-secret"): Regex(r"^[a-f0-9]{32}$"),
-            "username": str,
-            SchemaOptional("password"): str,
+            ConfigKey("client-id", "The client-id from Prosper."): Regex(
+                r"^[a-f0-9]{32}$"
+            ),
+            Optional(
+                ConfigKey(
+                    "client-secret",
+                    "The client-secret from Prosper; can be configured using the keyring library.",
+                )
+            ): Regex(r"^[a-f0-9]{32}$"),
+            ConfigKey("username", "Your Prosper username"): str,
+            Optional(
+                ConfigKey(
+                    "password",
+                    "Your Prosper password; can be configured using the keyring library.",
+                )
+            ): str,
         },
-        SchemaOptional("auth", default={"token-cache": _DEFAULT_TOKEN_CACHE_PATH}): {
-            SchemaOptional(
+        "auth": {
+            ConfigKey(
                 "token-cache",
+                "The filesystem location where the auth token will be cached.",
                 default=_DEFAULT_TOKEN_CACHE_PATH,
             ): str
         },
