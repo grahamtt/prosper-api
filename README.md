@@ -163,24 +163,26 @@ Available config values:
 
 ```json
 {
-  "serde": {
-    "use-decimals": {
-      "type": "bool",
-      "optional": false,
-      "default": true,
-      "description": "Floating point values should be parsed as decimals instead of floats."
-    },
-    "parse-dates": {
-      "type": "bool",
-      "optional": false,
-      "default": true,
-      "description": "Date values represented as strings should be parsed into `date` and `datetime` objects. Supports ISO-8601-compliant date strings."
-    },
-    "parse-enums": {
-      "type": "bool",
-      "optional": false,
-      "default": true,
-      "description": "Enum values represented as strings should be parsed into their respective types."
+  "prosper_shared": {
+    "serde": {
+      "use-decimals": {
+        "type": "bool",
+        "optional": false,
+        "default": true,
+        "description": "Floating point values should be parsed as decimals instead of floats."
+      },
+      "parse-dates": {
+        "type": "bool",
+        "optional": false,
+        "default": true,
+        "description": "Date values represented as strings should be parsed into `date` and `datetime` objects. Supports ISO-8601-compliant date strings."
+      },
+      "parse-enums": {
+        "type": "bool",
+        "optional": false,
+        "default": true,
+        "description": "Enum values represented as strings should be parsed into their respective types."
+      }
     }
   },
   "prosper_api": {
