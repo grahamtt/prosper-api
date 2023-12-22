@@ -33,7 +33,7 @@ backoff = "^2.2.1"
 keyring = {version = "^24.2.0", optional = true}
 simplejson = "^3.19.2"
 platformdirs = "^4.0.0"
-prosper-shared = "^0.1.43"
+prosper-shared = "^0.1.47"
 
 [tool.poetry.extras]
 secure = ["keyring"]
@@ -53,6 +53,7 @@ freezegun = "^1.2.2"
 mode = "poetry"
 pre-commit = [
     "prosper_shared.autohooks.clean",
+    "prosper_shared.autohooks.build_extras",
     "prosper_shared.autohooks.autoimport",
     "autohooks.plugins.black",
     "autohooks.plugins.ruff",
@@ -69,6 +70,12 @@ pre-commit = [
     "prosper_shared.autohooks.build",
     "prosper_shared.autohooks.assert_files",
 ]
+
+[tool.autohooks.plugins.build_extras]
+commands = [
+    "jinja2 -Dconfig_options=\"`echo 'from prosper_shared.omni_config import get_config_help\nfrom prosper_api.client import Client\nprint(get_config_help())\n' | python`\" README.md.jinja2 > README.md"
+]
+affected_files = ['README.md']
 
 [tool.autohooks.plugins.mutmut]
 arguments = [
