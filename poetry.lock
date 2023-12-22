@@ -788,14 +788,14 @@ files = [
 
 [[package]]
 name = "importlib-metadata"
-version = "7.0.0"
+version = "7.0.1"
 description = "Read metadata from Python packages"
 category = "main"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "importlib_metadata-7.0.0-py3-none-any.whl", hash = "sha256:d97503976bb81f40a193d41ee6570868479c69d5068651eb039c40d850c59d67"},
-    {file = "importlib_metadata-7.0.0.tar.gz", hash = "sha256:7fc841f8b8332803464e5dc1c63a2e59121f46ca186c0e2e182e80bf8c1319f7"},
+    {file = "importlib_metadata-7.0.1-py3-none-any.whl", hash = "sha256:4805911c3a4ec7c3966410053e9ec6a1fecd629117df5adee56dfc9432a1081e"},
+    {file = "importlib_metadata-7.0.1.tar.gz", hash = "sha256:f238736bb06590ae52ac1fab06a3a9ef1d8dce2b7a35b5ab329371d6c8f5d2cc"},
 ]
 
 [package.dependencies]
@@ -1429,14 +1429,14 @@ files = [
 
 [[package]]
 name = "prosper-shared"
-version = "0.1.47"
+version = "0.2.1"
 description = ""
 category = "main"
 optional = false
 python-versions = ">=3.9,<4.0"
 files = [
-    {file = "prosper_shared-0.1.47-py3-none-any.whl", hash = "sha256:d4fc7ee2786cf8096ca2c994b206aa0600ffd9001653abef87612d6c609b81ab"},
-    {file = "prosper_shared-0.1.47.tar.gz", hash = "sha256:82784c55c4dd030bd728cebf145463c9299a7746447d44e27355508f457984a7"},
+    {file = "prosper_shared-0.2.1-py3-none-any.whl", hash = "sha256:73c6cc01b4a3b1c8a319bec66b622fed393c6d08ea510dd734f3c02379351562"},
+    {file = "prosper_shared-0.2.1.tar.gz", hash = "sha256:e0a569a20aeabcebf7a4f3d5bb34f0ff29525e12f674700636d595d70b4a764a"},
 ]
 
 [package.dependencies]
@@ -2272,4 +2272,4 @@ secure = ["keyring"]
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.9,<4.0"
-content-hash = "7cb0904ffd44a434c74a5bc7482346577e83ee281fddd6f5d2f37b2e307248c3"
+content-hash = "120074b7107bdc6b9f363d04c80c7a45dd6d227b5e3a32dfed3438f14530ae89"

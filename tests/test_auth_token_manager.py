@@ -27,13 +27,15 @@ class TestAuthTokenManager:
     def config(self):
         config = Config(
             config_dict={
-                "credentials": {
-                    "client-id": "0123456789abcdef0123456789abcdef",
-                    "client-secret": "fedcba0987654321fedcba0987654321",
-                    "username": "test@test.test",
-                    "password": "password_value",
+                "prosper_api": {
+                    "credentials": {
+                        "client-id": "0123456789abcdef0123456789abcdef",
+                        "client-secret": "fedcba0987654321fedcba0987654321",
+                        "username": "test@test.test",
+                        "password": "password_value",
+                    },
+                    "auth": {"token-cache": "///NOT_A_VALID_PATH///"},
                 },
-                "auth": {"token-cache": "///NOT_A_VALID_PATH///"},
             },
             schema=_schema(),
         )
@@ -43,11 +45,13 @@ class TestAuthTokenManager:
     def config_with_no_creds(self):
         config = Config(
             config_dict={
-                "credentials": {
-                    "client-id": "0123456789abcdef0123456789abcdef",
-                    "username": "test@test.test",
+                "prosper_api": {
+                    "credentials": {
+                        "client-id": "0123456789abcdef0123456789abcdef",
+                        "username": "test@test.test",
+                    },
+                    "auth": {"token-cache": "///NOT_A_VALID_PATH///"},
                 },
-                "auth": {"token-cache": "///NOT_A_VALID_PATH///"},
             },
             schema=_schema(),
         )
@@ -65,11 +69,13 @@ class TestAuthTokenManager:
     def config_with_valid_token_cache(self, temp_token_cache):
         config = Config(
             config_dict={
-                "credentials": {
-                    "client-id": "0123456789abcdef0123456789abcdef",
-                    "username": "test@test.test",
+                "prosper_api": {
+                    "credentials": {
+                        "client-id": "0123456789abcdef0123456789abcdef",
+                        "username": "test@test.test",
+                    },
+                    "auth": {"token-cache": f"{temp_token_cache}"},
                 },
-                "auth": {"token-cache": f"{temp_token_cache}"},
             },
             schema=_schema(),
         )
@@ -108,7 +114,9 @@ class TestAuthTokenManager:
         assert len(caplog.messages) == 0
 
     def test_init_when_password_present(self, config_with_no_creds: Config, caplog):
-        config_with_no_creds._config_dict["credentials"]["password"] = "password_value"
+        config_with_no_creds._config_dict["prosper_api"]["credentials"][
+            "password"
+        ] = "password_value"
         AuthTokenManager(config_with_no_creds)
 
         assert caplog.messages[-1].startswith("Providing secrets via config files")
@@ -116,7 +124,7 @@ class TestAuthTokenManager:
     def test_init_when_client_secret_present(
         self, config_with_no_creds: Config, caplog
     ):
-        config_with_no_creds._config_dict["credentials"][
+        config_with_no_creds._config_dict["prosper_api"]["credentials"][
             "client-secret"
         ] = "client_secret_value"
         AuthTokenManager(config_with_no_creds)
@@ -124,8 +132,10 @@ class TestAuthTokenManager:
         assert caplog.messages[-1].startswith("Providing secrets via config files")
 
     def test_init_when_both_secrets_present(self, config_with_no_creds: Config, caplog):
-        config_with_no_creds._config_dict["credentials"]["password"] = "password_value"
-        config_with_no_creds._config_dict["credentials"][
+        config_with_no_creds._config_dict["prosper_api"]["credentials"][
+            "password"
+        ] = "password_value"
+        config_with_no_creds._config_dict["prosper_api"]["credentials"][
             "client-secret"
         ] = "client_secret_value"
         AuthTokenManager(config_with_no_creds)

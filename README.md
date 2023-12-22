@@ -183,36 +183,38 @@ Available config values:
       "description": "Enum values represented as strings should be parsed into their respective types."
     }
   },
-  "credentials": {
-    "client-id": {
-      "type": "str",
-      "optional": false,
-      "constraint": "^[a-f0-9]{32}$",
-      "description": "The client-id from Prosper."
+  "prosper_api": {
+    "credentials": {
+      "client-id": {
+        "type": "str",
+        "optional": false,
+        "constraint": "^[a-f0-9]{32}$",
+        "description": "The client-id from Prosper."
+      },
+      "client-secret": {
+        "type": "str",
+        "optional": true,
+        "constraint": "^[a-f0-9]{32}$",
+        "description": "The client-secret from Prosper; can be configured using the keyring library."
+      },
+      "username": {
+        "type": "str",
+        "optional": false,
+        "description": "Your Prosper username"
+      },
+      "password": {
+        "type": "str",
+        "optional": true,
+        "description": "Your Prosper password; can be configured using the keyring library."
+      }
     },
-    "client-secret": {
-      "type": "str",
-      "optional": true,
-      "constraint": "^[a-f0-9]{32}$",
-      "description": "The client-secret from Prosper; can be configured using the keyring library."
-    },
-    "username": {
-      "type": "str",
-      "optional": false,
-      "description": "Your Prosper username"
-    },
-    "password": {
-      "type": "str",
-      "optional": true,
-      "description": "Your Prosper password; can be configured using the keyring library."
-    }
-  },
-  "auth": {
-    "token-cache": {
-      "type": "str",
-      "optional": false,
-      "default": "/home/graham/.cache/prosper-api/token-cache",
-      "description": "The filesystem location where the auth token will be cached."
+    "auth": {
+      "token-cache": {
+        "type": "str",
+        "optional": false,
+        "default": "/home/graham/.cache/prosper-api/token-cache",
+        "description": "The filesystem location where the auth token will be cached."
+      }
     }
   }
 }
