@@ -161,65 +161,46 @@ while True:
 
 Available config values:
 
-```json
-{
-  "prosper_shared": {
-    "serde": {
-      "use-decimals": {
-        "type": "bool",
-        "optional": false,
-        "default": true,
-        "description": "Floating point values should be parsed as decimals instead of floats."
-      },
-      "parse-dates": {
-        "type": "bool",
-        "optional": false,
-        "default": true,
-        "description": "Date values represented as strings should be parsed into `date` and `datetime` objects. Supports ISO-8601-compliant date strings."
-      },
-      "parse-enums": {
-        "type": "bool",
-        "optional": false,
-        "default": true,
-        "description": "Enum values represented as strings should be parsed into their respective types."
-      }
-    }
-  },
-  "prosper_api": {
-    "credentials": {
-      "client-id": {
-        "type": "str",
-        "optional": false,
-        "constraint": "^[a-f0-9]{32}$",
-        "description": "The client-id from Prosper."
-      },
-      "client-secret": {
-        "type": "str",
-        "optional": true,
-        "constraint": "^[a-f0-9]{32}$",
-        "description": "The client-secret from Prosper; can be configured using the keyring library."
-      },
-      "username": {
-        "type": "str",
-        "optional": false,
-        "description": "Your Prosper username"
-      },
-      "password": {
-        "type": "str",
-        "optional": true,
-        "description": "Your Prosper password; can be configured using the keyring library."
-      }
-    },
-    "auth": {
-      "token-cache": {
-        "type": "str",
-        "optional": false,
-        "default": "/home/graham/.cache/prosper-api/token-cache",
-        "description": "The filesystem location where the auth token will be cached."
-      }
-    }
-  }
-}
+```yaml
+prosper_api.auth.token-cache:
+  default: /home/graham/.cache/prosper-api/token-cache
+  description: The filesystem location where the auth token will be cached.
+  optional: false
+  type: str
+prosper_api.credentials.client-id:
+  constraint: ^[a-f0-9]{32}$
+  description: The client-id from Prosper.
+  optional: false
+  type: str
+prosper_api.credentials.client-secret:
+  constraint: ^[a-f0-9]{32}$
+  description: The client-secret from Prosper; can be configured using the keyring library.
+  optional: true
+  type: str
+prosper_api.credentials.password:
+  description: Your Prosper password; can be configured using the keyring library.
+  optional: true
+  type: str
+prosper_api.credentials.username:
+  description: Your Prosper username
+  optional: false
+  type: str
+prosper_shared.serde.parse-dates:
+  default: true
+  description: Date values represented as strings should be parsed into `date` and `datetime` objects. Supports ISO-8601-compliant
+    date strings.
+  optional: false
+  type: bool
+prosper_shared.serde.parse-enums:
+  default: true
+  description: Enum values represented as strings should be parsed into their respective types.
+  optional: false
+  type: bool
+prosper_shared.serde.use-decimals:
+  default: true
+  description: Floating point values should be parsed as decimals instead of floats.
+  optional: false
+  type: bool
 ```
 
 ## Feedback
