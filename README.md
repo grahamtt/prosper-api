@@ -187,8 +187,8 @@ prosper_api.credentials.username:
   type: str
 prosper_shared.serde.parse-dates:
   default: true
-  description: Date values represented as strings should be parsed into `date` and `datetime` objects. Supports ISO-8601-compliant
-    date strings.
+  description: Date values represented as strings should be parsed into `date` and `datetime` objects.
+    Supports ISO-8601-compliant date strings.
   optional: false
   type: bool
 prosper_shared.serde.parse-enums:
