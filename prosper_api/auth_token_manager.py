@@ -18,18 +18,18 @@ _EXPIRES_IN_KEY = "expires_in"
 _EXPIRES_AT_KEY = "expires_at"
 
 
-_CLIENT_ID_CONFIG_PATH = "prosper_api.credentials.client-id"
-_CLIENT_SECRET_CONFIG_PATH = "prosper_api.credentials.client-secret"
-_USERNAME_CONFIG_PATH = "prosper_api.credentials.username"
-_PASSWORD_CONFIG_PATH = "prosper_api.credentials.password"
-_TOKEN_CACHE_CONFIG_PATH = "prosper_api.auth.token-cache"
+_CLIENT_ID_CONFIG_PATH = "prosper-api.credentials.client-id"
+_CLIENT_SECRET_CONFIG_PATH = "prosper-api.credentials.client-secret"
+_USERNAME_CONFIG_PATH = "prosper-api.credentials.username"
+_PASSWORD_CONFIG_PATH = "prosper-api.credentials.password"
+_TOKEN_CACHE_CONFIG_PATH = "prosper-api.auth.token-cache"
 _DEFAULT_TOKEN_CACHE_PATH = join(user_cache_dir("prosper-api"), "token-cache")
 
 
 @config_schema
 def _schema() -> SchemaType:
     return {
-        "prosper_api": {
+        "prosper-api": {
             "credentials": {
                 ConfigKey("client-id", "The client-id from Prosper."): Regex(
                     r"^[a-f0-9]{32}$"
