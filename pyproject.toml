@@ -27,7 +27,7 @@ repository = "https://github.com/grahamtt/prosper-api"
 python = ">=3.9,<4.0"
 backoff = "^2.2.1"
 dpath = "^2.1.6"
-prosper-shared = "^0.2.7"
+prosper-shared = "^0.2.9"
 ratelimit = "^2.2.1"
 requests = "^2.31.0"
 schema = "^0.7.5"
@@ -42,7 +42,7 @@ prosper-shared = { version = ">0.2.0", extras = ["dev"] }
 
 [tool.poetry.group.test.dependencies]
 freezegun = "^1.2.2"
-prosper-shared = { version = ">0", extras = ["toml","yaml"] }
+prosper-shared = { version = ">0.2.0", extras = ["toml","yaml"] }
 pytest = "^7.4.2"
 pytest-cov = "^4.1.0"
 pytest-mock = "^3.11.1"

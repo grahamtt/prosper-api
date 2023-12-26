@@ -27,7 +27,7 @@ class TestAuthTokenManager:
     def config(self):
         config = Config(
             config_dict={
-                "prosper_api": {
+                "prosper-api": {
                     "credentials": {
                         "client-id": "0123456789abcdef0123456789abcdef",
                         "client-secret": "fedcba0987654321fedcba0987654321",
@@ -45,7 +45,7 @@ class TestAuthTokenManager:
     def config_with_no_creds(self):
         config = Config(
             config_dict={
-                "prosper_api": {
+                "prosper-api": {
                     "credentials": {
                         "client-id": "0123456789abcdef0123456789abcdef",
                         "username": "test@test.test",
@@ -69,7 +69,7 @@ class TestAuthTokenManager:
     def config_with_valid_token_cache(self, temp_token_cache):
         config = Config(
             config_dict={
-                "prosper_api": {
+                "prosper-api": {
                     "credentials": {
                         "client-id": "0123456789abcdef0123456789abcdef",
                         "username": "test@test.test",
@@ -114,7 +114,7 @@ class TestAuthTokenManager:
         assert len(caplog.messages) == 0
 
     def test_init_when_password_present(self, config_with_no_creds: Config, caplog):
-        config_with_no_creds._config_dict["prosper_api"]["credentials"][
+        config_with_no_creds._config_dict["prosper-api"]["credentials"][
             "password"
         ] = "password_value"
         AuthTokenManager(config_with_no_creds)
@@ -124,7 +124,7 @@ class TestAuthTokenManager:
     def test_init_when_client_secret_present(
         self, config_with_no_creds: Config, caplog
     ):
-        config_with_no_creds._config_dict["prosper_api"]["credentials"][
+        config_with_no_creds._config_dict["prosper-api"]["credentials"][
             "client-secret"
         ] = "client_secret_value"
         AuthTokenManager(config_with_no_creds)
@@ -132,10 +132,10 @@ class TestAuthTokenManager:
         assert caplog.messages[-1].startswith("Providing secrets via config files")
 
     def test_init_when_both_secrets_present(self, config_with_no_creds: Config, caplog):
-        config_with_no_creds._config_dict["prosper_api"]["credentials"][
+        config_with_no_creds._config_dict["prosper-api"]["credentials"][
             "password"
         ] = "password_value"
-        config_with_no_creds._config_dict["prosper_api"]["credentials"][
+        config_with_no_creds._config_dict["prosper-api"]["credentials"][
             "client-secret"
         ] = "client_secret_value"
         AuthTokenManager(config_with_no_creds)
