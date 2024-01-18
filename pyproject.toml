@@ -52,6 +52,7 @@ pytest-sugar = "^0.9.7"
 mode = "poetry"
 pre-commit = [
     "prosper_shared.autohooks.clean",
+    "prosper_shared.autohooks.update_dependencies",
     "prosper_shared.autohooks.build_extras",
     "prosper_shared.autohooks.autoimport",
     "autohooks.plugins.black",
@@ -61,7 +62,6 @@ pre-commit = [
     "prosper_shared.autohooks.pydoclint",
     "prosper_shared.autohooks.tomlsort",
     "prosper_shared.autohooks.mdformat",
-    "prosper_shared.autohooks.update_dependencies",
     "autohooks.plugins.pytest",
     # "autohooks.tox", # Commenting out for now because it appears to be running only for Python 3.10
     "prosper_shared.autohooks.mutmut",

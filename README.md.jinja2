@@ -16,25 +16,25 @@ Python trading library for Prosper.com
 
 ### With Pip
 
-```commandline
+```bash
 pip install prosper-api
 ```
 
 #### Optional `keyring` support
 
-```commandline
+```bash
 pip install 'prosper-api[secure]'
 ```
 
 ### With Poetry
 
-```commandline
+```bash
 poetry add prosper-api
 ```
 
 #### Optional `keyring` support
 
-```commandline
+```bash
 poetry add 'prosper-api[secure]'
 ```
 
@@ -77,7 +77,7 @@ Run the following to store your credentials securely in your OS credentials stor
 For each command, you will be prompted to enter the corresponding secret. For 'CLIENT_ID', enter the client secret. For
 'USERNAME' enter the corresponding password.
 
-```commandline
+```bash
 keyring set prosper-api '{CLIENT_ID}'
 keyring set prosper-api '{USERNAME}'
 ```
