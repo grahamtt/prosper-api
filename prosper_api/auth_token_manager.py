@@ -37,14 +37,14 @@ def _schema() -> SchemaType:
                 Optional(
                     ConfigKey(
                         "client-secret",
-                        "The client-secret from Prosper; can be configured using the keyring library.",
+                        "The client-secret from Prosper; can be stored and accessed securely using the keyring library.",
                     )
                 ): Regex(r"^[a-f0-9]{32}$"),
                 ConfigKey("username", "Your Prosper username"): str,
                 Optional(
                     ConfigKey(
                         "password",
-                        "Your Prosper password; can be configured using the keyring library.",
+                        "Your Prosper password; can be stored and accessed securely using the keyring library.",
                     )
                 ): str,
             },

@@ -174,11 +174,12 @@ prosper-api.credentials.client-id:
   type: str
 prosper-api.credentials.client-secret:
   constraint: ^[a-f0-9]{32}$
-  description: The client-secret from Prosper; can be configured using the keyring library.
+  description: The client-secret from Prosper; can be stored and accessed securely using the keyring
+    library.
   optional: true
   type: str
 prosper-api.credentials.password:
-  description: Your Prosper password; can be configured using the keyring library.
+  description: Your Prosper password; can be stored and accessed securely using the keyring library.
   optional: true
   type: str
 prosper-api.credentials.username:
