@@ -312,6 +312,7 @@ class Note(NamedTuple):
     ownership_end_date: Union[str, date] = None
     note_default_reason: str = None
     note_default_reason_description: str = None
+    servicing_collection_agency_queue: str = None
 
 
 class ListNotesRequest(NamedTuple):
