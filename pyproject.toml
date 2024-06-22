@@ -4,7 +4,7 @@ build-backend = "poetry_dynamic_versioning.backend"
 
 [tool.poetry]
 name = "prosper-api"
-version = "0"
+version = "0.8.4-pre.1"
 description = "Python trading library for Prosper.com"
 authors = ["Graham Tibbitts <graham.tibbitts@gmail.com>"]
 license = "apache-2.0"
@@ -97,7 +97,7 @@ arguments = ['--all-extras']
 profile = "black"
 
 [tool.poetry-dynamic-versioning]
-enable = true
+enable = false
 metadata = false
 style = "semver"
 vcs = "git"
