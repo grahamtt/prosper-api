@@ -186,22 +186,6 @@ prosper-api.credentials.username:
   description: Your Prosper username
   optional: false
   type: str
-prosper-shared.serde.parse-dates:
-  default: true
-  description: Date values represented as strings should be parsed into `date` and `datetime` objects.
-    Supports ISO-8601-compliant date strings.
-  optional: false
-  type: bool
-prosper-shared.serde.parse-enums:
-  default: true
-  description: Enum values represented as strings should be parsed into their respective types.
-  optional: false
-  type: bool
-prosper-shared.serde.use-decimals:
-  default: true
-  description: Floating point values should be parsed as decimals instead of floats.
-  optional: false
-  type: bool
 ```
 
 ## Feedback

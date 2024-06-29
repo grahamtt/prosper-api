@@ -4,7 +4,6 @@ from typing import List, Optional, Union
 
 import requests
 from backoff import expo, on_exception
-from prosper_shared import serde
 from prosper_shared.omni_config import Config
 from ratelimit import RateLimitException, limits
 
@@ -101,10 +100,6 @@ class Client:
 
         if auth_token_manager is None:
             auth_token_manager = AuthTokenManager(config)
-
-        self.parse_decimals = config.get_as_bool(serde._USE_DECIMALS_CONFIG_PATH)
-        if not self.parse_decimals:
-            self._warn_about_floats()
 
         self._config = config
         self._auth_token_manager = auth_token_manager

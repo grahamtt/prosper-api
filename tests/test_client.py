@@ -713,38 +713,32 @@ class TestClient:
             "parse_decimals_config",
             "input_val",
             "return_val",
-            "expect_warning",
         ],
         [
             (
                 True,
                 None,
                 '{"p1": "v1", "p2": 2.0}',
-                False,
             ),
             (
                 True,
                 {"param1": "value1", "param2": 2.0},
                 '{"p1": "v1", "p2": 2.0}',
-                True,
             ),
             (
                 False,
                 {"param1": "value1", "param2": 2.0},
                 '{"p1": "v1", "p2": 2.0}',
-                True,
             ),
             (
                 True,
                 {"param1": "value1", "param2": Decimal(2.0)},
                 '{"p1": "v1", "p2": 2.0}',
-                False,
             ),
             (
                 False,
                 {"param1": "value1", "param2": Decimal(2.0)},
                 '{"p1": "v1", "p2": 2.0}',
-                True,
             ),
         ],
     )
@@ -757,7 +751,6 @@ class TestClient:
         parse_decimals_config: bool,
         input_val: dict,
         return_val: str,
-        expect_warning: bool,
     ):
         auth_token_manager_mock.return_value.get_token.return_value = "auth_token"
         request_mock.return_value.text = return_val
@@ -778,60 +771,38 @@ class TestClient:
                 "Accept": "application/json",
             },
         )
-        if expect_warning:
-            assert [
-                r
-                for r in caplog.records
-                if r.message.startswith(
-                    "WARNING: Floating point numbers are not recommended for representing currency"
-                )
-            ]
-        else:
-            assert not [
-                r
-                for r in caplog.records
-                if r.message.startswith(
-                    "WARNING: Floating point numbers are not recommended for representing currency"
-                )
-            ]
 
     @pytest.mark.parametrize(
         [
             "parse_decimals_config",
             "input_val",
             "return_val",
-            "expect_warning",
         ],
         [
             (
                 True,
                 None,
                 '{"p1": "v1", "p2": 2.0}',
-                False,
             ),
             (
                 True,
                 {"param1": "value1", "param2": 2.0},
                 '{"p1": "v1", "p2": 2.0}',
-                True,
             ),
             (
                 False,
                 {"param1": "value1", "param2": 2.0},
                 '{"p1": "v1", "p2": 2.0}',
-                True,
             ),
             (
                 True,
                 {"param1": "value1", "param2": Decimal(2.0)},
                 '{"p1": "v1", "p2": 2.0}',
-                False,
             ),
             (
                 False,
                 {"param1": "value1", "param2": Decimal(2.0)},
                 '{"p1": "v1", "p2": 2.0}',
-                True,
             ),
         ],
     )
@@ -844,7 +815,6 @@ class TestClient:
         parse_decimals_config: bool,
         input_val: dict,
         return_val: str,
-        expect_warning: bool,
     ):
         auth_token_manager_mock.return_value.get_token.return_value = "auth_token"
         request_mock.return_value.text = return_val
@@ -865,22 +835,6 @@ class TestClient:
                 "Accept": "application/json",
             },
         )
-        if expect_warning:
-            assert [
-                r
-                for r in caplog.records
-                if r.message.startswith(
-                    "WARNING: Floating point numbers are not recommended for representing currency"
-                )
-            ]
-        else:
-            assert not [
-                r
-                for r in caplog.records
-                if r.message.startswith(
-                    "WARNING: Floating point numbers are not recommended for representing currency"
-                )
-            ]
 
     def test_bool_val_when_invalid(self):
         with pytest.raises(ValueError):
