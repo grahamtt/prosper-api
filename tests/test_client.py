@@ -1,11 +1,11 @@
 from copy import deepcopy
-from datetime import date, datetime
+from datetime import datetime
 from decimal import Decimal
 from json import dumps
 
 import pytest
 
-from prosper_api.client import Client, _bool_val, _date_val
+from prosper_api.client import Client, _bool_val
 from prosper_api.models import BidStatus, SearchListingsRequest
 
 
@@ -232,7 +232,6 @@ class TestClient:
                 {"sort_by": "fico_score desc"},
             ),
             # Boolean filters
-            ({"biddable": None}, {"biddable": "true"}),
             ({"invested": True}, {"invested": "true"}),
             ({"invested": False}, {"invested": "false"}),
             (
@@ -360,73 +359,85 @@ class TestClient:
                 {"prior_prosper_loans_principal_outstanding_min": 300},
                 {"prior_prosper_loans_principal_outstanding_min": 300},
             ),
-            ({"prosper_score_max": 300}, {"prosper_score_max": 300}),
-            ({"prosper_score_min": 300}, {"prosper_score_min": 300}),
+            ({"prosper_score_max": 3}, {"prosper_score_max": 3}),
+            ({"prosper_score_min": 7}, {"prosper_score_min": 7}),
             ({"stated_monthly_income_max": 300}, {"stated_monthly_income_max": 300}),
             ({"stated_monthly_income_min": 300}, {"stated_monthly_income_min": 300}),
-            ({"verification_stage_max": 300}, {"verification_stage_max": 300}),
-            ({"verification_stage_min": 300}, {"verification_stage_min": 300}),
+            ({"verification_stage_max": 2}, {"verification_stage_max": 2}),
+            ({"verification_stage_min": 2}, {"verification_stage_min": 2}),
             # Date range filters
             (
-                {"listing_creation_date_max": date.fromisoformat("2023-11-04")},
+                {"listing_creation_date_max": "2023-11-04"},
                 {"listing_creation_date_max": "2023-11-04"},
             ),
             (
-                {"listing_creation_date_min": date.fromisoformat("2023-11-04")},
+                {"listing_creation_date_min": "2023-11-04"},
                 {"listing_creation_date_min": "2023-11-04"},
             ),
             (
-                {"listing_end_date_max": date.fromisoformat("2023-11-04")},
+                {"listing_end_date_max": "2023-11-04"},
                 {"listing_end_date_max": "2023-11-04"},
             ),
             (
-                {"listing_end_date_min": date.fromisoformat("2023-11-04")},
+                {"listing_end_date_min": "2023-11-04"},
                 {"listing_end_date_min": "2023-11-04"},
             ),
             (
-                {"listing_start_date_max": date.fromisoformat("2023-11-04")},
+                {"listing_start_date_max": "2023-11-04"},
                 {"listing_start_date_max": "2023-11-04"},
             ),
             (
-                {"listing_start_date_min": date.fromisoformat("2023-11-04")},
+                {"listing_start_date_min": "2023-11-04"},
                 {"listing_start_date_min": "2023-11-04"},
             ),
             (
-                {"loan_origination_date_max": date.fromisoformat("2023-11-04")},
+                {"loan_origination_date_max": "2023-11-04"},
                 {"loan_origination_date_max": "2023-11-04"},
             ),
             (
-                {"loan_origination_date_min": date.fromisoformat("2023-11-04")},
+                {"loan_origination_date_min": "2023-11-04"},
                 {"loan_origination_date_min": "2023-11-04"},
             ),
             (
-                {"whole_loan_end_date_max": date.fromisoformat("2023-11-04")},
+                {"whole_loan_end_date_max": "2023-11-04"},
                 {"whole_loan_end_date_max": "2023-11-04"},
             ),
             (
-                {"whole_loan_end_date_min": date.fromisoformat("2023-11-04")},
+                {"whole_loan_end_date_min": "2023-11-04"},
                 {"whole_loan_end_date_min": "2023-11-04"},
             ),
             (
-                {"whole_loan_start_date_max": date.fromisoformat("2023-11-04")},
+                {"whole_loan_start_date_max": "2023-11-04"},
                 {"whole_loan_start_date_max": "2023-11-04"},
             ),
             (
-                {"whole_loan_start_date_min": date.fromisoformat("2023-11-04")},
+                {"whole_loan_start_date_min": "2023-11-04"},
                 {"whole_loan_start_date_min": "2023-11-04"},
             ),
             # Multi-value filters
             (
-                {"employment_status_description": [1, 2, 3]},
-                {"employment_status_description": "1,2,3"},
+                {
+                    "employment_status_description": [
+                        "Employed",
+                        "Self-employed",
+                        "Retired",
+                    ]
+                },
+                {"employment_status_description": "Employed,Self-employed,Retired"},
             ),
-            ({"fico_score": [1, 2, 3]}, {"fico_score": "1,2,3"}),
+            (
+                {"fico_score": ["<600", "600-619", "620-639"]},
+                {"fico_score": "<600,600-619,620-639"},
+            ),
             ({"income_range": [1, 2, 3]}, {"income_range": "1,2,3"}),
             ({"listing_category_id": [1, 2, 3]}, {"listing_category_id": "1,2,3"}),
             ({"listing_number": [1, 2, 3]}, {"listing_number": "1,2,3"}),
-            ({"listing_term": [1, 2, 3]}, {"listing_term": "1,2,3"}),
-            ({"occupation": [1, 2, 3]}, {"occupation": "1,2,3"}),
-            ({"prosper_rating": [1, 2, 3]}, {"prosper_rating": "1,2,3"}),
+            ({"listing_term": [24, 36, 48]}, {"listing_term": "24,36,48"}),
+            (
+                {"occupation": ["Analyst", "Architect", "Attorney"]},
+                {"occupation": "Analyst,Architect,Attorney"},
+            ),
+            ({"prosper_rating": ["N/A", "HR", "E"]}, {"prosper_rating": "N/A,HR,E"}),
         ],
     )
     def test_search(self, client_for_api_tests, input, expected_call):
@@ -499,7 +510,7 @@ class TestClient:
                         "listing_number": 111111,
                         "note_status": 3,
                         "note_status_description": "DEFAULTED",
-                        "note_default_reason": 2,
+                        "note_default_reason": "Yo no se",
                         "note_default_reason_description": "Bankruptcy",
                         "is_sold": False,
                         "is_sold_folio": False,
@@ -874,17 +885,6 @@ class TestClient:
     def test_bool_val_when_invalid(self):
         with pytest.raises(ValueError):
             _bool_val("blah")
-
-    def test_date_val_when_not_string_or_date(self):
-        with pytest.raises(ValueError):
-            _date_val(1234)
-
-    def test_date_val_when_invalid_date(self):
-        with pytest.raises(ValueError):
-            _date_val("asdf")
-
-    def test_date_val_when_string_date(self):
-        assert _date_val("2023-11-07") == "2023-11-07"
 
     @pytest.mark.skip("Takes too long; refactor to mock the sleeps")
     def test_rate_limiting(self, auth_token_manager_mock, request_mock):

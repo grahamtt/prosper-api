@@ -1,5 +1,4 @@
 import logging
-from datetime import date
 from decimal import Decimal
 from typing import List, Optional, Union
 
@@ -7,7 +6,6 @@ import requests
 from backoff import expo, on_exception
 from prosper_shared import serde
 from prosper_shared.omni_config import Config
-from prosper_shared.serde import Serde
 from ratelimit import RateLimitException, limits
 
 from prosper_api.auth_token_manager import AuthTokenManager
@@ -40,19 +38,6 @@ def _bool_val(val: bool, default=None):
 
 def _list_val(val: List[object]):
     return ",".join(str(v) for v in val) if val else None
-
-
-def _date_val(val: Union[str, date]):
-    if val is None:
-        return None
-
-    if isinstance(val, str):
-        return date.fromisoformat(val).isoformat()
-
-    if isinstance(val, date):
-        return val.isoformat()
-
-    raise ValueError(f"Unexpected type {type(val)}")
 
 
 class Client:
@@ -123,7 +108,6 @@ class Client:
 
         self._config = config
         self._auth_token_manager = auth_token_manager
-        self._serde = Serde(config)
 
     def get_account_info(self) -> Account:
         """Get the account metadata.
@@ -138,7 +122,7 @@ class Client:
             self._ACCOUNT_API_URL,
             {},
         )
-        return self._serde.deserialize(resp, Account)
+        return Account.model_validate_json(resp)
 
     def search_listings(
         self, request: Union[SearchListingsRequest, None]
@@ -189,27 +173,19 @@ class Client:
                 "listing_amount_min": request.listing_amount_min,
                 "listing_amount_max": request.listing_amount_max,
                 "listing_category_id": _list_val(request.listing_category_id),
-                "listing_creation_date_min": _date_val(
-                    request.listing_creation_date_min
-                ),
-                "listing_creation_date_max": _date_val(
-                    request.listing_creation_date_max
-                ),
-                "listing_end_date_min": _date_val(request.listing_end_date_min),
-                "listing_end_date_max": _date_val(request.listing_end_date_max),
+                "listing_creation_date_min": request.listing_creation_date_min,
+                "listing_creation_date_max": request.listing_creation_date_max,
+                "listing_end_date_min": request.listing_end_date_min,
+                "listing_end_date_max": request.listing_end_date_max,
                 "listing_monthly_payment_min": request.listing_monthly_payment_min,
                 "listing_monthly_payment_max": request.listing_monthly_payment_max,
                 "listing_number": _list_val(request.listing_number),
-                "listing_start_date_min": _date_val(request.listing_start_date_min),
-                "listing_start_date_max": _date_val(request.listing_start_date_max),
+                "listing_start_date_min": request.listing_start_date_min,
+                "listing_start_date_max": request.listing_start_date_max,
                 "listing_status": request.listing_status,
                 "listing_term": _list_val(request.listing_term),
-                "loan_origination_date_min": _date_val(
-                    request.loan_origination_date_min
-                ),
-                "loan_origination_date_max": _date_val(
-                    request.loan_origination_date_max
-                ),
+                "loan_origination_date_min": request.loan_origination_date_min,
+                "loan_origination_date_max": request.loan_origination_date_max,
                 "months_employed_min": request.months_employed_min,
                 "months_employed_max": request.months_employed_max,
                 "occupation": _list_val(request.occupation),
@@ -243,14 +219,10 @@ class Client:
                 "stated_monthly_income_max": request.stated_monthly_income_max,
                 "verification_stage_min": request.verification_stage_min,
                 "verification_stage_max": request.verification_stage_max,
-                "whole_loan_end_date_min": _date_val(request.whole_loan_end_date_min),
-                "whole_loan_end_date_max": _date_val(request.whole_loan_end_date_max),
-                "whole_loan_start_date_min": _date_val(
-                    request.whole_loan_start_date_min
-                ),
-                "whole_loan_start_date_max": _date_val(
-                    request.whole_loan_start_date_max
-                ),
+                "whole_loan_end_date_min": request.whole_loan_end_date_min,
+                "whole_loan_end_date_max": request.whole_loan_end_date_max,
+                "whole_loan_start_date_min": request.whole_loan_start_date_min,
+                "whole_loan_start_date_max": request.whole_loan_start_date_max,
                 "co_borrower_application": _bool_val(request.co_borrower_application),
                 "combined_dti_wprosper_loan_min": request.combined_dti_wprosper_loan_min,
                 "combined_dti_wprosper_loan_max": request.combined_dti_wprosper_loan_max,
@@ -258,7 +230,7 @@ class Client:
                 "combined_stated_monthly_income_max": request.combined_stated_monthly_income_max,
             },
         )
-        return self._serde.deserialize(resp, SearchListingsResponse)
+        return SearchListingsResponse.model_validate_json(resp)
 
     def list_notes(self, request: ListNotesRequest = None) -> ListNotesResponse:
         """List notes in the account.
@@ -283,7 +255,7 @@ class Client:
                 "limit": request.limit,
             },
         )
-        return self._serde.deserialize(resp, ListNotesResponse)
+        return ListNotesResponse.model_validate_json(resp)
 
     def order(
         self,
@@ -306,7 +278,7 @@ class Client:
             self._ORDERS_API_URL,
             {"bid_requests": [{"listing_id": listing_id, "bid_amount": amount}]},
         )
-        return self._serde.deserialize(resp, Order)
+        return Order.model_validate_json(resp)
 
     def list_orders(self, request: ListOrdersRequest = None) -> ListOrdersResponse:
         """Lists orders in the account.
@@ -331,7 +303,7 @@ class Client:
                 "limit": request.limit,
             },
         )
-        return self._serde.deserialize(resp, ListOrdersResponse)
+        return ListOrdersResponse.model_validate_json(resp)
 
     def list_loans(self, request: ListLoansRequest = None) -> ListLoansResponse:
         """Lists loans associated with the account.
@@ -356,7 +328,7 @@ class Client:
                 "limit": request.limit,
             },
         )
-        return self._serde.deserialize(resp, ListLoansResponse)
+        return ListLoansResponse.model_validate_json(resp)
 
     def _do_get(self, url, query_params=None):
         if query_params is None:

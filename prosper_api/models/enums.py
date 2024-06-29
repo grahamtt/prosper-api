@@ -8,9 +8,6 @@ class _DefaultEnum(Enum):
     def __repr__(self):
         return f"{self.__class__.__name__}.{self.name}"
 
-    def from_value(self, val: str):
-        return self._value2member_map_[val]
-
 
 class ProsperRating(_DefaultEnum):
     """Prosper ratings."""
