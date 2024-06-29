@@ -2308,4 +2308,4 @@ secure = ["keyring"]
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.9,<4.0"
-content-hash = "2df5cea5787528120d3231648bc76b7409d7db569bf5d5d983c0cff11bf4554f"
+content-hash = "daf2bf5a095ed2c6732866c2764beef561abc71c094bac685a9fbe873e8a6721"
