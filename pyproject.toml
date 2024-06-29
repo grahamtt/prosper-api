@@ -98,7 +98,7 @@ arguments = ['--all-extras']
 profile = "black"
 
 [tool.poetry-dynamic-versioning]
-enable = false
+enable = true
 metadata = false
 style = "semver"
 vcs = "git"
