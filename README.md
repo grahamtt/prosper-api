@@ -163,7 +163,7 @@ Available config values:
 
 ```yaml
 prosper-api.auth.token-cache:
-  default: /home/graham/.cache/prosper-api/token-cache
+  default: /Users/graham/Library/Caches/prosper-api/token-cache
   description: The filesystem location where the auth token will be cached.
   optional: false
   type: str
