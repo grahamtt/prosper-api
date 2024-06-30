@@ -12,3 +12,10 @@ updates:
     allow:
       - dependency-type: "all"
     versioning-strategy: "widen"
+  - package-ecosystem: "github-actions"
+    directory: "/" # Location of package manifests
+    schedule:
+      interval: "daily"
+    allow:
+      - dependency-type: "all"
+    versioning-strategy: "widen"

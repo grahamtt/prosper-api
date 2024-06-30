@@ -1433,13 +1433,13 @@ files = [
 
 [[package]]
 name = "prosper-shared"
-version = "0.7.0"
+version = "0.7.1"
 description = ""
 optional = false
 python-versions = "<4.0,>=3.9"
 files = [
-    {file = "prosper_shared-0.7.0-py3-none-any.whl", hash = "sha256:d47de291423044949b2f7b08e0db5a9d4b04d8829ea447e457180bd92138363f"},
-    {file = "prosper_shared-0.7.0.tar.gz", hash = "sha256:195e4d1dac7155cd02c21081433f9b5b0b76f455fc33e44a6e2b8c548ef10977"},
+    {file = "prosper_shared-0.7.1-py3-none-any.whl", hash = "sha256:17155ef599f2e187dbb30fbf55f212df94e4138fbda08d3797c940043e0e9272"},
+    {file = "prosper_shared-0.7.1.tar.gz", hash = "sha256:8357d88847d975d310e3ca1d573f877a862f32ddfaf513f254f37c0f7d5ad1ea"},
 ]
 
 [package.dependencies]
