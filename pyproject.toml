@@ -65,7 +65,7 @@ pre-commit = [
     "prosper_shared.autohooks.mdformat",
     "autohooks.plugins.pytest",
     # "autohooks.tox", # Commenting out for now because it appears to be running only for Python 3.10
-    "prosper_shared.autohooks.mutmut",
+    # "prosper_shared.autohooks.mutmut", # Doesn't seem to work on MacOS. I'll work on it.
     # "prosper_shared.autohooks.dynamic_versioning", # Disabling for now until I figure out how to apply to the current commit.
     "prosper_shared.autohooks.build",
     "prosper_shared.autohooks.assert_files",
