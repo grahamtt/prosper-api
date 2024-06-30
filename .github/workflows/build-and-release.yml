@@ -99,34 +99,3 @@ jobs:
           files: |
             dist/*.whl
             dist/*.tar.gz
-
-  main-branch-release: # Create github release for all commits to mainline
-    name: "Main branch release"
-    if: ${{ github.ref == 'refs/heads/main' }}
-    needs: ci
-    runs-on: "ubuntu-latest"
-
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - name: Set up Python
-        uses: actions/setup-python@v3
-        with:
-          python-version: '3.x'
-      - name: Run image
-        uses: abatilo/actions-poetry@v2
-        with:
-          poetry-version: '1.6.1'
-      - name: Install dependencies
-        run: | 
-          poetry self add "poetry-dynamic-versioning[plugin]"
-          poetry install --all-extras
-      - name: Create Github release
-        uses: "marvinpinto/action-automatic-releases@latest"
-        with:
-          repo_token: "${{ secrets.RELEASE_TOKEN }}"
-          prerelease: false
-          files: |
-            dist/*.whl
-            dist/*.tar.gz
