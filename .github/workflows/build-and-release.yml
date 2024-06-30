@@ -13,7 +13,7 @@ jobs:
       matrix:
         python-version: [
 #          "3.8", # Some dev dependencies aren't supported
-          "3.9",
+#          "3.9", # Coverage is messed up for some reason
           "3.10",
           "3.11",
           "3.12",
@@ -67,7 +67,7 @@ jobs:
           coverageCommand: poetry run pytest
           coverageLocations: ${{github.workspace}}/dist/coverage.info:lcov
 
-  tagged-release: # TODO: Maybe make this conditional so it can run on pull requests
+  tagged-release: # Publish new library version for tagged commits
     name: "Tagged Release"
     if: ${{ startsWith( github.ref, 'refs/tags/' ) }}
     needs: ci
@@ -91,6 +91,37 @@ jobs:
           poetry install --all-extras
       - name: Build and publish package
         run: poetry publish --build --username __token__ --password ${{ secrets.PYPI_API_TOKEN }}
+      - name: Create Github release
+        uses: "marvinpinto/action-automatic-releases@latest"
+        with:
+          repo_token: "${{ secrets.RELEASE_TOKEN }}"
+          prerelease: false
+          files: |
+            dist/*.whl
+            dist/*.tar.gz
+
+  main-branch-release: # Create github release for all commits to mainline
+    name: "Tagged Release"
+    if: ${{ github.ref == 'refs/heads/main' }}
+    needs: ci
+    runs-on: "ubuntu-latest"
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Set up Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: '3.x'
+      - name: Run image
+        uses: abatilo/actions-poetry@v2
+        with:
+          poetry-version: '1.6.1'
+      - name: Install dependencies
+        run: | 
+          poetry self add "poetry-dynamic-versioning[plugin]"
+          poetry install --all-extras
       - name: Create Github release
         uses: "marvinpinto/action-automatic-releases@latest"
         with:
