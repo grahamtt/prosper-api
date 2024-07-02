@@ -159,7 +159,7 @@ class Listing(BaseModel):
     prior_prosper_loans31dpd: Optional[Decimal] = None
     max_prior_prosper_loan: Optional[Decimal] = None
     min_prior_prosper_loan: Optional[Decimal] = None
-    verification_stage: Optional[str] = None
+    verification_stage: Optional[int] = None
     combined_dti_wprosper_loan: Optional[Decimal] = None
     combined_stated_monthly_income: Optional[Decimal] = None
 
