@@ -311,7 +311,7 @@ class Note(BaseModel):
     next_payment_due_date: str
     ownership_start_date: str
     ownership_end_date: Optional[str] = None
-    note_default_reason: Optional[str] = None
+    note_default_reason: Optional[LoanDefaultReason] = None
     note_default_reason_description: Optional[str] = None
     servicing_collection_agency_queue: Optional[str] = None
 

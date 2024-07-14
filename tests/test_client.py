@@ -510,7 +510,7 @@ class TestClient:
                         "listing_number": 111111,
                         "note_status": 3,
                         "note_status_description": "DEFAULTED",
-                        "note_default_reason": "Yo no se",
+                        "note_default_reason": 3,
                         "note_default_reason_description": "Bankruptcy",
                         "is_sold": False,
                         "is_sold_folio": False,

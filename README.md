@@ -162,30 +162,33 @@ while True:
 Available config values:
 
 ```yaml
-prosper-api.auth.token-cache:
-  default: /Users/graham/Library/Caches/prosper-api/token-cache
-  description: The filesystem location where the auth token will be cached.
-  optional: false
-  type: str
-prosper-api.credentials.client-id:
-  constraint: ^[a-f0-9]{32}$
-  description: The client-id from Prosper.
-  optional: false
-  type: str
-prosper-api.credentials.client-secret:
-  constraint: ^[a-f0-9]{32}$
-  description: The client-secret from Prosper; can be stored and accessed securely using the keyring
-    library.
-  optional: true
-  type: str
-prosper-api.credentials.password:
-  description: Your Prosper password; can be stored and accessed securely using the keyring library.
-  optional: true
-  type: str
-prosper-api.credentials.username:
-  description: Your Prosper username
-  optional: false
-  type: str
+["prosper-api.credentials.client-id"]
+type = "str"
+optional = false
+constraint = "^[a-f0-9]{32}$"
+description = "The client-id from Prosper."
+
+["prosper-api.credentials.client-secret"]
+type = "str"
+optional = true
+constraint = "^[a-f0-9]{32}$"
+description = "The client-secret from Prosper; can be stored and accessed securely using the keyring library."
+
+["prosper-api.credentials.username"]
+type = "str"
+optional = false
+description = "Your Prosper username"
+
+["prosper-api.credentials.password"]
+type = "str"
+optional = true
+description = "Your Prosper password; can be stored and accessed securely using the keyring library."
+
+["prosper-api.auth.token-cache"]
+type = "str"
+optional = false
+default = "/Users/graham/Library/Caches/prosper-api/token-cache"
+description = "The filesystem location where the auth token will be cached."
 ```
 
 ## Feedback
