@@ -255,7 +255,7 @@ class SearchListingsRequest(BaseModel):
     combined_stated_monthly_income_min: Optional[Decimal] = None
     combined_stated_monthly_income_max: Optional[Decimal] = None
 
-    listing_number: List[int] = []
+    listing_number: Optional[List[int]] = None
 
 
 class SearchListingsResponse(_ListResponse):
