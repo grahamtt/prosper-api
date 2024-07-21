@@ -14,12 +14,17 @@ from prosper_api.models.enums import (
     InvestmentType,
     ListingCategory,
     ListingStatus,
+    ListLoansSortBy,
+    ListNotesSortBy,
+    ListOrdersSortBy,
     LoanDefaultReason,
     LoanStatus,
     Occupation,
     OrderSource,
     OrderStatus,
     ProsperRating,
+    SearchListingsSortBy,
+    SortOrder,
 )
 
 
@@ -167,8 +172,8 @@ class Listing(BaseModel):
 class SearchListingsRequest(BaseModel):
     """Request for searching listings."""
 
-    sort_by: str = "lender_yield"
-    sort_dir: str = "desc"
+    sort_by: SearchListingsSortBy = SearchListingsSortBy.LENDER_YIELD
+    sort_dir: SortOrder = SortOrder.DESCENDING
     offset: Optional[int] = None
     limit: Optional[int] = None
     biddable: bool = True
@@ -319,8 +324,8 @@ class Note(BaseModel):
 class ListNotesRequest(BaseModel):
     """Request for searching notes."""
 
-    sort_by: str = "prosper_rating"
-    sort_dir: str = "desc"
+    sort_by: ListNotesSortBy = ListNotesSortBy.PROSPER_RATING
+    sort_dir: SortOrder = SortOrder.DESCENDING
     offset: Optional[int] = None
     limit: Optional[int] = None
 
@@ -360,8 +365,8 @@ class Order(BaseModel):
 class ListOrdersRequest(BaseModel):
     """Request for listing orders."""
 
-    sort_by: str = "prosper_rating"
-    sort_dir: str = "desc"
+    sort_by: ListOrdersSortBy = ListOrdersSortBy.PROSPER_RATING
+    sort_dir: SortOrder = SortOrder.DESCENDING
     offset: Optional[int] = None
     limit: Optional[int] = None
 
@@ -402,8 +407,8 @@ class Loan(BaseModel):
 class ListLoansRequest(BaseModel):
     """Request for searching loans."""
 
-    sort_by: str = "prosper_rating"
-    sort_dir: str = "desc"
+    sort_by: ListLoansSortBy = ListLoansSortBy.PROSPER_RATING
+    sort_dir: SortOrder = SortOrder.DESCENDING
     offset: Optional[int] = None
     limit: Optional[int] = None
 

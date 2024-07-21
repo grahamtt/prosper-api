@@ -9,6 +9,70 @@ class _DefaultEnum(Enum):
         return f"{self.__class__.__name__}.{self.name}"
 
 
+class SortOrder(_DefaultEnum):
+    """Sort orders."""
+
+    ASCENDING = "asc"
+    DESCENDING = "desc"
+
+
+class SearchListingsSortBy(_DefaultEnum):
+    """Listing sort bys."""
+
+    AMOUNT_FUNDED = "amount_funded"
+    AMOUNT_REMAINING = "amount_remaining"
+    BORROWER_RATE = "borrower_rate"
+    FICO_SCORE = "fico_score"
+    INVESTMENT_TYPEID = "investment_typeid"
+    LENDER_YIELD = "lender_yield"
+    LISTING_AMOUNT = "listing_amount"
+    LISTING_CATEGORY_ID = "listing_category_id"
+    LISTING_CREATION_DATE = "listing_creation_date"
+    LISTING_END_DATE = "listing_end_date"
+    LISTING_NUMBER = "listing_number"
+    LISTING_START_DATE = "listing_start_date"
+    LISTING_STATUS = "listing_status"
+    LISTING_TERM = "listing_term"
+    PARTIAL_FUNDING_INDICATOR = "partial_funding_indicator"
+    PERCENT_FUNDED = "percent_funded"
+    PROSPER_RATING = "prosper_rating"
+    PROSPER_SCORE = "prosper_score"
+    VERIFICATION_STAGE = "verification_stage"
+
+
+class ListNotesSortBy(_DefaultEnum):
+    """Listing sort bys."""
+
+    LOAN_NOTE_ID = "loan_note_id"
+    NOTE_OWNERSHIP_AMOUNT = "note_ownership_amount"
+    AMOUNT_BORROWED = "amount_borrowed"
+    BORROWER_RATE = "borrower_rate"
+    PROSPER_RATING = "prosper_rating"
+    TERM = "term"
+    AGE_IN_MONTHS = "age_in_months"
+    ORIGINATION_DATE = "origination_date"
+    NOTE_STATUS = "note_status"
+
+
+class ListOrdersSortBy(_DefaultEnum):
+    """Listing sort bys."""
+
+    LISTING_TITLE = "listing_title"
+    PROSPER_RATING = "prosper_rating"
+    LISTING_AMOUNT = "listing_amount"
+    LOAN_TERM_MONTHS = "loan_term_months"
+    ESTIMATED_END_DATE = "estimated_end_date"
+
+
+class ListLoansSortBy(_DefaultEnum):
+    """Listing sort bys."""
+
+    LOAN_NUMBER = "loan_number"
+    BORROWER_RATE = "borrower_rate"
+    PROSPER_RATING = "prosper_rating"
+    ORIGINATION_DATE = "origination_date"
+
+
 class ProsperRating(_DefaultEnum):
     """Prosper ratings."""
 
