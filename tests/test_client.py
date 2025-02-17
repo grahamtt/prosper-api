@@ -6,7 +6,7 @@ from json import dumps
 import pytest
 
 from prosper_api.client import Client, _bool_val
-from prosper_api.models import BidStatus, SearchListingsRequest
+from prosper_api.models import BidStatus, ListPaymentsRequest, SearchListingsRequest
 
 
 class TestClient:
@@ -707,6 +707,81 @@ class TestClient:
         )
         assert len(result.result) == 1
         assert result.result[0].loan_number == 11111
+
+    def test_list_payments(self, client_for_api_tests):
+        client_for_api_tests._do_get.return_value = dumps(
+            {
+                "result": [
+                    {
+                        "loan_number": 2300367,
+                        "transaction_id": 318744581,
+                        "funds_available_date": "2025-02-03T08:00:00.000+0000",
+                        "investor_disbursement_date": "2025-02-04T08:00:00.000+0000",
+                        "transaction_effective_date": "2025-02-02T08:00:00.000+0000",
+                        "account_effective_date": "2025-02-02T08:00:00.000+0000",
+                        "payment_transaction_code": "ACH",
+                        "payment_status": "Success",
+                        "match_back_id": "B4F8003ADFD16ECEA608C5859BA2CB2E5E481F03",
+                        "prior_match_back_id": None,
+                        "loan_payment_cashflow_type": "Payment",
+                        "payment_amount": "0.7812",
+                        "principal_amount": "0.2169",
+                        "interest_amount": "0.5643",
+                        "origination_interest_amount": "0",
+                        "late_fee_amount": "0",
+                        "service_fee_amount": "0.0223",
+                        "collection_fee_amount": "0",
+                        "gl_reward_amount": "0",
+                        "nsf_fee_amount": "0",
+                        "pre_days_past_due": 0,
+                        "post_days_past_due": None,
+                        "resulting_principal_balance": "26.0107",
+                    },
+                    {
+                        "loan_number": 2300367,
+                        "transaction_id": 317088207,
+                        "funds_available_date": "2025-01-05T08:00:00.000+0000",
+                        "investor_disbursement_date": "2025-01-06T08:00:00.000+0000",
+                        "transaction_effective_date": "2025-01-02T08:00:00.000+0000",
+                        "account_effective_date": "2025-01-02T08:00:00.000+0000",
+                        "payment_transaction_code": "ACH",
+                        "payment_status": "Success",
+                        "match_back_id": "10F603DD91EB3F3C0408850CD0A6EBD25A03070B",
+                        "prior_match_back_id": None,
+                        "loan_payment_cashflow_type": "Payment",
+                        "payment_amount": "0.7812",
+                        "principal_amount": "0.2124",
+                        "interest_amount": "0.5688",
+                        "origination_interest_amount": "0",
+                        "late_fee_amount": "0",
+                        "service_fee_amount": "0.0224",
+                        "collection_fee_amount": "0",
+                        "gl_reward_amount": "0",
+                        "nsf_fee_amount": "0",
+                        "pre_days_past_due": 0,
+                        "post_days_past_due": None,
+                        "resulting_principal_balance": "26.2276",
+                    },
+                ],
+                "result_count": 2,
+                "total_count": 2,
+            }
+        )
+        result = client_for_api_tests.list_payments(
+            ListPaymentsRequest(loan_number=[2300367])
+        )
+
+        client_for_api_tests._do_get.assert_called_once_with(
+            "https://api.prosper.com/loans/payments",
+            query_params={
+                "limit": None,
+                "loan_number": "2300367",
+                "offset": None,
+                "transaction_effective_date": None,
+            },
+        )
+        assert len(result.result) == 2
+        assert result.result[0].loan_number == 2300367
 
     @pytest.mark.parametrize(
         [

@@ -63,7 +63,7 @@ password = "AWESOME_PASSWORD"
 
 ### More secure
 
-> ℹ️ You must have installed `keyring` or used the '\[secure\]' mode when installing the library.
+> ℹ️ You must have installed `keyring` or used the '[secure]' mode when installing the library.
 
 Remove the `client-secret` and `password` portions of the config:
 

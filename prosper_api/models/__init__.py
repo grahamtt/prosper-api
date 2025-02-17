@@ -22,6 +22,9 @@ from prosper_api.models.enums import (
     Occupation,
     OrderSource,
     OrderStatus,
+    PaymentCashflowType,
+    PaymentStatus,
+    PaymentTransactionCode,
     ProsperRating,
     SearchListingsSortBy,
     SortOrder,
@@ -417,3 +420,48 @@ class ListLoansResponse(_ListResponse):
     """The loans that match the given parameters."""
 
     result: List[Loan]
+
+
+class Payment(BaseModel):
+    """Representation of a loan payment."""
+
+    loan_number: int
+    transaction_id: Optional[int] = None
+    funds_available_date: Optional[str] = None
+    investor_disbursement_date: Optional[str] = None
+    transaction_effective_date: str
+    account_effective_date: str
+    payment_transaction_code: Optional[PaymentTransactionCode] = None
+    payment_status: PaymentStatus
+    match_back_id: str
+    prior_match_back_id: Optional[str] = None
+    loan_payment_cashflow_type: Optional[PaymentCashflowType] = None
+    payment_amount: Decimal
+    principal_amount: Decimal
+    interest_amount: Decimal
+    origination_interest_amount: Decimal
+    late_fee_amount: Decimal
+    service_fee_amount: Decimal
+    collection_fee_amount: Decimal
+    gl_reward_amount: Decimal
+    nsf_fee_amount: Decimal
+    pre_days_past_due: int
+    post_days_past_due: Optional[int] = None
+    resulting_principal_balance: Decimal
+
+
+class ListPaymentsRequest(BaseModel):
+    """Request for listing payments."""
+
+    loan_number: List[int]
+    transaction_effective_date: Optional[str] = None
+    offset: Optional[int] = None
+    limit: Optional[int] = None
+
+
+class ListPaymentsResponse(BaseModel):
+    """The payments in the requested range."""
+
+    result: List[Payment]
+    result_count: int
+    total_count: int
