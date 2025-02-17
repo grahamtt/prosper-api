@@ -16,6 +16,8 @@ from prosper_api.models import (
     ListNotesResponse,
     ListOrdersRequest,
     ListOrdersResponse,
+    ListPaymentsRequest,
+    ListPaymentsResponse,
     Order,
     SearchListingsRequest,
     SearchListingsResponse,
@@ -80,6 +82,7 @@ class Client:
     _NOTES_API_URL = "https://api.prosper.com/v1/notes/"
     _ORDERS_API_URL = "https://api.prosper.com/v1/orders/"
     _LOANS_API_URL = "https://api.prosper.com/v1/loans/"
+    _PAYMENTS_API_URL = "https://api.prosper.com/loans/payments"
 
     _has_warned_about_floats = False
 
@@ -324,6 +327,30 @@ class Client:
             },
         )
         return ListLoansResponse.model_validate_json(resp)
+
+    def list_payments(self, request: ListPaymentsRequest) -> ListPaymentsResponse:
+        """Lists loans payments for the given loans.
+
+        Args:
+            request (ListPaymentsRequest): Configures the sort and pagination parameters.
+
+        Returns:
+            ListPaymentsResponse: Holds the list results and pagination information.
+
+        See Also:
+            https://developers.prosper.com/docs/investor/loans-api/
+        """
+        resp = self._do_get(
+            self._PAYMENTS_API_URL,
+            query_params={
+                "loan_number": _list_val(request.loan_number),
+                "transaction_effective_date": request.transaction_effective_date,
+                "offset": request.offset,
+                "limit": request.limit,
+            },
+        )
+        logger.debug(resp)
+        return ListPaymentsResponse.model_validate_json(resp)
 
     def _do_get(self, url, query_params=None):
         if query_params is None:
